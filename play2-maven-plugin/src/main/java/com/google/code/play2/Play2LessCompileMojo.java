@@ -26,6 +26,7 @@ import java.util.Set;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -39,7 +40,7 @@ import com.google.code.play2.less.LessDependencyCache;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "less-compile" )
+@Mojo( name = "less-compile", defaultPhase = LifecyclePhase.GENERATE_RESOURCES )
 public class Play2LessCompileMojo
     extends AbstractPlay2Mojo
 {
@@ -174,7 +175,8 @@ public class Play2LessCompileMojo
                 }
                 newAllDependencies.set( fileName, fileDependencies );
             }
-            newAllDependencies.writeToFile( depsFile );
+            //TODO - change file format, disable caching for now
+            // newAllDependencies.writeToFile( depsFile );
 
             boolean resourceAlreadyAdded = false;
             for ( Resource res : (List<Resource>) project.getResources() )

@@ -40,11 +40,11 @@
                 com.google.code.play2-maven-plugin:play2-maven-plugin:routes-compile,
                 com.google.code.play2-maven-plugin:play2-maven-plugin:template-compile
               </generate-sources>
-              <generate-resources>
+              <!-- add in the ptoject, if needed <generate-resources>
                 com.google.code.play2-maven-plugin:play2-maven-plugin:closure-compile,
                 com.google.code.play2-maven-plugin:play2-maven-plugin:coffee-compile,
                 com.google.code.play2-maven-plugin:play2-maven-plugin:less-compile
-              </generate-resources>
+              </generate-resources>-->
               <process-resources>
                 org.apache.maven.plugins:maven-resources-plugin:resources
               </process-resources>

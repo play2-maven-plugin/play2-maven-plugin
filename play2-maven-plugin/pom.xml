@@ -42,7 +42,6 @@ under the License.
         <play2-scala.version>2.9.2</play2-scala.version>
         <scala.version>2.9.2</scala.version> <!-- don't change to 2.10.0, "routes-compile" task will fail -->
         <!--<sbt.version>0.12.2</sbt.version>-->
-        <maven-dependency-tree.version>2.0</maven-dependency-tree.version> <!-- ??? -->
         <maven-plugin-plugin.version>3.2</maven-plugin-plugin.version>
         <plexus-archiver.version>2.3</plexus-archiver.version>
     </properties>
@@ -210,12 +209,6 @@ under the License.
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-common-artifact-filters</artifactId>
             <version>1.4</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-dependency-tree</artifactId>
-            <version>${maven-dependency-tree.version}</version>
         </dependency>
 
         <dependency>

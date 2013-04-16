@@ -31,7 +31,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
@@ -69,8 +68,8 @@ public abstract class AbstractPlay2DistMojo
     @Parameter( property = "play.distDependencyExcludes", defaultValue = "" )
     private String distDependencyExcludes;
 
-    protected ZipArchiver prepareArchiver( /*ConfigurationParser configParser*/ )
-        throws DependencyTreeBuilderException, IOException, MojoExecutionException, NoSuchArchiverException
+    protected ZipArchiver prepareArchiver()
+        throws IOException, MojoExecutionException, NoSuchArchiverException
     {
         ZipArchiver zipArchiver = getZipArchiver();
 
@@ -99,13 +98,6 @@ public abstract class AbstractPlay2DistMojo
         Set<?> projectArtifacts = project.getArtifacts();
 
         Set<Artifact> excludedArtifacts = new HashSet<Artifact>();
-        /*Artifact scalaCompilerArtifact =
-            getDependencyArtifact( projectArtifacts, "org.scala-lang", "scala-compiler", "jar" );
-        if ( scalaCompilerArtifact != null )
-        {
-            //excludedArtifacts.addAll( getDependencyArtifacts( projectArtifacts, scalaCompilerArtifact ) );
-            excludedArtifacts.add( scalaCompilerArtifact );
-        }*/
 
         AndArtifactFilter dependencyFilter = new AndArtifactFilter();
         if ( distDependencyIncludes != null && distDependencyIncludes.length() > 0 )
@@ -166,13 +158,6 @@ public abstract class AbstractPlay2DistMojo
             cpsb.append(destFileName);
         }
         String classPathString = cpsb.toString();
-
-        /*File customConfigFile = null;
-        String customConfigFileName = System.getProperty("config.file");
-        if (customConfigFileName != null)
-        {
-            customConfigFile = new File(customConfigFileName);
-        }*/
 
         File startFile = createStartFile(buildDirectory, classPathString);
         zipArchiver.addFile( startFile, packageName + "/start" );

@@ -24,14 +24,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import com.typesafe.zinc.Compiler;
@@ -137,15 +135,9 @@ public abstract class AbstractPlay2ScalaCompileMojo
                                                                  SCALA_GROUPID, SCALA_REFLECT_ARTIFACTID ) );
             }
 
-            Set<Artifact> deps = getDependencyArtifacts( project.getArtifacts(), scalaReflectArtifact );
             List<File> scalaExtra = new ArrayList<File>();
-            for ( Artifact dependencyArtifact : deps )
-            {
-                if ( dependencyArtifact != scalaCompilerArtifact && dependencyArtifact != scalaLibraryArtifact )
-                {
-                    scalaExtra.add( dependencyArtifact.getFile() );
-                }
-            }
+            scalaExtra.add( scalaReflectArtifact.getFile() );
+
             Artifact xsbtiArtifact = getDependencyArtifact( pluginArtifacts, SBT_GROUP_ID, XSBTI_ARTIFACT_ID, "jar" );
             Artifact compilerInterfaceSrc =
                 getDependencyArtifact( pluginArtifacts, SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID, "jar",
@@ -189,10 +181,10 @@ public abstract class AbstractPlay2ScalaCompileMojo
         {
             throw new MojoFailureException( "?", e );
         }
-        catch ( DependencyTreeBuilderException e )
+        /*catch ( DependencyTreeBuilderException e )
         {
             throw new MojoFailureException( "?", e );
-        }
+        }*/
     }
 
     protected abstract List<String> getClasspathElements();

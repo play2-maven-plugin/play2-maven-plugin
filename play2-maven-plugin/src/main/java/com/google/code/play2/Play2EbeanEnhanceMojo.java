@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -46,7 +47,7 @@ import com.avaje.ebean.enhance.ant.OfflineFileTransform;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "ebean-enhance", requiresDependencyResolution = ResolutionScope.COMPILE )
+@Mojo( name = "ebean-enhance", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE )
 public class Play2EbeanEnhanceMojo
     extends AbstractPlay2Mojo
 {
@@ -57,18 +58,12 @@ public class Play2EbeanEnhanceMojo
     @Parameter( property = "project.compileClasspathElements", readonly = true, required = true )
     private List<String> classpathElements;
 
-    /**
-     * The directory for compiled classes.
-     * 
-     */
-    @Parameter( property = "play.distOutputDirectory", defaultValue = "${project.build.outputDirectory}", required = true )
-    private File outputDirectory;
-    //FIXME-ten parametr nie powinien byc widoczny, albo w ogóle nie powinno go byc
-
     @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        File outputDirectory = new File(project.getBuild().getOutputDirectory());
+
         classpathElements.remove( outputDirectory.getAbsolutePath() );
         List<File> classpathFiles = new ArrayList<File>( classpathElements.size() );
         for ( String path : classpathElements )

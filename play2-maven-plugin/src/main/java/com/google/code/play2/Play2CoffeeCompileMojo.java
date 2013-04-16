@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -38,7 +39,7 @@ import com.google.code.play2.jscompile.JavascriptCompiler;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "coffee-compile" )
+@Mojo( name = "coffee-compile", defaultPhase = LifecyclePhase.GENERATE_RESOURCES )
 public class Play2CoffeeCompileMojo
     extends AbstractPlay2Mojo
 {

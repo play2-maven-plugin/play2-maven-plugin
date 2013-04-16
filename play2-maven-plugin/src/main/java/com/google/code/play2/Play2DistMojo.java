@@ -27,7 +27,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
@@ -121,10 +120,6 @@ public class Play2DistMojo
             System.out.println();
         }
         catch ( ArchiverException e )
-        {
-            throw new MojoExecutionException( "?", e );
-        }
-        catch ( DependencyTreeBuilderException e )
         {
             throw new MojoExecutionException( "?", e );
         }
