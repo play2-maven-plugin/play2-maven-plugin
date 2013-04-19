@@ -22,7 +22,7 @@ under the License.
     <parent>
         <groupId>com.google.code.play2-maven-plugin</groupId>
         <artifactId>maven-parent</artifactId>
-        <version>1.0.0-alpha1-SNAPSHOT</version>
+        <version>1.0.0-alpha1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -31,8 +31,8 @@ under the License.
     <version>1.0.0-alpha1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>Maven Plugin for Play! Framework 2.0 : Plugin Parent</name>
-    <description>Maven Plugin for Play! Framework 2.0 : Plugin Parent</description>
+    <name>Maven Plugin for Play! Framework 2.x : Plugin Parent</name>
+    <description>Maven Plugin for Play! Framework 2.x : Plugin Parent</description>
     <url>http://play2-maven-plugin.googlecode.com/svn/mavensite/${project.version}</url>
 
     <scm>
