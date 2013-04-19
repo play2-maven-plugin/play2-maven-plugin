@@ -78,7 +78,7 @@ public abstract class AbstractPlay2Mojo
     protected String getMainLang()
     {
         String result = "scala";
-        Set<?> classPathArtifacts = project.getArtifacts();
+        Set<?> classPathArtifacts = project.getDependencyArtifacts(); // only direct dependencies
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();

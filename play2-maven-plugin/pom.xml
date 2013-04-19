@@ -29,14 +29,15 @@ under the License.
     <artifactId>play2-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>Maven Plugin for Play! Framework 2.0 : Plugin</name>
-    <description>Maven Plugin for Play! Framework 2.0 : Plugin</description>
+    <name>Maven Plugin for Play! Framework 2.x : Plugin</name>
+    <description>Maven Plugin for Play! Framework 2.x : Plugin</description>
 
     <prerequisites>
         <maven>2.2.1</maven>
     </prerequisites>
 
     <properties>
+        <ant.version>1.9.0</ant.version>
         <maven.version>2.2.1</maven.version>
         <play2.version>2.1.0</play2.version>
         <play2-scala.version>2.9.2</play2-scala.version>
@@ -46,7 +47,7 @@ under the License.
         <plexus-archiver.version>2.3</plexus-archiver.version>
     </properties>
 
-<!--    <repositories>
+    <repositories>
         <repository>
             <id>typesafe</id>
             <name>Typesafe - releases</name>
@@ -55,9 +56,15 @@ under the License.
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-    </repositories>-->
+    </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>${ant.version}</version>
+        </dependency>
+
         <!-- remove scala-lang and scala-compiler dependencies? -->
         <dependency>
             <groupId>com.typesafe.zinc</groupId>
