@@ -35,7 +35,7 @@ import com.google.code.play2.less.LessCompiler;
 import com.google.code.play2.less.LessDependencyCache;
 
 /**
- * ...
+ * Compile Less assets
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0

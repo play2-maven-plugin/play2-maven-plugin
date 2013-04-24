@@ -30,7 +30,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import play.templates.ScalaTemplateCompiler;
 
 /**
- * ...
+ * Compile Scala templates
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0

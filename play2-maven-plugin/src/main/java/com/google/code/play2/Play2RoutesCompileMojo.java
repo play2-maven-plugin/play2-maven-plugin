@@ -33,7 +33,7 @@ import scala.collection.JavaConversions;
 import play.router.RoutesCompiler$;
 
 /**
- * ...
+ * Compile routes
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0

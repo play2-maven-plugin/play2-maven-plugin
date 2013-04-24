@@ -58,7 +58,7 @@ import sbt.inc.Analysis;
 //import com.avaje.ebean.enhance.ant.OfflineFileTransform;
 
 /**
- * ...
+ * Compile Scala and Java sources
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0

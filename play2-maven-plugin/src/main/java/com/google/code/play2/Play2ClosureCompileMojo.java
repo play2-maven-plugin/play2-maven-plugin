@@ -35,7 +35,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import com.google.code.play2.jscompile.JavascriptCompiler;
 
 /**
- * ...
+ * Compile JavaScript assets
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
