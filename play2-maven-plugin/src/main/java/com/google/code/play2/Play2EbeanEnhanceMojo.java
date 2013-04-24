@@ -42,7 +42,7 @@ import com.avaje.ebean.enhance.agent.Transformer;
 import com.avaje.ebean.enhance.ant.OfflineFileTransform;
 
 /**
- * ...
+ * Ebean enhance
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
