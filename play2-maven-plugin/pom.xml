@@ -250,7 +250,6 @@ under the License.
                             <link>http://maven.apache.org/ref/${maven.version}/maven-plugin-api/apidocs/</link>
                             <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
                             <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/apache/ant/ant/${ant.version}/</link>
-                            <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/apache/maven/shared/maven-dependency-tree/${maven-dependency-tree.version}/</link>
                             <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
                         </links>
                         <tagletArtifacts>
