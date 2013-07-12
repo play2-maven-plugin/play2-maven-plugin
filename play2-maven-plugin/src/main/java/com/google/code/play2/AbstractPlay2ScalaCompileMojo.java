@@ -20,7 +20,6 @@ package com.google.code.play2;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +64,13 @@ public abstract class AbstractPlay2ScalaCompileMojo
     public static final String XSBTI_ARTIFACT_ID = "sbt-interface";
 
     public static final String COMPILE_ORDER = "mixed";
+
+    /**
+     * The -encoding argument for Scala and Java compilers.
+     * 
+     */
+    @Parameter( property = "project.build.sourceEncoding" )
+    protected String sourceEncoding;
 
     /**
      * Contains the full list of projects in the reactor.
@@ -155,8 +161,18 @@ public abstract class AbstractPlay2ScalaCompileMojo
 
             List<String> classpathElements = getClasspathElements();
             classpathElements.remove( getOutputDirectory().getAbsolutePath() );
-            List<String> scalacOptions = Collections.emptyList();
-            List<String> javacOptions = Collections.emptyList();
+
+            List<String> scalacOptions = new ArrayList<String>(4);
+            scalacOptions.add( "-deprecation" );
+            scalacOptions.add( "-unchecked" );
+            scalacOptions.add( "-encoding" );
+            scalacOptions.add( sourceEncoding );
+
+            List<String> javacOptions = new ArrayList<String>(3);
+            javacOptions.add( "-encoding" );
+            javacOptions.add( sourceEncoding );
+            javacOptions.add( "-g" );
+
             Map<File, File> cacheMap = getAnalysisCacheMap();
 
             List<File> classpath = new ArrayList<File>( classpathElements.size() );
