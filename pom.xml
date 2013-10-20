@@ -42,6 +42,8 @@ under the License.
     </scm>
 
     <modules>
+        <module>play2-provider-api</module>
+        <module>play2-providers</module>
         <module>play2-maven-plugin</module>
     </modules>
 
