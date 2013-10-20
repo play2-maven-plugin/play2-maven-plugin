@@ -35,6 +35,7 @@ under the License.
 
     <modules>
         <module>play2-provider-play21</module>
+        <module>play2-provider-play22</module>
     </modules>
 
     <build>
