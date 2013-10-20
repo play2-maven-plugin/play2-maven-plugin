@@ -1,4 +1,4 @@
-package com.google.code.play2;
+package com.google.code.play2.provider.play21;
 
 import org.apache.maven.plugin.logging.Log;
 import xsbti.F0;

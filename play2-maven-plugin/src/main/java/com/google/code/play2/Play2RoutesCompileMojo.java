@@ -28,9 +28,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import scala.collection.JavaConversions;
+import com.google.code.play2.provider.Play2RoutesCompiler;
+import com.google.code.play2.provider.RoutesCompilationException;
 
-import play.router.RoutesCompiler$;
 
 /**
  * Compile routes
@@ -70,7 +70,8 @@ public class Play2RoutesCompileMojo
                 File targetDirectory = new File( project.getBuild().getDirectory() );
                 File generatedDirectory = new File( targetDirectory, targetDirectoryName );
 
-                String mainLang = getMainLang();
+                String playGroupId = play2Provider.getPlayGroupId();
+                String mainLang = getMainLang(playGroupId);
                 String[] additionalImports = {};
                 if ( "java".equalsIgnoreCase( mainLang ) )
                 {
@@ -82,13 +83,24 @@ public class Play2RoutesCompileMojo
                 }
                 List<String> additionalImportsList = Arrays.asList( additionalImports );
 
+                Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
+                compiler.setOutputDirectory( generatedDirectory );
+                compiler.setAdditionalImports( additionalImportsList );
+
                 for (String fileName: files)
                 {
                     File routesFile = new File( confDirectory, fileName );
                     if ( routesFile.isFile() )
                     {
-                        RoutesCompiler$.MODULE$.compile( routesFile, generatedDirectory,
-                                                         JavaConversions.asScalaBuffer( additionalImportsList ) );
+                        try
+                        {
+                            compiler.compile( routesFile );
+                        }
+                        catch ( RoutesCompilationException e )
+                        {
+                            throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
+                                                                             routesFile.getPath() ), e );
+                        }
                     }
                 }
 

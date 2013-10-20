@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.javascript.jscomp.CompilerOptions;
+//?import com.google.javascript.jscomp.CompilerOptions;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -32,7 +32,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import com.google.code.play2.jscompile.JavascriptCompiler;
+import com.google.code.play2.provider.AssetCompilationException;
+import com.google.code.play2.provider.JavascriptCompilationResult;
+import com.google.code.play2.provider.Play2JavascriptCompiler;
+
 
 /**
  * Compile JavaScript assets
@@ -56,19 +59,6 @@ public class Play2ClosureCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        try
-        {
-            compile();
-        }
-        catch ( AssetCompilationException e )
-        {
-            throw new MojoExecutionException( "?", e );
-        }
-    }
-
-    protected void compile()
-        throws AssetCompilationException, IOException
-    {
         File basedir = project.getBasedir();
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
@@ -88,6 +78,10 @@ public class Play2ClosureCompileMojo
             File generatedDirectory = new File( targetDirectory, targetDirectoryName );
             File outputDirectory = new File( generatedDirectory, "public" );
 
+            Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
+            compiler.setSimpleCompilerOptions( new ArrayList<String>() ); // TODO-add options
+            compiler.setFullCompilerOptions( new ArrayList<String>() ); // TODO-add options
+            
             for ( String fileName : files )
             {
                 getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
@@ -107,27 +101,33 @@ public class Play2ClosureCompileMojo
 
                 if ( modified )
                 {
-                    List<String> simpleCompilerOptions = new ArrayList<String>();// TODO-add options
-                    CompilerOptions fullCompilerOptions = null;
                     createDirectory( jsFile.getParentFile(), false );
-                    JavascriptCompiler compiler = JavascriptCompiler.getInstance();
-                    JavascriptCompiler.CompileResult result =
-                        compiler.compile( srcJsFile, simpleCompilerOptions, fullCompilerOptions );
-                    String jsContent = result.getJs();
-                    String minifiedJsContent = result.getMinifiedJs();
-                    createDirectory( jsFile.getParentFile(), false );
-                    writeToFile( jsFile, jsContent );
-                    if ( minifiedJsContent != null )
+                    try
                     {
-                        createDirectory( minifiedJsFile.getParentFile(), false );
-                        writeToFile( minifiedJsFile, minifiedJsContent );
-                    }
-                    else
-                    {
-                        if ( minifiedJsFile.exists() )
-                        {// TODO-check if isFile
-                            minifiedJsFile.delete();// TODO-check result
+                        JavascriptCompilationResult result = compiler.compile( srcJsFile );
+                        // JavascriptCompiler compiler = JavascriptCompiler.getInstance();
+                        // JavascriptCompiler.CompileResult result =
+                        // compiler.compile( srcJsFile, simpleCompilerOptions, fullCompilerOptions );
+                        String jsContent = result.getJs();
+                        String minifiedJsContent = result.getMinifiedJs();
+                        createDirectory( jsFile.getParentFile(), false );
+                        writeToFile( jsFile, jsContent );
+                        if ( minifiedJsContent != null )
+                        {
+                            createDirectory( minifiedJsFile.getParentFile(), false );
+                            writeToFile( minifiedJsFile, minifiedJsContent );
                         }
+                        else
+                        {
+                            if ( minifiedJsFile.exists() )
+                            {// TODO-check if isFile
+                                minifiedJsFile.delete();// TODO-check result
+                            }
+                        }
+                    }
+                    catch ( AssetCompilationException e )
+                    {
+                        throw new MojoExecutionException("Javascript compilation failed", e);
                     }
                 }
             }

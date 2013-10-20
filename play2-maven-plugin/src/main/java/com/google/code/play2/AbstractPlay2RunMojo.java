@@ -65,6 +65,19 @@ public abstract class AbstractPlay2RunMojo
         
         File baseDir = project.getBasedir();
 
+        // Make separate method for checking conf file (use in "run" and "start" mojos)
+        File confDir = new File(baseDir, "conf");
+        if (!confDir.isDirectory())
+        {
+            getLog().info( "Skipping execution" );
+            return;
+        }
+        if (!new File(confDir, "application.conf").isFile() && !new File(confDir, "application.json").isFile())
+        {
+            getLog().info( "Skipping execution" );
+            return;
+        }
+        
         File pidFile = new File( baseDir, "RUNNING_PID"/*"server.pid"*/ );
         if ( pidFile.exists() )
         {

@@ -30,8 +30,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import com.google.code.play2.coffeescript.CoffeescriptCompiler;
-import com.google.code.play2.jscompile.JavascriptCompiler;
+import com.google.code.play2.provider.AssetCompilationException;
+import com.google.code.play2.provider.CoffeescriptCompilationResult;
+import com.google.code.play2.provider.Play2CoffeescriptCompiler;
+import com.google.code.play2.provider.Play2JavascriptCompiler;
 
 /**
  * Compile Coffee Script assets
@@ -55,19 +57,6 @@ public class Play2CoffeeCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        try
-        {
-            compile();
-        }
-        catch ( AssetCompilationException e )
-        {
-            throw new MojoExecutionException( "?", e );
-        }
-    }
-
-    protected void compile()
-        throws AssetCompilationException, IOException
-    {
         File basedir = project.getBasedir();
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
@@ -86,6 +75,9 @@ public class Play2CoffeeCompileMojo
             File targetDirectory = new File( project.getBuild().getDirectory() );
             File generatedDirectory = new File( targetDirectory, targetDirectoryName );
             File outputDirectory = new File( generatedDirectory, "public" );
+
+            Play2CoffeescriptCompiler compiler = play2Provider.getCoffeescriptCompiler();
+            compiler.setOptions( new ArrayList<String>() /* TEMP */ );
 
             for ( String fileName : files )
             {
@@ -106,23 +98,32 @@ public class Play2CoffeeCompileMojo
 
                 if ( modified )
                 {
-                    CoffeescriptCompiler compiler = CoffeescriptCompiler.getInstance();
-                    String jsContent = compiler.compile( coffeeFile, new ArrayList<String>()/* TEMP */);
-                    createDirectory( jsFile.getParentFile(), false );
-                    writeToFile( jsFile, jsContent );
                     try
                     {
-                        String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
-                        createDirectory( minifiedJsFile.getParentFile(), false );
-                        writeToFile( minifiedJsFile, minifiedJsContent );
+                        CoffeescriptCompilationResult result = compiler.compile( coffeeFile );
+                        String jsContent = result.getJs();
+                        createDirectory( jsFile.getParentFile(), false );
+                        writeToFile( jsFile, jsContent );
+                        try
+                        {
+                            Play2JavascriptCompiler jsCompiler = play2Provider.getJavascriptCompiler();
+                            String minifiedJsContent = jsCompiler.minify( jsContent, coffeeFile.getName() );
+                            // String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
+                            createDirectory( minifiedJsFile.getParentFile(), false );
+                            writeToFile( minifiedJsFile, minifiedJsContent );
+                        }
+                        catch ( AssetCompilationException e )
+                        {
+                            // ignore
+                            if ( minifiedJsFile.exists() )
+                            {// TODO-check if isFile
+                                minifiedJsFile.delete();// TODO-check result
+                            }
+                        }
                     }
                     catch ( AssetCompilationException e )
                     {
-                        // ignore
-                        if ( minifiedJsFile.exists() )
-                        {// TODO-check if isFile
-                            minifiedJsFile.delete();// TODO-check result
-                        }
+                        throw new MojoExecutionException("CoffeeScript compilation failed", e);
                     }
                 }
             }

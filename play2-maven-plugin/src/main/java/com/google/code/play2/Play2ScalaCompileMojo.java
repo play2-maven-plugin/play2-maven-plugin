@@ -40,11 +40,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
-import play.core.enhancers.PropertiesEnhancer;
+import com.google.code.play2.provider.SBTCompilationResult;
 
 //import org.codehaus.plexus.util.PathTool;
 
-import scala.collection.JavaConversions;
+//import scala.collection.JavaConversions;
 
 //import com.typesafe.config.Config;
 //import com.typesafe.config.ConfigException;
@@ -52,7 +52,7 @@ import scala.collection.JavaConversions;
 //import com.typesafe.config.ConfigValue;
 
 //import sbt.IO;
-import sbt.inc.Analysis;
+//import sbt.inc.Analysis;
 
 //import com.avaje.ebean.enhance.agent.Transformer;
 //import com.avaje.ebean.enhance.ant.OfflineFileTransform;
@@ -131,156 +131,27 @@ public class Play2ScalaCompileMojo
         //FIXME TEMP return defaultAnalysisCacheFile( project );
         return new File(project.getBuild().getDirectory(), "cache/" + project.getArtifactId() + "/compile/inc_compile");
     }
-    
+
     @Override
-    protected void postCompile(List<File> classpathFiles, Analysis analysis) throws MojoExecutionException, IOException {
+    protected void postCompile(SBTCompilationResult compileResult/*List<File> classpathFiles, Analysis analysis*/) throws MojoExecutionException, IOException {
         try
         {
-            StringBuilder sb = new StringBuilder();
-            for (File classpathFile: classpathFiles)
-            {
-                sb.append(classpathFile.getAbsolutePath()).append(java.io.File.pathSeparator);
-            }
-            sb.append(getOutputDirectory().getAbsolutePath());
-            String classpath = sb.toString();
-            
-            File timestampFile = new File(getAnalysisCacheFile().getParentFile(), "play_instrumentation");
-            long lastEnhanced = 0L;
-            if ( timestampFile.exists() )
-            {
-                String line = readFileFirstLine( timestampFile );
-                lastEnhanced = Long.parseLong( line );
-            }
-
-            File scannerBaseDir = new File(project.getBasedir(), "app" );//TODO-parametrize
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( scannerBaseDir );
-            scanner.setIncludes( new String[] {"**/*.java"} );
-            scanner.addDefaultExcludes();
-            scanner.scan();
-            String[] javaSources = scanner.getIncludedFiles();
-            for ( String source : javaSources )
-            {
-                File sourceFile = new File(scannerBaseDir, source);
-                // System.out.println( String.format( "'%s'", sourceFile.getAbsolutePath() ) );
-                if ( analysis.apis().internalAPI( sourceFile ).compilation().startTime() > lastEnhanced )
-                {
-                    Set<File> javaClasses = JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
-                    for ( File classFile : javaClasses )
-                    {
-                        // System.out.println( String.format( "- '%s'", classFile.getAbsolutePath() ) );
-                        PropertiesEnhancer.generateAccessors( classpath, classFile );
-                        PropertiesEnhancer.rewriteAccess( classpath, classFile );
-                    }
-                }
-            }
-            
-            scannerBaseDir = new File(project.getBuild().getDirectory(), "src_managed/main" );//TODO-parametrize
-            if ( scannerBaseDir.isDirectory() )
-            {
-                scanner = new DirectoryScanner();
-                scanner.setBasedir( scannerBaseDir );
-                scanner.setIncludes( new String[] {"**/*.template.scala"} );
-                scanner.scan();
-                String[] scalaTemplateSources = scanner.getIncludedFiles();
-                for ( String source : scalaTemplateSources )
-                {
-                    File sourceFile = new File(scannerBaseDir, source);
-                    // System.out.println( String.format( "'%s'", sourceFile.getAbsolutePath() ) );
-                    if ( analysis.apis().internalAPI( sourceFile ).compilation().startTime() > lastEnhanced )
-                    {
-                        Set<File> templateClasses = JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
-                        for ( File classFile : templateClasses )
-                        {
-                            // System.out.println( String.format( "- '%s'", classFile.getAbsolutePath() ) );
-                            PropertiesEnhancer.rewriteAccess( classpath, classFile );
-                        }
-                    }
-                }
-            }
-            
-            writeToFile( timestampFile, Long.toString( System.currentTimeMillis()) );
-
-// PlayCommands:352
-            // EBean
-/*            if (classpath.contains("play-java-ebean"))
-            {
-                ClassLoader originalContextClassLoader = Thread.currentThread().getContextClassLoader();
-                try
-                {
-                    List<URL> classPathUrls = new ArrayList<URL>();
-                    for (File classpathFile: classpathFiles)
-                    {
-                        classPathUrls.add(classpathFile.toURI().toURL());
-                    }
-                    classPathUrls.add(getOutputDirectory().toURI().toURL());
-                    URL[] cp = classPathUrls.toArray( new URL[]{} );
-
-                    Thread.currentThread().setContextClassLoader(new URLClassLoader(cp, ClassLoader.getSystemClassLoader()));
-
-                    ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-                    Transformer t = new Transformer(cp, "debug=-1");
-
-                    OfflineFileTransform ft = new OfflineFileTransform(t, cl, /*classes*//*getOutputDirectory().getAbsolutePath(), /*classes*//*getOutputDirectory().getAbsolutePath());
-
-                    Config config = ConfigFactory.load(ConfigFactory.parseFileAnySyntax(new File("conf/application.conf")));
-
-                    String models = null;
-                    try
-                    {
-                        // see https://github.com/playframework/Play20/wiki/JavaEbean
-                        Set<Map.Entry<String, ConfigValue>> entries = config.getConfig("ebean").entrySet();
-                        for (Map.Entry<String, ConfigValue> entry: entries)
-                        {
-                            ConfigValue configValue = entry.getValue();
-                            Object configValueUnwrapped = configValue.unwrapped();
-                            //TODO-optimize
-                            if (models == null)
-                            {
-                                models = configValueUnwrapped.toString();
-                            }
-                            else
-                            {
-                                models = models + "," + configValueUnwrapped.toString();
-                            }
-                        }
-                    }
-                    catch (ConfigException.Missing e)
-                    {
-                        models = "models.*";
-                    }
-                    
-                    try
-                    {
-                        ft.process( models );
-                    }
-                    catch (Throwable/*?*//* e)
-                    {
-                        
-                    }
-                }
-                finally
-                {
-                    Thread.currentThread().setContextClassLoader( originalContextClassLoader );
-                }
-            }*/
 // PlayCommands:392
             File managedClassesDirectory = new File(getOutputDirectory().getParentFile(), getOutputDirectory().getName() + "_managed");
             Set<String> managedClassesSet = new HashSet<String>();
             if (managedClassesDirectory.isDirectory())
             {
-                scanner = new DirectoryScanner();
+                DirectoryScanner scanner = new DirectoryScanner();
                 scanner.setBasedir( managedClassesDirectory );
                 scanner.scan();
                 String[] managedClasses = scanner.getIncludedFiles();
                 managedClassesSet.addAll( Arrays.asList(managedClasses) );
             }
             
-            scannerBaseDir = new File(project.getBuild().getDirectory(), "src_managed/main" );//TODO-parametrize
+            File scannerBaseDir = new File(project.getBuild().getDirectory(), "src_managed/main" );//TODO-parametrize
             if ( scannerBaseDir.isDirectory() )
             {
-                scanner = new DirectoryScanner();
+                DirectoryScanner scanner = new DirectoryScanner();
                 scanner.setBasedir( scannerBaseDir );
                 scanner.setIncludes( new String[] {"**/*.scala", "**/*.java"} );
                 scanner.scan();
@@ -298,7 +169,7 @@ public class Play2ScalaCompileMojo
                 for ( String source : managedSources )
                 {
                     File sourceFile = new File(scannerBaseDir, source);
-                    Set<File> sourceProducts = JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
+                    Set<File> sourceProducts = compileResult.getProducts( sourceFile );
                     //sbt.IO$.MODULE$.copy(ma byc Seq sourceProducts, sbt.IO$.MODULE$.copy$default$2(), sbt.IO$.MODULE$.copyDirectory$default$3());
                     //System.out.println("outdir: " + getOutputDirectory().getPath());
                     for (File file: sourceProducts)
@@ -333,4 +204,5 @@ public class Play2ScalaCompileMojo
             throw new MojoExecutionException( "?", e );
         }
     }
+
 }

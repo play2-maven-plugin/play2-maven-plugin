@@ -21,21 +21,33 @@ import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import com.typesafe.zinc.Compiler;
-import com.typesafe.zinc.Inputs;
-import com.typesafe.zinc.Setup;
-
-import sbt.inc.Analysis;
+import com.google.code.play2.provider.Play2SBTCompiler;
+import com.google.code.play2.provider.SBTCompilationException;
+import com.google.code.play2.provider.SBTCompilationResult;
 
 /**
  * Abstract base class for Play! Mojos.
@@ -63,7 +75,13 @@ public abstract class AbstractPlay2ScalaCompileMojo
 
     public static final String XSBTI_ARTIFACT_ID = "sbt-interface";
 
-    public static final String COMPILE_ORDER = "mixed";
+    /**
+     * ...
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.sbtVersion" )
+    private String sbtVersion;
 
     /**
      * The -encoding argument for Scala and Java compilers.
@@ -73,6 +91,13 @@ public abstract class AbstractPlay2ScalaCompileMojo
     protected String sourceEncoding;
 
     /**
+     * Artifact factory, needed to download source jars.
+     * 
+     */
+    @Component
+    protected MavenProjectBuilder mavenProjectBuilder;
+
+    /**
      * Contains the full list of projects in the reactor.
      * 
      */
@@ -80,11 +105,32 @@ public abstract class AbstractPlay2ScalaCompileMojo
     protected List<MavenProject> reactorProjects;
 
     /**
-     * List of artifacts this plugin depends on.
-     * 
+     * Used to look up artifacts in the remote repository.
+     *
      */
-    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
-    private List<Artifact> pluginArtifacts;
+    @Component
+    protected ArtifactFactory factory;
+
+    /**
+     * Used to resolve artifacts.
+     *
+     */
+    @Component
+    protected ArtifactResolver resolver;
+
+    /**
+     * Location of the local repository.
+     *
+     */
+    @Parameter( property = "localRepository", readonly = true, required = true )
+    protected ArtifactRepository localRepo;
+
+    /**
+     * List of Remote Repositories used by the resolver
+     *
+     */
+    @Parameter( property = "project.remoteArtifactRepositories", readonly = true, required = true )
+    protected List<?> remoteRepos;
 
     @Override
     protected void internalExecute()
@@ -122,42 +168,41 @@ public abstract class AbstractPlay2ScalaCompileMojo
                 throw new MojoExecutionException( String.format( "Required %s:%s:jar dependency not found", SCALA_GROUPID,
                                                                  SCALA_LIBRARY_ARTIFACTID ) );
             }
+            String scalaVersion = scalaLibraryArtifact.getVersion();
             
             Artifact scalaCompilerArtifact =
-                getDependencyArtifact( /* pluginArtifacts */project.getArtifacts(), SCALA_GROUPID,
-                                       SCALA_COMPILER_ARTIFACTID, "jar" );
+                            getResolvedArtifact( SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, scalaVersion );
             if ( scalaCompilerArtifact == null )
             {
-                throw new MojoExecutionException( String.format( "Required %s:%s:jar dependency not found",
-                                                                 SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID ) );
+                throw new MojoExecutionException( String.format( "Required %s:%s:%s:jar dependency not found",
+                                                                 SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, scalaVersion ) );
             }
 
-            Artifact scalaReflectArtifact =
-                getDependencyArtifact( /* pluginArtifacts */project.getArtifacts(), SCALA_GROUPID,
-                                       SCALA_REFLECT_ARTIFACTID, "jar" );
-            if ( scalaReflectArtifact == null )
+            List<File> scalaExtraJars = getCompilerDependencies(scalaCompilerArtifact);
+            scalaExtraJars.remove(scalaLibraryArtifact.getFile());
+
+            Play2SBTCompiler compiler = play2Provider.getScalaCompiler();
+
+            String sbtVersion = this.sbtVersion;
+            if (sbtVersion == null || (sbtVersion.length() == 0)) {
+                sbtVersion = compiler.getDefaultSbtVersion();
+            }
+                        
+            Artifact xsbtiArtifact = getResolvedArtifact( SBT_GROUP_ID, XSBTI_ARTIFACT_ID, sbtVersion );
+            if ( xsbtiArtifact == null )
             {
-                throw new MojoExecutionException( String.format( "Required %s:%s:jar dependency not found",
-                                                                 SCALA_GROUPID, SCALA_REFLECT_ARTIFACTID ) );
+                throw new MojoExecutionException( String.format( "Required %s:%s:%s:jar dependency not found",
+                                                                 SBT_GROUP_ID, XSBTI_ARTIFACT_ID, sbtVersion ) );
             }
 
-            List<File> scalaExtra = new ArrayList<File>();
-            scalaExtra.add( scalaReflectArtifact.getFile() );
-
-            Artifact xsbtiArtifact = getDependencyArtifact( pluginArtifacts, SBT_GROUP_ID, XSBTI_ARTIFACT_ID, "jar" );
             Artifact compilerInterfaceSrc =
-                getDependencyArtifact( pluginArtifacts, SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID, "jar",
-                                       COMPILER_INTERFACE_CLASSIFIER );
-
-            SbtLogger sbtLogger = new SbtLogger( getLog() );
-            Setup setup =
-                Setup.create( scalaCompilerArtifact.getFile(), scalaLibraryArtifact.getFile(), scalaExtra,
-                              xsbtiArtifact.getFile(), compilerInterfaceSrc.getFile(), null );
-            if ( getLog().isDebugEnabled() )
+                            getResolvedArtifact( SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID, sbtVersion,
+                                                   COMPILER_INTERFACE_CLASSIFIER );
+            if ( compilerInterfaceSrc == null )
             {
-                Setup.debug( setup, sbtLogger );
+                throw new MojoExecutionException( String.format( "Required %s:%s:%s:%s:jar dependency not found",
+                                                                 SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID, sbtVersion, COMPILER_INTERFACE_CLASSIFIER ) );
             }
-            Compiler compiler = Compiler.create( setup, sbtLogger );
 
             List<String> classpathElements = getClasspathElements();
             classpathElements.remove( getOutputDirectory().getAbsolutePath() );
@@ -181,26 +226,29 @@ public abstract class AbstractPlay2ScalaCompileMojo
                 classpath.add( new File( path ) );
             }
 
-            Inputs inputs =
-                Inputs.create( classpath, sources, getOutputDirectory(), scalacOptions, javacOptions,
-                               getAnalysisCacheFile(), cacheMap, COMPILE_ORDER );
-            if ( getLog().isDebugEnabled() )
-            {
-                Inputs.debug( inputs, sbtLogger );
-            }
-            Analysis analysis = compiler.compile( inputs, sbtLogger );
-            postCompile(classpath/*, sources*/, analysis);
-            //System.out.println(analysis.relations());
-            //System.out.println(analysis.stamps());
+            SBTCompilationResult compileResult = compiler.compile( getLog(), scalaCompilerArtifact.getFile(), scalaLibraryArtifact.getFile(), scalaExtraJars, xsbtiArtifact.getFile(), compilerInterfaceSrc.getFile(), classpath, sources, getOutputDirectory(), scalacOptions, javacOptions, getAnalysisCacheFile(), cacheMap );
+            postCompile(compileResult);
         }
-        catch ( xsbti.CompileFailed e )
+        catch ( SBTCompilationException e )
         {
-            throw new MojoFailureException( "?", e );
+            throw new MojoFailureException( "Scala compilation failed", e );
         }
-        /*catch ( DependencyTreeBuilderException e )
+        catch ( ArtifactNotFoundException e )
         {
-            throw new MojoFailureException( "?", e );
-        }*/
+            throw new MojoFailureException( "Scala compilation failed", e );
+        }
+        catch ( ArtifactResolutionException e )
+        {
+            throw new MojoFailureException( "Scala compilation failed", e );
+        }
+        catch ( InvalidDependencyVersionException e )
+        {
+            throw new MojoFailureException( "Scala compilation failed", e );
+        }
+        catch ( ProjectBuildingException e )
+        {
+            throw new MojoFailureException( "Scala compilation failed", e );
+        }
     }
 
     protected abstract List<String> getClasspathElements();
@@ -270,7 +318,67 @@ public abstract class AbstractPlay2ScalaCompileMojo
         return new File( defaultAnalysisDirectory( p ), "test-compile" );
     }
 
-    protected void postCompile(List<File> classpathFiles, Analysis analysis) throws MojoExecutionException, IOException {
+    protected void postCompile(SBTCompilationResult compileResult/*List<File> classpathFiles, Analysis analysis*/) throws MojoExecutionException, IOException {
     }
     
+    // Private utility methods    
+    
+    private Artifact getResolvedArtifact(String groupId, String artifactId, String version) throws ArtifactNotFoundException, ArtifactResolutionException {
+        Artifact artifact = factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar");
+        resolver.resolve(artifact, remoteRepos, localRepo);
+        return artifact;
+    }
+
+    private Artifact getResolvedArtifact(String groupId, String artifactId, String version, String classifier) throws ArtifactNotFoundException, ArtifactResolutionException {
+        Artifact artifact = factory.createArtifactWithClassifier(groupId, artifactId, version, "jar", classifier);
+        resolver.resolve(artifact, remoteRepos, localRepo);
+        return artifact;
+    }
+
+    private List<File> getCompilerDependencies(Artifact scalaCompilerArtifact) throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException, ProjectBuildingException {
+        List<File> d = new ArrayList<File>();
+        for (Artifact artifact : getAllDependencies(scalaCompilerArtifact)) {
+            d.add(artifact.getFile());
+        }
+        return d;
+      }
+
+    private Set<Artifact> getAllDependencies(Artifact artifact) throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException, ProjectBuildingException {
+        Set<Artifact> result = new HashSet<Artifact>();
+        MavenProject p = mavenProjectBuilder.buildFromRepository(artifact, remoteRepos, localRepo);
+        Set<Artifact> d = resolveDependencyArtifacts(p);
+        result.addAll(d);
+        for (Artifact dependency : d) {
+            Set<Artifact> transitive = getAllDependencies(dependency);
+            result.addAll(transitive);
+        }
+        return result;
+    }
+
+    /**
+     * This method resolves the dependency artifacts from the project.
+     *
+     * @param theProject The POM.
+     * @return resolved set of dependency artifacts.
+     *
+     * @throws ArtifactResolutionException
+     * @throws ArtifactNotFoundException
+     * @throws InvalidDependencyVersionException
+     */
+    private Set<Artifact> resolveDependencyArtifacts(MavenProject theProject) throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException {
+        AndArtifactFilter filter = new AndArtifactFilter();
+        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
+        filter.add(new ArtifactFilter(){
+            public boolean include(Artifact artifact) {
+                return !artifact.isOptional();
+            }
+        });
+        //TODO follow the dependenciesManagement and override rules
+        Set<Artifact> artifacts = theProject.createArtifacts(factory, Artifact.SCOPE_RUNTIME, filter);
+        for (Artifact artifact : artifacts) {
+            resolver.resolve(artifact, remoteRepos, localRepo);
+        }
+        return artifacts;
+    }
+
 }

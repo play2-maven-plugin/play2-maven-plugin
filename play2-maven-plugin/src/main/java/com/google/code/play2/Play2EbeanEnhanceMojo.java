@@ -23,8 +23,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -33,13 +31,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigException;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigValue;
-
-import com.avaje.ebean.enhance.agent.Transformer;
-import com.avaje.ebean.enhance.ant.OfflineFileTransform;
+import com.google.code.play2.provider.Play2EbeanEnhancer;
 
 /**
  * Ebean enhance
@@ -85,50 +77,12 @@ public class Play2EbeanEnhanceMojo
 
             Thread.currentThread().setContextClassLoader( new URLClassLoader( cp, ClassLoader.getSystemClassLoader() ) );
 
-            ClassLoader cl = ClassLoader.getSystemClassLoader();
+            Play2EbeanEnhancer enhancer = play2Provider.getEbeanEnhancer();
+            enhancer.setOutputDirectory( outputDirectory );
+            enhancer.setClassPathUrls( classPathUrls );
 
-            Transformer t = new Transformer( cp, "debug=-1" );
-
-            OfflineFileTransform ft =
-                new OfflineFileTransform( t, cl, /* classes */outputDirectory.getAbsolutePath(), /* classes */
-                                          outputDirectory.getAbsolutePath() );
-
-            Config config =
-                ConfigFactory.load( ConfigFactory.parseFileAnySyntax( new File( "conf/application.conf" ) ) );
-
-            String models = null;
-            try
-            {
-                // see https://github.com/playframework/Play20/wiki/JavaEbean
-                Set<Map.Entry<String, ConfigValue>> entries = config.getConfig( "ebean" ).entrySet();
-                for ( Map.Entry<String, ConfigValue> entry : entries )
-                {
-                    ConfigValue configValue = entry.getValue();
-                    Object configValueUnwrapped = configValue.unwrapped();
-                    // TODO-optimize
-                    if ( models == null )
-                    {
-                        models = configValueUnwrapped.toString();
-                    }
-                    else
-                    {
-                        models = models + "," + configValueUnwrapped.toString();
-                    }
-                }
-            }
-            catch ( ConfigException.Missing e )
-            {
-                models = "models.*";
-            }
-
-            try
-            {
-                ft.process( models );
-            }
-            catch ( Throwable/* ? */e )
-            {
-
-            }
+            //TODO-conf powinien byc "na bazie" basedir
+            enhancer.enhance( new File( "conf/application.conf" ) );
         }
         finally
         {

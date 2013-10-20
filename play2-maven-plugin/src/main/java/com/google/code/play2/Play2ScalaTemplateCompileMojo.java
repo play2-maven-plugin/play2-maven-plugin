@@ -27,7 +27,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import play.templates.ScalaTemplateCompiler;
+import com.google.code.play2.provider.Play2TemplateCompiler;
+import com.google.code.play2.provider.TemplateCompilationException;
 
 /**
  * Compile Scala templates
@@ -45,43 +46,6 @@ public class Play2ScalaTemplateCompileMojo
     private final static String targetDirectoryName = "src_managed/main";
 
     private final static String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
-
-    private final static String[] resultTypes = { "play.api.templates.Html", "play.api.templates.Txt",
-        "play.api.templates.Xml" };
-
-    private final static String[] formatterTypes = { "play.api.templates.HtmlFormat", "play.api.templates.TxtFormat",
-        "play.api.templates.XmlFormat" };
-
-    private final static String[] javaAdditionalImports = new String[] { "play.api.templates._",
-        "play.api.templates.PlayMagic._",
-
-        "models._", "controllers._",
-
-        "java.lang._", "java.util._",
-
-        "scala.collection.JavaConversions._", "scala.collection.JavaConverters._",
-
-        "play.api.i18n._",
-        // "play.api.templates.PlayMagicForJava._", // Play! 2.0.x
-        "play.core.j.PlayMagicForJava._",
-
-        "play.mvc._", "play.data._", "play.api.data.Field",
-        // "com.avaje.ebean._", // Play! 2.0.x
-
-        "play.mvc.Http.Context.Implicit._",
-
-        "views.%format%._" };
-
-    private final static String[] scalaAdditionalImports = new String[] { "play.api.templates._",
-        "play.api.templates.PlayMagic._",
-
-        "models._", "controllers._",
-
-        "play.api.i18n._",
-
-        "play.api.mvc._", "play.api.data._",
-
-        "views.%format%._" };
 
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -101,31 +65,26 @@ public class Play2ScalaTemplateCompileMojo
 
         if ( files.length > 0 )
         {
+            String playGroupId = play2Provider.getPlayGroupId();
+            String mainLang = getMainLang(playGroupId);
+
+            Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
+            compiler.setAppDirectory( appDirectory );
+            compiler.setOutputDirectory( generatedDirectory );
+            compiler.setMainLang( mainLang );
+
             for ( String fileName : files )
             {
                 getLog().debug( String.format( "Processing template \"%s\"", fileName ) );
                 File templateFile = new File( appDirectory, fileName );
-                String ext = fileName.substring( fileName.lastIndexOf( "." ) + 1 );
-                String importsAsString = getImportsAsString( ext );
-                int index = -1;
-                if ( "html".equals( ext ) )
+                try
                 {
-                    index = 0;
+                    compiler.compile( templateFile );
                 }
-                else if ( "txt".equals( ext ) )
+                catch ( TemplateCompilationException e )
                 {
-                    index = 1;
-                }
-                else if ( "xml".equals( ext ) )
-                {
-                    index = 2;
-                }
-                if ( index >= 0 )
-                {
-                    String resultType = resultTypes[index];
-                    String formatterType = formatterTypes[index];
-                    ScalaTemplateCompiler.compile( templateFile, appDirectory, generatedDirectory, resultType,
-                                                   formatterType, importsAsString );
+                    throw new MojoExecutionException( String.format( "Template compilation failed (%s)",
+                                                                     templateFile.getPath() ), e );
                 }
             }
 
@@ -135,26 +94,6 @@ public class Play2ScalaTemplateCompileMojo
                 getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
             }
         }
-    }
-
-    private String getImportsAsString( String format )
-    {
-        String mainLang = getMainLang();
-        String[] additionalImports = {};
-        if ( "java".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = javaAdditionalImports;
-        }
-        else if ( "scala".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = scalaAdditionalImports;
-        }
-        StringBuilder sb = new StringBuilder();
-        for ( String additionalImport : additionalImports )
-        {
-            sb.append( "import " ).append( additionalImport.replace( "%format%", format ) ).append( ";\n" );
-        }
-        return sb.substring( 0, sb.length()-1 );
     }
 
 }

@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package com.google.code.play2.coffeescript;
+package com.google.code.play2.provider.play21;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,29 +34,29 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
 
-import com.google.code.play2.AssetCompilationException;
+import com.google.code.play2.provider.AssetCompilationException;
+import com.google.code.play2.provider.CoffeescriptCompilationResult;
+import com.google.code.play2.provider.Play2CoffeescriptCompiler;
 
 //Based on Play! 2.1.0 framework/src/sbt-plugin/src/main/scala/coffeescript/CoffeeScriptCompiler.scala
-public class CoffeescriptCompiler
+public class Play21CoffeescriptCompiler
+    implements Play2CoffeescriptCompiler
 {
 
-    private static CoffeescriptCompiler instance = null;
-
-    public static synchronized CoffeescriptCompiler getInstance()
+    private List<String> options;
+    
+    public void setOptions( List<String> options )
     {
-        if ( instance == null )
-        {
-            instance = new CoffeescriptCompiler();
-        }
-        return instance;
+        this.options = options;
     }
-
-    public String compile( File source, List<String> options )
-        throws IOException, AssetCompilationException
+    
+    public CoffeescriptCompilationResult compile( File source )
+        throws AssetCompilationException, IOException
     {
         try
         {
-            return compile( source, options.contains( "bare" ) );
+            String js = compile( source, options.contains( "bare" ) );
+            return new CompileResult( js );
         }
         catch ( JavaScriptException e )
         {
@@ -122,6 +122,23 @@ public class CoffeescriptCompiler
             is.close();
         }
         return result;
+    }
+
+
+    public static class CompileResult
+        implements CoffeescriptCompilationResult
+    {
+        private String js;
+
+        public CompileResult( String js )
+        {
+            this.js = js;
+        }
+
+        public String getJs()
+        {
+            return js;
+        }
     }
 
 }

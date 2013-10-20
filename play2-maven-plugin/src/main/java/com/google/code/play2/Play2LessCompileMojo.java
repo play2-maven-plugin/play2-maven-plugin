@@ -31,8 +31,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import com.google.code.play2.less.LessCompiler;
 import com.google.code.play2.less.LessDependencyCache;
+import com.google.code.play2.provider.AssetCompilationException;
+import com.google.code.play2.provider.LessCompilationResult;
+import com.google.code.play2.provider.Play2LessCompiler;
 
 /**
  * Compile Less assets
@@ -57,19 +59,6 @@ public class Play2LessCompileMojo
 
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
-    {
-        try
-        {
-            compile();
-        }
-        catch ( AssetCompilationException e )
-        {
-            throw new MojoExecutionException( "?", e );
-        }
-    }
-
-    protected void compile()
-        throws AssetCompilationException, IOException
     {
         File basedir = project.getBasedir();
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
@@ -156,36 +145,43 @@ public class Play2LessCompileMojo
 
                 if ( modified )
                 {
-                    LessCompiler compiler = LessCompiler.getInstance();
-                    LessCompiler.CompileResult result = compiler.compile( templateFile );
-                    String cssContent = result.getCss();
-                    String minifiedCssContent = result.getMinifiedCss();
-                    // writeOutputToFiles(new File(generatedDirectory, "public"), fileName, cssContent,
-                    // minifiedCssContent);
-                    createDirectory( cssFile.getParentFile(), false );
-                    writeToFile( cssFile, cssContent );
-                    if ( minifiedCssContent != null )
+                    Play2LessCompiler compiler = play2Provider.getLessCompiler();
+                    try
                     {
-                        createDirectory( minifiedCssFile.getParentFile(), false );
-                        writeToFile( minifiedCssFile, minifiedCssContent );
-                    }
-                    else
-                    {
-                        if ( minifiedCssFile.exists() )
-                        {// TODO-check if isFile
-                            minifiedCssFile.delete();// TODO-check result
+                        LessCompilationResult result = compiler.compile( templateFile );
+                        String cssContent = result.getCss();
+                        String minifiedCssContent = result.getMinifiedCss();
+                        // writeOutputToFiles(new File(generatedDirectory, "public"), fileName, cssContent,
+                        // minifiedCssContent);
+                        createDirectory( cssFile.getParentFile(), false );
+                        writeToFile( cssFile, cssContent );
+                        if ( minifiedCssContent != null )
+                        {
+                            createDirectory( minifiedCssFile.getParentFile(), false );
+                            writeToFile( minifiedCssFile, minifiedCssContent );
                         }
+                        else
+                        {
+                            if ( minifiedCssFile.exists() )
+                            {// TODO-check if isFile
+                                minifiedCssFile.delete();// TODO-check result
+                            }
+                        }
+                        List<File> allSourceFiles = result.getDependencies();
+                        fileDependencies = new HashSet<String>();
+                        for ( File file : allSourceFiles )
+                        {
+                            getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
+                            fileDependencies.add( file.getPath() );
+                        }
+                        // allDependencies.put(fileName, fileDependencies);
+                        // System.out.println(allSourceFiles);
+                        // System.out.println(":::end:::");
                     }
-                    List<File> allSourceFiles = result.getDependencies();
-                    fileDependencies = new HashSet<String>();
-                    for ( File file : allSourceFiles )
+                    catch ( AssetCompilationException e )
                     {
-                        getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
-                        fileDependencies.add( file.getPath() );
+                        throw new MojoExecutionException("Less compilation failed", e);
                     }
-                    // allDependencies.put(fileName, fileDependencies);
-                    // System.out.println(allSourceFiles);
-                    // System.out.println(":::end:::");
                 }
                 newAllDependencies.set( fileName, fileDependencies );
             }

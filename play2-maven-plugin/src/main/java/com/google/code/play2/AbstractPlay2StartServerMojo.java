@@ -63,10 +63,10 @@ public abstract class AbstractPlay2StartServerMojo
         else
         {
             javaTask.setFailonerror( true );
-            //PidFileDeleter.getInstance().add( pidFile );
+            PidFileDeleter.getInstance().add( pidFile );
         }
 
-        PidFileDeleter.getInstance().add( pidFile );
+        //przeniesienie tu bylo bledem PidFileDeleter.getInstance().add( pidFile );
         //addSystemProperty( javaTask, "pidFile", pidFile.getAbsolutePath() );
 
         if ( logFile != null )

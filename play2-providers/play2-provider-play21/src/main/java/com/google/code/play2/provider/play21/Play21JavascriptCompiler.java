@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package com.google.code.play2.jscompile;
+package com.google.code.play2.provider.play21;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,24 +45,27 @@ import com.google.javascript.jscomp.Result;
 //import org.mozilla.javascript.*;
 //import org.mozilla.javascript.tools.shell.*;
 
-import com.google.code.play2.AssetCompilationException;
+import com.google.code.play2.provider.AssetCompilationException;
+import com.google.code.play2.provider.JavascriptCompilationResult;
+import com.google.code.play2.provider.Play2JavascriptCompiler;
 
 //Based on Play! 2.1.0 framework/src/sbt-plugin/src/main/scala/jscompile/JavascriptCompiler.scala
-public class JavascriptCompiler
+public class Play21JavascriptCompiler
+    implements Play2JavascriptCompiler
 {
-    private static JavascriptCompiler instance = null;
+    private List<String> simpleCompilerOptions;
 
-    public static synchronized JavascriptCompiler getInstance()
+    //???
+    private List<String> fullCompilerOptions;
+    
+    public void setSimpleCompilerOptions( List<String> simpleCompilerOptions)
     {
-        if ( instance == null )
-        {
-            instance = new JavascriptCompiler();
-        }
-        return instance;
+        this.simpleCompilerOptions = simpleCompilerOptions;
     }
 
-    private JavascriptCompiler()
+    public void setFullCompilerOptions( List<String> fullCompilerOptions)
     {
+        this.fullCompilerOptions = fullCompilerOptions;
     }
 
     // private String css = null;
@@ -78,14 +81,14 @@ public class JavascriptCompiler
     // return dependencies;
     // }
 
-    public CompileResult compile( File source, List<String> simpleCompilerOptions, CompilerOptions fullCompilerOptions )
+    public CompileResult compile( File source )
         throws AssetCompilationException, IOException
     {
         boolean simpleCheck = simpleCompilerOptions.contains( "rjs" );
 
         String origin = readFileContent( source );
 
-        CompilerOptions options = fullCompilerOptions;
+        CompilerOptions options = null;//????fullCompilerOptions;
         if ( options == null )
         {
             CompilerOptions defaultOptions = new CompilerOptions();
@@ -168,7 +171,7 @@ public class JavascriptCompiler
         }
     }
 
-    public static String minify( String source, String name )
+    public/* static*/ String minify( String source, String name )
         throws AssetCompilationException
     {
         Compiler compiler = new Compiler();
@@ -268,7 +271,7 @@ public class JavascriptCompiler
         return result;
     }
 
-    public static class CompileResult
+    public static class CompileResult implements JavascriptCompilationResult
     {
         private String js;
 

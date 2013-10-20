@@ -29,8 +29,8 @@ under the License.
     <artifactId>play2-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>Maven Plugin for Play! Framework 2.x : Plugin</name>
-    <description>Maven Plugin for Play! Framework 2.x : Plugin</description>
+    <name>Maven Plugin for Play! Framework 2.x : Play! 2.x Maven Plugin</name>
+    <description>Maven Plugin for Play! Framework 2.x : Play! 2.x Maven Plugin</description>
 
     <prerequisites>
         <maven>2.2.1</maven>
@@ -39,10 +39,6 @@ under the License.
     <properties>
         <ant.version>1.9.0</ant.version>
         <maven.version>2.2.1</maven.version>
-        <play2.version>2.1.0</play2.version>
-        <play2-scala.version>2.9.2</play2-scala.version>
-        <scala.version>2.9.2</scala.version> <!-- don't change to 2.10.0, "routes-compile" task will fail -->
-        <!--<sbt.version>0.12.2</sbt.version>-->
         <maven-plugin-plugin.version>3.2</maven-plugin-plugin.version>
         <plexus-archiver.version>2.3</plexus-archiver.version>
     </properties>
@@ -60,123 +56,15 @@ under the License.
 
     <dependencies>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>play2-provider-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
             <version>${ant.version}</version>
-        </dependency>
-
-        <!-- remove scala-lang and scala-compiler dependencies? -->
-        <dependency>
-            <groupId>com.typesafe.zinc</groupId>
-            <artifactId>zinc</artifactId>
-            <version>0.1.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-compiler</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.javascript</groupId>
-            <artifactId>closure-compiler</artifactId>
-            <version>rr2079.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>args4j</groupId>
-                    <artifactId>args4j</artifactId>
-                </exclusion>
-                <!--<exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>-->
-                <exclusion>
-                    <groupId>com.google.protobuf</groupId>
-                    <artifactId>protobuf-java</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.ant</groupId>
-                    <artifactId>ant</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.googlecode.jarjar</groupId>
-                    <artifactId>jarjar</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- for ebean classes enhancement -->
-        <!--<dependency>
-            <groupId>org.avaje.ebeanorm</groupId>
-            <artifactId>avaje-ebeanorm</artifactId>
-            <version>3.1.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.persistence</groupId>
-                    <artifactId>persistence-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
-        <dependency>
-            <groupId>org.avaje.ebeanorm</groupId>
-            <artifactId>avaje-ebeanorm-agent</artifactId>
-            <version>3.1.1</version>
-        </dependency>
-
-        <!-- used in "routes-compile" and "template-compile" mojos -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-compiler</artifactId>
-            <version>${scala.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>play</groupId>
-            <artifactId>play-exceptions</artifactId>
-            <version>${play2.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>play</groupId>
-            <artifactId>routes-compiler_${play2-scala.version}</artifactId>
-            <version>${play2.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>play</groupId>
-            <artifactId>templates-compiler_${play2-scala.version}</artifactId>
-            <version>${play2.version}</version>
-        </dependency>
-
-        <!-- contains PropertiesEnhancer -->
-        <dependency>
-            <groupId>play</groupId>
-            <artifactId>sbt-link</artifactId>
-            <version>${play2.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>rhino</groupId>
-            <artifactId>js</artifactId>
-            <version>1.7R2</version>
         </dependency>
 
         <!-- Maven -->

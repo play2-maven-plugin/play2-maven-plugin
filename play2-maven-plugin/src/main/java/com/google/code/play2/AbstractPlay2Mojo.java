@@ -39,6 +39,8 @@ import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.util.FileUtils;
 
+import com.google.code.play2.provider.Play2Provider;
+
 /**
  * Abstract base class for Play! Mojos.
  * 
@@ -53,6 +55,12 @@ public abstract class AbstractPlay2Mojo
      */
     @Component
     protected MavenProject project;
+
+    /**
+     * ...
+     */
+    @Component
+    protected Play2Provider play2Provider;
 
     protected abstract void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException;
@@ -75,14 +83,15 @@ public abstract class AbstractPlay2Mojo
         }
     }
 
-    protected String getMainLang()
+    protected String getMainLang(String playGroupId)
     {
         String result = "scala";
+
         Set<?> classPathArtifacts = project.getDependencyArtifacts(); // only direct dependencies
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
-            if ( artifact.getGroupId().equals( "play" ) && artifact.getArtifactId().startsWith( "play-java_" ) )
+            if ( artifact.getGroupId().equals( playGroupId ) && artifact.getArtifactId().startsWith( "play-java_" ) )
             {
                 result = "java";
                 break;

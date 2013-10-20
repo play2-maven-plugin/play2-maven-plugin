@@ -47,7 +47,7 @@ public abstract class AbstractDependencyProcessingPlay2Mojo
         return result;
     }
     
-    protected Artifact getDependencyArtifact( Collection<?> classPathArtifacts, String groupId, String artifactId, String type, String classifier )
+    /*protected Artifact getDependencyArtifact( Collection<?> classPathArtifacts, String groupId, String artifactId, String type, String classifier )
     {
         Artifact result = null;
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
@@ -61,6 +61,6 @@ public abstract class AbstractDependencyProcessingPlay2Mojo
             }
         }
         return result;
-    }
+    }*/
     
 }

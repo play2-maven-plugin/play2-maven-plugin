@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package com.google.code.play2.less;
+package com.google.code.play2.provider.play21;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -34,25 +35,17 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
 
-import com.google.code.play2.AssetCompilationException;
+import com.google.code.play2.provider.AssetCompilationException;
+import com.google.code.play2.provider.LessCompilationResult;
+import com.google.code.play2.provider.Play2LessCompiler;
 
 // Based on Play! 2.1.0 framework/src/sbt-plugin/src/main/scala/less/LessCompiler.scala
-public class LessCompiler
+public class Play21LessCompiler
+    implements Play2LessCompiler
 {
     public final static String LESS_SCRIPT = "less-1.3.1.js";
                     
-    private static LessCompiler instance = null;
-
-    public static synchronized LessCompiler getInstance()
-    {
-        if ( instance == null )
-        {
-            instance = new LessCompiler();
-        }
-        return instance;
-    }
-
-    public CompileResult compile( File source )
+    public LessCompilationResult compile( File source )
         throws AssetCompilationException, IOException
     {
         try
@@ -103,69 +96,78 @@ public class LessCompiler
         Object wrappedLessCompiler = Context.javaToJS( this, scope );
         ScriptableObject.putProperty( scope, "LessCompiler", wrappedLessCompiler );
 
-        ctx.evaluateString( scope, multiLineString( new String[] { "", "                var timers = [],",
-            "                    window = {", "                        document: {",
+        ctx.evaluateString( scope, multiLineString( new String[] {
+            "",
+            "                var timers = [],",
+            "                    window = {",
+            "                        document: {",
             "                            getElementById: function(id) { ",
             "                                return [];", "                            },",
             "                            getElementsByTagName: function(tagName) {",
             "                                return [];", "                            }",
-            "                        },", "                        location: {",
+            "                        },",
+            "                        location: {",
             "                            protocol: 'file:', ", "                            hostname: 'localhost', ",
             "                            port: '80'", "                        },",
             "                        setInterval: function(fn, time) {",
             "                            var num = timers.length;",
             "                            timers[num] = fn.call(this, null);",
-            "                            return num;", "                        }", "                    },",
-            "                    document = window.document,", "                    location = window.location,",
-            "                    setInterval = window.setInterval;", "", "            " } ), "browser.js", 1, null );
-        ctx.evaluateReader( scope,
-                            new InputStreamReader(
+            "                            return num;", "                        }",
+            "                    },",
+            "                    document = window.document,",
+            "                    location = window.location,",
+            "                    setInterval = window.setInterval;",
+            "",
+            "            "
+            } ), "browser.js", 1, null );
+        ctx.evaluateReader( scope, new InputStreamReader(
                                                    getClass().getClassLoader().getResource( LESS_SCRIPT ).openConnection().getInputStream() ),
                                                    LESS_SCRIPT, 1, null );
-        ctx.evaluateString( scope,
-                            multiLineString( new String[] {
-                                "                var compile = function(source) {",
-                                "",
-                                "                    var compiled;",
-                                "                    // Import tree context",
-                                "                    var context = [source];",
-                                "                    var dependencies = [source];",
-                                "",
-                                "                    window.less.Parser.importer = function(path, paths, fn, env) {",
-                                "",
-                                "                        var imported = LessCompiler.resolve(context[context.length - 1], path);",
-                                "                        var importedName = String(imported.getAbsolutePath());",
-                                "                        var input = String(LessCompiler.readContent(imported));",
-                                "",
-                                "                        // Store it in the contents, for error reporting",
-                                "                        env.contents[importedName] = input;",
-                                "",
-                                "                        context.push(imported);",
-                                "                        dependencies.push(imported)",
-                                "",
-                                "                        new(window.less.Parser)({",
-                                "                            optimization:3,",
-                                "                            filename:importedName,",
-                                "                            contents:env.contents,",
-                                "                            dumpLineNumbers:window.less.dumpLineNumbers",
-                                "                        }).parse(input, function (e, root) {",
-                                "                            if(e instanceof Object) {",
-                                "                                throw e;",
-                                "                            }",
-                                "                            fn(e, root, input);",
-                                "",
-                                "                            context.pop();",
-                                "                        });",
-                                "                    }",
-                                "",
-                                "                    new(window.less.Parser)({optimization:3, filename:String(source.getCanonicalPath())}).parse(String(LessCompiler.readContent(source)), function (e,root) {",
-                                "                        if(e instanceof Object) {",
-                                "                            throw e;",
-                                "                        }",
-                                "                        compiled = root.toCSS({compress: "
-                                    + ( minify ? "true" : "false" ) + "})", "                    })", "",
-                                "                    return {css:compiled, dependencies:dependencies}",
-                                "                }", "            " } ), "compiler.js", 1, null );
+        ctx.evaluateString( scope, multiLineString( new String[] {
+            "                var compile = function(source) {",
+            "",
+            "                    var compiled;",
+            "                    // Import tree context",
+            "                    var context = [source];",
+            "                    var dependencies = [source];",
+            "",
+            "                    window.less.Parser.importer = function(path, paths, fn, env) {",
+            "",
+            "                        var imported = LessCompiler.resolve(context[context.length - 1], path);",
+            "                        var importedName = String(imported.getAbsolutePath());",
+            "                        var input = String(LessCompiler.readContent(imported));",
+            "",
+            "                        // Store it in the contents, for error reporting",
+            "                        env.contents[importedName] = input;",
+            "",
+            "                        context.push(imported);",
+            "                        dependencies.push(imported)",
+            "",
+            "                        new(window.less.Parser)({",
+            "                            optimization:3,",
+            "                            filename:importedName,",
+            "                            contents:env.contents,",
+            "                            dumpLineNumbers:window.less.dumpLineNumbers",
+            "                        }).parse(input, function (e, root) {",
+            "                            if(e instanceof Object) {",
+            "                                throw e;",
+            "                            }",
+            "                            fn(e, root, input);",
+            "",
+            "                            context.pop();",
+            "                        });",
+            "                    }",
+            "",
+            "                    new(window.less.Parser)({optimization:3, filename:String(source.getCanonicalPath())}).parse(String(LessCompiler.readContent(source)), function (e,root) {",
+            "                        if(e instanceof Object) {",
+            "                            throw e;",
+            "                        }",
+            "                        compiled = root.toCSS({compress: " + ( minify ? "true" : "false" ) + "})", "                    })",
+            "",
+            "                    return {css:compiled, dependencies:dependencies}",
+            "                }",
+            "            "
+            } ), "compiler.js", 1, null );
         Function compilerFunction = (Function) scope.get( "compile", scope );
 
         Context.exit();
@@ -248,8 +250,10 @@ public class LessCompiler
         }
     }
 
+
     public static class CompileResult
         extends InternalCompileResult
+        implements LessCompilationResult
     {
         private String minifiedCss;
 
@@ -264,4 +268,5 @@ public class LessCompiler
             return minifiedCss;
         }
     }
+
 }

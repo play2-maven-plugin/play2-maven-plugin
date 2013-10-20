@@ -51,6 +51,9 @@
               <compile>
                 com.google.code.play2-maven-plugin:play2-maven-plugin:compile
               </compile>
+              <process-classes>
+                com.google.code.play2-maven-plugin:play2-maven-plugin:enhance
+              </process-classes>
               <process-test-resources>
                 org.apache.maven.plugins:maven-resources-plugin:testResources
               </process-test-resources>
