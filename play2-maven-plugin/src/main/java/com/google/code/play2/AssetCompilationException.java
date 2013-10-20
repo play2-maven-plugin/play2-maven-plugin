@@ -22,13 +22,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.Serializable;
-
-import play.api.PlayException;
+//import java.io.Serializable;
 
 public class AssetCompilationException
-    extends PlayException.ExceptionSource
-    implements Serializable
+    extends Exception
 {
     private static final long serialVersionUID = 1L;
 
@@ -40,7 +37,7 @@ public class AssetCompilationException
 
     public AssetCompilationException( File source, String message, Integer atLine, Integer column )
     {
-        super( "Compilation error", message );
+        super( "Compilation error[" + message + "]" );
         this.source = source;
         this.line = atLine;
         this.position = column;

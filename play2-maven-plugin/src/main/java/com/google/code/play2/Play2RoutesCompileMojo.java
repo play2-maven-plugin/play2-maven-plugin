@@ -61,8 +61,8 @@ public class Play2RoutesCompileMojo
         {
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( confDirectory );
-            //scanner.setExcludes( routesExcludes );
             scanner.setIncludes( routesIncludes );
+            scanner.addDefaultExcludes();
             scanner.scan();
             String[] files = scanner.getIncludedFiles();
             if ( files.length > 0 )

@@ -130,6 +130,7 @@ public abstract class AbstractPlay2Mojo
         }
         finally
         {
+            writer.flush();
             writer.close();
         }
     }

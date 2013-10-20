@@ -55,6 +55,19 @@ public class Play2CoffeeCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        try
+        {
+            compile();
+        }
+        catch ( AssetCompilationException e )
+        {
+            throw new MojoExecutionException( "?", e );
+        }
+    }
+
+    protected void compile()
+        throws AssetCompilationException, IOException
+    {
         File basedir = project.getBasedir();
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
@@ -63,8 +76,9 @@ public class Play2CoffeeCompileMojo
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
-        scanner.setExcludes( coffeeExcludes );
         scanner.setIncludes( coffeeIncludes );
+        scanner.setExcludes( coffeeExcludes );
+        scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
         if ( files.length > 0 )

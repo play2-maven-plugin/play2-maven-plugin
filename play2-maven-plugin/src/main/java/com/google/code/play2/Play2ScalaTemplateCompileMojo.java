@@ -95,6 +95,7 @@ public class Play2ScalaTemplateCompileMojo
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( appDirectory );
         scanner.setIncludes( scalaTemplatesIncludes );
+        scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
 
@@ -115,7 +116,7 @@ public class Play2ScalaTemplateCompileMojo
                 {
                     index = 1;
                 }
-                if ( "xml".equals( ext ) )
+                else if ( "xml".equals( ext ) )
                 {
                     index = 2;
                 }
@@ -153,7 +154,7 @@ public class Play2ScalaTemplateCompileMojo
         {
             sb.append( "import " ).append( additionalImport.replace( "%format%", format ) ).append( ";\n" );
         }
-        return sb.toString();
+        return sb.substring( 0, sb.length()-1 );
     }
 
 }

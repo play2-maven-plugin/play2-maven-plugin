@@ -56,6 +56,19 @@ public class Play2ClosureCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        try
+        {
+            compile();
+        }
+        catch ( AssetCompilationException e )
+        {
+            throw new MojoExecutionException( "?", e );
+        }
+    }
+
+    protected void compile()
+        throws AssetCompilationException, IOException
+    {
         File basedir = project.getBasedir();
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
@@ -64,8 +77,9 @@ public class Play2ClosureCompileMojo
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
-        scanner.setExcludes( closureExcludes );
         scanner.setIncludes( closureIncludes );
+        scanner.setExcludes( closureExcludes );
+        scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
         if ( files.length > 0 )

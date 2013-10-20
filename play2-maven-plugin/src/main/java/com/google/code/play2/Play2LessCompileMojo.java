@@ -58,6 +58,19 @@ public class Play2LessCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        try
+        {
+            compile();
+        }
+        catch ( AssetCompilationException e )
+        {
+            throw new MojoExecutionException( "?", e );
+        }
+    }
+
+    protected void compile()
+        throws AssetCompilationException, IOException
+    {
         File basedir = project.getBasedir();
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
@@ -76,8 +89,9 @@ public class Play2LessCompileMojo
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
-        scanner.setExcludes( lessExcludes );
         scanner.setIncludes( lessIncludes );
+        scanner.setExcludes( lessExcludes );
+        scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
         LessDependencyCache newAllDependencies = new LessDependencyCache();

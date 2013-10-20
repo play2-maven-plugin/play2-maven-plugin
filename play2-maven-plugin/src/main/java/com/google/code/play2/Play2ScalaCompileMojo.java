@@ -156,6 +156,7 @@ public class Play2ScalaCompileMojo
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( scannerBaseDir );
             scanner.setIncludes( new String[] {"**/*.java"} );
+            scanner.addDefaultExcludes();
             scanner.scan();
             String[] javaSources = scanner.getIncludedFiles();
             for ( String source : javaSources )
