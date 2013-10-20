@@ -36,7 +36,7 @@ import org.apache.tools.ant.types.Environment;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  */
 public abstract class AbstractAntJavaBasedPlay2Mojo
-    extends AbstractDependencyProcessingPlay2Mojo
+    extends AbstractPlay2Mojo
 {
 
     /**

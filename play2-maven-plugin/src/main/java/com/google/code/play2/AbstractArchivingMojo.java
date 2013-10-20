@@ -38,7 +38,7 @@ import org.codehaus.plexus.util.io.RawInputStreamFacade;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  */
 public abstract class AbstractArchivingMojo
-    extends AbstractDependencyProcessingPlay2Mojo
+    extends AbstractPlay2Mojo
 {
 
     /**
