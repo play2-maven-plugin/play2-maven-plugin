@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -40,6 +41,14 @@ import com.google.code.play2.provider.TemplateCompilationException;
 public class Play2ScalaTemplateCompileMojo
     extends AbstractPlay2Mojo
 {
+
+    /**
+     * Force main language (avoid autodetection).
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.mainLang", defaultValue = "" )
+    private String mainLang;
 
     private final static String appDirectoryName = "app";
 
@@ -65,13 +74,23 @@ public class Play2ScalaTemplateCompileMojo
 
         if ( files.length > 0 )
         {
-            String playGroupId = play2Provider.getPlayGroupId();
-            String mainLang = getMainLang(playGroupId);
+            if ( mainLang != null && !"".equals( mainLang ) && !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
+            {
+                throw new MojoExecutionException(
+                                                  String.format( "Template compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
+                                                                 mainLang ) );
+            }
+            String resolvedMainLang = mainLang;
+            if (resolvedMainLang == null || resolvedMainLang.length() == 0)
+            {
+                String playGroupId = play2Provider.getPlayGroupId();
+                resolvedMainLang = getMainLang(playGroupId);
+            }
 
             Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
             compiler.setAppDirectory( appDirectory );
             compiler.setOutputDirectory( generatedDirectory );
-            compiler.setMainLang( mainLang );
+            compiler.setMainLang( resolvedMainLang );
 
             for ( String fileName : files )
             {

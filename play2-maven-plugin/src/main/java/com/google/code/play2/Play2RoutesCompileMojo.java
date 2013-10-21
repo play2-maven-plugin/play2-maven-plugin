@@ -25,6 +25,7 @@ import java.util.List;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.DirectoryScanner;
 
@@ -42,6 +43,15 @@ import com.google.code.play2.provider.RoutesCompilationException;
 public class Play2RoutesCompileMojo
     extends AbstractPlay2Mojo
 {
+
+    /**
+     * Force main language (avoid autodetection).
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.mainLang", defaultValue = "" )
+    private String mainLang;
+
     private final static String confDirectoryName = "conf";
 
     private final static String targetDirectoryName = "src_managed/main";
@@ -67,17 +77,28 @@ public class Play2RoutesCompileMojo
             String[] files = scanner.getIncludedFiles();
             if ( files.length > 0 )
             {
+                if ( mainLang != null && !"".equals( mainLang ) && !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
+                {
+                    throw new MojoExecutionException(
+                                                      String.format( "Routes compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
+                                                                     mainLang ) );
+                }
+
                 File targetDirectory = new File( project.getBuild().getDirectory() );
                 File generatedDirectory = new File( targetDirectory, targetDirectoryName );
 
-                String playGroupId = play2Provider.getPlayGroupId();
-                String mainLang = getMainLang(playGroupId);
+                String resolvedMainLang = mainLang;
+                if (resolvedMainLang == null || resolvedMainLang.length() == 0)
+                {
+                    String playGroupId = play2Provider.getPlayGroupId();
+                    resolvedMainLang = getMainLang(playGroupId);
+                }
                 String[] additionalImports = {};
-                if ( "java".equalsIgnoreCase( mainLang ) )
+                if ( "java".equalsIgnoreCase( resolvedMainLang ) )
                 {
                     additionalImports = javaAdditionalImports;
                 }
-                else if ( "scala".equalsIgnoreCase( mainLang ) )
+                else if ( "scala".equalsIgnoreCase( resolvedMainLang ) )
                 {
                     additionalImports = scalaAdditionalImports;
                 }
