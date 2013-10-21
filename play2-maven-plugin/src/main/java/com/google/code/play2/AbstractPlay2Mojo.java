@@ -87,7 +87,7 @@ public abstract class AbstractPlay2Mojo
     {
         String result = "scala";
 
-        Set<?> classPathArtifacts = project.getDependencyArtifacts(); // only direct dependencies
+        Set<?> classPathArtifacts = project.getArtifacts();
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
