@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+  <bannerLeft>
+    <name>Play and Maven</name>
+    <src>/images/logo_apache.jpg</src>
+    <href>http://maven.apache.org/</href>
+  </bannerLeft>
+
+  <bannerRight>
+    <src>/images/logo_maven.jpg</src>
+  </bannerRight>
+
+  <publishDate format="dd MMM yyyy" />
+
+  <skin>
+    <groupId>org.apache.maven.skins</groupId>
+    <artifactId>maven-stylus-skin</artifactId>
+    <version>1.4</version>
+  </skin>
+
+  <version position="left" />
+
+  <body>
+    <links>
+      <item name="Maven 2" href="http://maven.apache.org/"/>
+    </links>
+    
+    <menu ref="parent" inherit="top"/>
+    <menu ref="modules" inherit="top"/>
+    <menu ref="reports" inherit="top"/>
+  </body>
+</project>

@@ -29,8 +29,8 @@ under the License.
     <artifactId>play2-provider-play22</artifactId>
     <packaging>jar</packaging>
 
-    <name>Maven Plugin for Play! Framework 2.x : Play! 2.x Provider for Play! 2.2.x</name>
-    <description>Maven Plugin for Play! Framework 2.x : Play! 2.x Provider for Play! 2.2.x</description>
+    <name>Maven Plugin for Play! Framework 2.x : Play! 2.x Providers : Play! 2.2.x</name>
+    <description>Maven Plugin for Play! Framework 2.x : Play! 2.x Providers : Play! 2.2.x</description>
 
     <prerequisites>
         <maven>2.2.1</maven>
@@ -152,6 +152,7 @@ under the License.
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-maven-plugin</artifactId>
+                <version>1.3.8</version>
                 <executions>
                     <execution>
                         <goals>
