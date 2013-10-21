@@ -136,7 +136,6 @@ public abstract class AbstractPlay2DistMojo
         }
 
         // lib
-        StringBuilder cpsb = new StringBuilder();
         for ( Iterator<?> iter = filteredArtifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -151,16 +150,13 @@ public abstract class AbstractPlay2DistMojo
             String destFileName = dfnsb.toString();
             //destinationFileName = ;
             zipArchiver.addFile( jarFile, packageName + "/lib/" + destFileName/*jarFile.getName()*/ );
-            if (cpsb.length() > 0) {
-                cpsb.append(':');
-            }
-            cpsb.append("$scriptdir/lib/");
-            cpsb.append(destFileName);
         }
-        String classPathString = cpsb.toString();
 
-        File startFile = createStartFile(buildDirectory, classPathString);
-        zipArchiver.addFile( startFile, packageName + "/start" );
+        File linuxStartFile = createLinuxStartFile(buildDirectory);
+        zipArchiver.addFile( linuxStartFile, packageName + "/start" );
+        
+        File windowsStartFile = createWindowsStartFile(buildDirectory);
+        zipArchiver.addFile( windowsStartFile, packageName + "/start.bat" );
         
         File readmeFile = new File(baseDir, "README");
         if (readmeFile.isFile())
@@ -178,7 +174,7 @@ public abstract class AbstractPlay2DistMojo
         return zipArchiver;
     }
 
-    private File createStartFile(File buildDirectory, String classPathString) throws IOException {
+    private File createLinuxStartFile(File buildDirectory) throws IOException {
         File result = new File( buildDirectory, "start" );
         BufferedWriter writer = createBufferedFileWriter( result, "UTF-8" );
         try
@@ -187,17 +183,41 @@ public abstract class AbstractPlay2DistMojo
             writer.newLine();
             writer.write( "scriptdir=`dirname $0`" );
             writer.newLine();
-            writer.write( "classpath=\"" );
-            writer.write( classPathString );
-            writer.write( "\"" );
+            writer.write( "classpath=$scriptdir/lib/*" );
             writer.newLine();
-            writer.write( "exec java $* -cp $classpath" );
+            writer.write( "exec java $* -cp \"$classpath\"" );
             if ( configFile != null )
             {
                 writer.write( " -Dconfig.file=`dirname $0`/" );
                 writer.write( configFile.getName() );
             }
-            writer.write( " play.core.server.NettyServer `dirname $0`" );
+            writer.write( " play.core.server.NettyServer $scriptdir" );
+            writer.newLine();
+        }
+        finally
+        {
+            writer.flush();
+            writer.close();
+        }
+        return result;
+    }
+    
+    private File createWindowsStartFile(File buildDirectory) throws IOException {
+        File result = new File( buildDirectory, "start.bat" );
+        BufferedWriter writer = createBufferedFileWriter( result, "UTF-8" );
+        try
+        {
+            writer.write( "set scriptdir=%~dp0" );
+            writer.newLine();
+            writer.write( "set classpath=%scriptdir%/lib/*" );
+            writer.newLine();
+            writer.write( "java %* -cp \"%classpath%\"" );
+            if ( configFile != null )
+            {
+                writer.write( " -Dconfig.file=`dirname $0`/" );
+                writer.write( configFile.getName() );
+            }
+            writer.write( " play.core.server.NettyServer %scriptdir%" );
             writer.newLine();
         }
         finally
