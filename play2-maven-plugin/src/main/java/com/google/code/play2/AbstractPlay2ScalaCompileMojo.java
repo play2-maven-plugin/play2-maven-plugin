@@ -20,6 +20,7 @@ package com.google.code.play2;
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -89,6 +90,20 @@ public abstract class AbstractPlay2ScalaCompileMojo
      */
     @Parameter( property = "project.build.sourceEncoding" )
     protected String sourceEncoding;
+
+    /**
+     * Additional parameters for Java compiler.
+     * 
+     */
+    @Parameter( property = "play.javacOptions", defaultValue = "-g" )
+    protected String javacOptions;
+
+    /**
+     * Additional parameters for Scala compiler.
+     * 
+     */
+    @Parameter( property = "play.scalacOptions", defaultValue = "-deprecation -unchecked" )
+    protected String scalacOptions;
 
     /**
      * Artifact factory, needed to download source jars.
@@ -207,16 +222,24 @@ public abstract class AbstractPlay2ScalaCompileMojo
             List<String> classpathElements = getClasspathElements();
             classpathElements.remove( getOutputDirectory().getAbsolutePath() );
 
-            List<String> scalacOptions = new ArrayList<String>(4);
-            scalacOptions.add( "-deprecation" );
-            scalacOptions.add( "-unchecked" );
-            scalacOptions.add( "-encoding" );
-            scalacOptions.add( sourceEncoding );
+            // Resolving scalacOptions
+            List<String> resolvedScalacOptions = new ArrayList<String>( Arrays.asList( scalacOptions.split(" ") ) );
+            if (!resolvedScalacOptions.contains( "-encoding" ))
+            {
+                if ( sourceEncoding != null && sourceEncoding.length() > 0)
+                {
+                    resolvedScalacOptions.add( "-encoding" );
+                    resolvedScalacOptions.add( sourceEncoding );
+                }
+            }
 
-            List<String> javacOptions = new ArrayList<String>(3);
-            javacOptions.add( "-encoding" );
-            javacOptions.add( sourceEncoding );
-            javacOptions.add( "-g" );
+            // Resolving javacOptions
+            List<String> resolvedJavacOptions = new ArrayList<String>( Arrays.asList( javacOptions.split(" ") ) );
+            if (!resolvedJavacOptions.contains( "-encoding" ))
+            {
+                resolvedJavacOptions.add( "-encoding" );
+                resolvedJavacOptions.add( sourceEncoding );
+            }
 
             Map<File, File> cacheMap = getAnalysisCacheMap();
 
@@ -226,7 +249,7 @@ public abstract class AbstractPlay2ScalaCompileMojo
                 classpath.add( new File( path ) );
             }
 
-            SBTCompilationResult compileResult = compiler.compile( getLog(), scalaCompilerArtifact.getFile(), scalaLibraryArtifact.getFile(), scalaExtraJars, xsbtiArtifact.getFile(), compilerInterfaceSrc.getFile(), classpath, sources, getOutputDirectory(), scalacOptions, javacOptions, getAnalysisCacheFile(), cacheMap );
+            SBTCompilationResult compileResult = compiler.compile( getLog(), scalaCompilerArtifact.getFile(), scalaLibraryArtifact.getFile(), scalaExtraJars, xsbtiArtifact.getFile(), compilerInterfaceSrc.getFile(), classpath, sources, getOutputDirectory(), resolvedScalacOptions, resolvedJavacOptions, getAnalysisCacheFile(), cacheMap );
             postCompile(compileResult);
         }
         catch ( SBTCompilationException e )
