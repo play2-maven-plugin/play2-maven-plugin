@@ -214,7 +214,7 @@ public abstract class AbstractPlay2DistMojo
             writer.write( "java %* -cp \"%classpath%\"" );
             if ( configFile != null )
             {
-                writer.write( " -Dconfig.file=`dirname $0`/" );
+                writer.write( " -Dconfig.file=%scriptdir%/" );
                 writer.write( configFile.getName() );
             }
             writer.write( " play.core.server.NettyServer %scriptdir%" );
