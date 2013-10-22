@@ -24,7 +24,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
@@ -37,7 +36,7 @@ import com.google.code.play2.provider.TemplateCompilationException;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "template-compile", requiresDependencyResolution = ResolutionScope.COMPILE )
+@Mojo( name = "template-compile" )
 public class Play2ScalaTemplateCompileMojo
     extends AbstractPlay2Mojo
 {
@@ -47,7 +46,7 @@ public class Play2ScalaTemplateCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.mainLang", defaultValue = "" )
+    @Parameter( property = "play.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
 
     private final static String appDirectoryName = "app";
@@ -74,23 +73,17 @@ public class Play2ScalaTemplateCompileMojo
 
         if ( files.length > 0 )
         {
-            if ( mainLang != null && !"".equals( mainLang ) && !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
+            if ( !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
             {
                 throw new MojoExecutionException(
                                                   String.format( "Template compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
                                                                  mainLang ) );
             }
-            String resolvedMainLang = mainLang;
-            if (resolvedMainLang == null || resolvedMainLang.length() == 0)
-            {
-                String playGroupId = play2Provider.getPlayGroupId();
-                resolvedMainLang = getMainLang(playGroupId);
-            }
 
             Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
             compiler.setAppDirectory( appDirectory );
             compiler.setOutputDirectory( generatedDirectory );
-            compiler.setMainLang( resolvedMainLang );
+            compiler.setMainLang( mainLang );
 
             for ( String fileName : files )
             {

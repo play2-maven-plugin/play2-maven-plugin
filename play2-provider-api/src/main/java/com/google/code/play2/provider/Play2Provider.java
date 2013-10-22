@@ -19,8 +19,6 @@ package com.google.code.play2.provider;
 
 public interface Play2Provider
 {
-    String getPlayGroupId();
-    
     Play2LessCompiler getLessCompiler();
 
     Play2CoffeescriptCompiler getCoffeescriptCompiler();

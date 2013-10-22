@@ -35,11 +35,6 @@ import com.google.code.play2.provider.Play2TemplateCompiler;
 public class Play22Provider
     implements Play2Provider
 {
-    public String getPlayGroupId()
-    {
-        return "com.typesafe.play";
-    }
-    
     public Play2LessCompiler getLessCompiler() {
         return new Play22LessCompiler();
     }

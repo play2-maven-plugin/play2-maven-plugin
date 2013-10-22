@@ -27,10 +27,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
-import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -81,23 +78,6 @@ public abstract class AbstractPlay2Mojo
         {
             throw new MojoExecutionException( "?", e );
         }
-    }
-
-    protected String getMainLang(String playGroupId)
-    {
-        String result = "scala";
-
-        Set<?> classPathArtifacts = project.getArtifacts();
-        for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            if ( artifact.getGroupId().equals( playGroupId ) && artifact.getArtifactId().startsWith( "play-java_" ) )
-            {
-                result = "java";
-                break;
-            }
-        }
-        return result;
     }
 
     protected final BufferedReader createBufferedFileReader( File file, String encoding )

@@ -35,11 +35,6 @@ import com.google.code.play2.provider.Play2TemplateCompiler;
 public class Play21Provider
     implements Play2Provider
 {
-    public String getPlayGroupId()
-    {
-        return "play";
-    }
-    
     public Play2LessCompiler getLessCompiler() {
         return new Play21LessCompiler();
     }
