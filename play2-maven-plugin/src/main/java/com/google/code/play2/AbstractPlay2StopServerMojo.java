@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.google.code.play2;
@@ -35,7 +36,7 @@ public abstract class AbstractPlay2StopServerMojo
     {
         File baseDir = project.getBasedir();
 
-        File pidFile = new File( baseDir, "RUNNING_PID"/*"server.pid"*/ );
+        File pidFile = new File( baseDir, "RUNNING_PID" );
         if ( !pidFile.exists() )
         {
             throw new MojoExecutionException( String.format( "Play! Server is not started (\"%s\" file not found)",
@@ -62,16 +63,16 @@ public abstract class AbstractPlay2StopServerMojo
         {
             throw new MojoExecutionException( "?", e );
         }
-        
+
         PidFileDeleter.getInstance().remove( pidFile );
     }
-    
-    // copied from Play! Framework's "play.utils.Utils" Java class
+
+    // Copied from Play! Framework's "play.utils.Utils" Java class
     protected void kill( String pid )
         throws IOException, InterruptedException
     {
         String os = System.getProperty( "os.name" );
-        String command = ( os.startsWith( "Windows" ) ) ? "taskkill /F /PID " + pid : "kill " + pid;
+        String command = os.startsWith( "Windows" ) ? "taskkill /F /PID " + pid : "kill " + pid;
         Runtime.getRuntime().exec( command ).waitFor();
     }
 

@@ -86,63 +86,54 @@ public abstract class AbstractPlay2ScalaCompileMojo
 
     /**
      * The -encoding argument for Scala and Java compilers.
-     * 
      */
     @Parameter( property = "project.build.sourceEncoding" )
     protected String sourceEncoding;
 
     /**
      * Additional parameters for Java compiler.
-     * 
      */
     @Parameter( property = "play.javacOptions", defaultValue = "-g" )
     protected String javacOptions;
 
     /**
      * Additional parameters for Scala compiler.
-     * 
      */
     @Parameter( property = "play.scalacOptions", defaultValue = "-deprecation -unchecked" )
     protected String scalacOptions;
 
     /**
      * Artifact factory, needed to download source jars.
-     * 
      */
     @Component
     protected MavenProjectBuilder mavenProjectBuilder;
 
     /**
      * Contains the full list of projects in the reactor.
-     * 
      */
     @Parameter( defaultValue = "${reactorProjects}", required = true, readonly = true )
     protected List<MavenProject> reactorProjects;
 
     /**
      * Used to look up artifacts in the remote repository.
-     *
      */
     @Component
     protected ArtifactFactory factory;
 
     /**
      * Used to resolve artifacts.
-     *
      */
     @Component
     protected ArtifactResolver resolver;
 
     /**
      * Location of the local repository.
-     *
      */
     @Parameter( property = "localRepository", readonly = true, required = true )
     protected ArtifactRepository localRepo;
 
     /**
      * List of Remote Repositories used by the resolver
-     *
      */
     @Parameter( property = "project.remoteArtifactRepositories", readonly = true, required = true )
     protected List<?> remoteRepos;
@@ -177,56 +168,59 @@ public abstract class AbstractPlay2ScalaCompileMojo
         try
         {
             Artifact scalaLibraryArtifact =
-                getDependencyArtifact( /*pluginArtifacts*/project.getArtifacts(), SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, "jar" );
+                getDependencyArtifact( project.getArtifacts(), SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, "jar" );
             if ( scalaLibraryArtifact == null )
             {
-                throw new MojoExecutionException( String.format( "Required %s:%s:jar dependency not found", SCALA_GROUPID,
-                                                                 SCALA_LIBRARY_ARTIFACTID ) );
+                throw new MojoExecutionException( String.format( "Required %s:%s:jar dependency not found",
+                                                                 SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID ) );
             }
             String scalaVersion = scalaLibraryArtifact.getVersion();
-            
+
             Artifact scalaCompilerArtifact =
-                            getResolvedArtifact( SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, scalaVersion );
+                getResolvedArtifact( SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, scalaVersion );
             if ( scalaCompilerArtifact == null )
             {
-                throw new MojoExecutionException( String.format( "Required %s:%s:%s:jar dependency not found",
+                throw new MojoExecutionException(
+                                                  String.format( "Required %s:%s:%s:jar dependency not found",
                                                                  SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, scalaVersion ) );
             }
 
-            List<File> scalaExtraJars = getCompilerDependencies(scalaCompilerArtifact);
-            scalaExtraJars.remove(scalaLibraryArtifact.getFile());
+            List<File> scalaExtraJars = getCompilerDependencies( scalaCompilerArtifact );
+            scalaExtraJars.remove( scalaLibraryArtifact.getFile() );
 
             Play2SBTCompiler compiler = play2Provider.getScalaCompiler();
 
-            String sbtVersion = this.sbtVersion;
-            if (sbtVersion == null || (sbtVersion.length() == 0)) {
-                sbtVersion = compiler.getDefaultSbtVersion();
+            String resolvedSbtVersion = this.sbtVersion;
+            if ( resolvedSbtVersion == null || resolvedSbtVersion.length() == 0 )
+            {
+                resolvedSbtVersion = compiler.getDefaultSbtVersion();
             }
-                        
-            Artifact xsbtiArtifact = getResolvedArtifact( SBT_GROUP_ID, XSBTI_ARTIFACT_ID, sbtVersion );
+
+            Artifact xsbtiArtifact = getResolvedArtifact( SBT_GROUP_ID, XSBTI_ARTIFACT_ID, resolvedSbtVersion );
             if ( xsbtiArtifact == null )
             {
                 throw new MojoExecutionException( String.format( "Required %s:%s:%s:jar dependency not found",
-                                                                 SBT_GROUP_ID, XSBTI_ARTIFACT_ID, sbtVersion ) );
+                                                                 SBT_GROUP_ID, XSBTI_ARTIFACT_ID, resolvedSbtVersion ) );
             }
 
             Artifact compilerInterfaceSrc =
-                            getResolvedArtifact( SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID, sbtVersion,
-                                                   COMPILER_INTERFACE_CLASSIFIER );
+                getResolvedArtifact( SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID, resolvedSbtVersion,
+                                     COMPILER_INTERFACE_CLASSIFIER );
             if ( compilerInterfaceSrc == null )
             {
                 throw new MojoExecutionException( String.format( "Required %s:%s:%s:%s:jar dependency not found",
-                                                                 SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID, sbtVersion, COMPILER_INTERFACE_CLASSIFIER ) );
+                                                                 SBT_GROUP_ID, COMPILER_INTERFACE_ARTIFACT_ID,
+                                                                 resolvedSbtVersion, COMPILER_INTERFACE_CLASSIFIER ) );
             }
 
             List<String> classpathElements = getClasspathElements();
             classpathElements.remove( getOutputDirectory().getAbsolutePath() );
 
             // Resolving scalacOptions
-            List<String> resolvedScalacOptions = new ArrayList<String>( Arrays.asList( scalacOptions.split(" ") ) );
-            if (!resolvedScalacOptions.contains( "-encoding" ))
+            List<String> resolvedScalacOptions = new ArrayList<String>( Arrays.asList( scalacOptions.split( " " ) ) );
+            if ( !resolvedScalacOptions.contains( "-encoding" ) )
             {
-                if ( sourceEncoding != null && sourceEncoding.length() > 0)
+                if ( sourceEncoding != null && sourceEncoding.length() > 0 )
                 {
                     resolvedScalacOptions.add( "-encoding" );
                     resolvedScalacOptions.add( sourceEncoding );
@@ -234,8 +228,8 @@ public abstract class AbstractPlay2ScalaCompileMojo
             }
 
             // Resolving javacOptions
-            List<String> resolvedJavacOptions = new ArrayList<String>( Arrays.asList( javacOptions.split(" ") ) );
-            if (!resolvedJavacOptions.contains( "-encoding" ))
+            List<String> resolvedJavacOptions = new ArrayList<String>( Arrays.asList( javacOptions.split( " " ) ) );
+            if ( !resolvedJavacOptions.contains( "-encoding" ) )
             {
                 resolvedJavacOptions.add( "-encoding" );
                 resolvedJavacOptions.add( sourceEncoding );
@@ -249,8 +243,12 @@ public abstract class AbstractPlay2ScalaCompileMojo
                 classpath.add( new File( path ) );
             }
 
-            SBTCompilationResult compileResult = compiler.compile( getLog(), scalaCompilerArtifact.getFile(), scalaLibraryArtifact.getFile(), scalaExtraJars, xsbtiArtifact.getFile(), compilerInterfaceSrc.getFile(), classpath, sources, getOutputDirectory(), resolvedScalacOptions, resolvedJavacOptions, getAnalysisCacheFile(), cacheMap );
-            postCompile(compileResult);
+            SBTCompilationResult compileResult =
+                compiler.compile( getLog(), scalaCompilerArtifact.getFile(), scalaLibraryArtifact.getFile(),
+                                  scalaExtraJars, xsbtiArtifact.getFile(), compilerInterfaceSrc.getFile(), classpath,
+                                  sources, getOutputDirectory(), resolvedScalacOptions, resolvedJavacOptions,
+                                  getAnalysisCacheFile(), cacheMap );
+            postCompile( compileResult );
         }
         catch ( SBTCompilationException e )
         {
@@ -299,7 +297,7 @@ public abstract class AbstractPlay2ScalaCompileMojo
                 String[] includedFileNames = scanner.getIncludedFiles();
                 for ( String includedFileName : includedFileNames )
                 {
-                    File tmpAbsFile = new File( dir, includedFileName ).getAbsoluteFile();// ?
+                    File tmpAbsFile = new File( dir, includedFileName ).getAbsoluteFile(); // ?
                     sourceFiles.add( tmpAbsFile );
                 }
             }
@@ -341,65 +339,83 @@ public abstract class AbstractPlay2ScalaCompileMojo
         return new File( defaultAnalysisDirectory( p ), "test-compile" );
     }
 
-    protected void postCompile(SBTCompilationResult compileResult/*List<File> classpathFiles, Analysis analysis*/) throws MojoExecutionException, IOException {
+    protected void postCompile( SBTCompilationResult compileResult )
+        throws MojoExecutionException, IOException
+    {
     }
-    
-    // Private utility methods    
-    
-    private Artifact getResolvedArtifact(String groupId, String artifactId, String version) throws ArtifactNotFoundException, ArtifactResolutionException {
-        Artifact artifact = factory.createArtifact(groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar");
-        resolver.resolve(artifact, remoteRepos, localRepo);
+
+    // Private utility methods
+
+    private Artifact getResolvedArtifact( String groupId, String artifactId, String version )
+        throws ArtifactNotFoundException, ArtifactResolutionException
+    {
+        Artifact artifact = factory.createArtifact( groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar" );
+        resolver.resolve( artifact, remoteRepos, localRepo );
         return artifact;
     }
 
-    private Artifact getResolvedArtifact(String groupId, String artifactId, String version, String classifier) throws ArtifactNotFoundException, ArtifactResolutionException {
-        Artifact artifact = factory.createArtifactWithClassifier(groupId, artifactId, version, "jar", classifier);
-        resolver.resolve(artifact, remoteRepos, localRepo);
+    private Artifact getResolvedArtifact( String groupId, String artifactId, String version, String classifier )
+        throws ArtifactNotFoundException, ArtifactResolutionException
+    {
+        Artifact artifact = factory.createArtifactWithClassifier( groupId, artifactId, version, "jar", classifier );
+        resolver.resolve( artifact, remoteRepos, localRepo );
         return artifact;
     }
 
-    private List<File> getCompilerDependencies(Artifact scalaCompilerArtifact) throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException, ProjectBuildingException {
+    private List<File> getCompilerDependencies( Artifact scalaCompilerArtifact )
+        throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException,
+        ProjectBuildingException
+    {
         List<File> d = new ArrayList<File>();
-        for (Artifact artifact : getAllDependencies(scalaCompilerArtifact)) {
-            d.add(artifact.getFile());
+        for ( Artifact artifact : getAllDependencies( scalaCompilerArtifact ) )
+        {
+            d.add( artifact.getFile() );
         }
         return d;
-      }
+    }
 
-    private Set<Artifact> getAllDependencies(Artifact artifact) throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException, ProjectBuildingException {
+    private Set<Artifact> getAllDependencies( Artifact artifact )
+        throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException,
+        ProjectBuildingException
+    {
         Set<Artifact> result = new HashSet<Artifact>();
-        MavenProject p = mavenProjectBuilder.buildFromRepository(artifact, remoteRepos, localRepo);
-        Set<Artifact> d = resolveDependencyArtifacts(p);
-        result.addAll(d);
-        for (Artifact dependency : d) {
-            Set<Artifact> transitive = getAllDependencies(dependency);
-            result.addAll(transitive);
+        MavenProject p = mavenProjectBuilder.buildFromRepository( artifact, remoteRepos, localRepo );
+        Set<Artifact> d = resolveDependencyArtifacts( p );
+        result.addAll( d );
+        for ( Artifact dependency : d )
+        {
+            Set<Artifact> transitive = getAllDependencies( dependency );
+            result.addAll( transitive );
         }
         return result;
     }
 
     /**
      * This method resolves the dependency artifacts from the project.
-     *
+     * 
      * @param theProject The POM.
      * @return resolved set of dependency artifacts.
-     *
      * @throws ArtifactResolutionException
      * @throws ArtifactNotFoundException
      * @throws InvalidDependencyVersionException
      */
-    private Set<Artifact> resolveDependencyArtifacts(MavenProject theProject) throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException {
+    private Set<Artifact> resolveDependencyArtifacts( MavenProject theProject )
+        throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException
+    {
         AndArtifactFilter filter = new AndArtifactFilter();
-        filter.add(new ScopeArtifactFilter(Artifact.SCOPE_TEST));
-        filter.add(new ArtifactFilter(){
-            public boolean include(Artifact artifact) {
+        filter.add( new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
+        filter.add( new ArtifactFilter()
+        {
+            public boolean include( Artifact artifact )
+            {
                 return !artifact.isOptional();
             }
-        });
-        //TODO follow the dependenciesManagement and override rules
-        Set<Artifact> artifacts = theProject.createArtifacts(factory, Artifact.SCOPE_RUNTIME, filter);
-        for (Artifact artifact : artifacts) {
-            resolver.resolve(artifact, remoteRepos, localRepo);
+        } );
+        // TODO follow the dependenciesManagement and override rules
+        Set<Artifact> artifacts = theProject.createArtifacts( factory, Artifact.SCOPE_RUNTIME, filter );
+        for ( Artifact artifact : artifacts )
+        {
+            resolver.resolve( artifact, remoteRepos, localRepo );
         }
         return artifacts;
     }

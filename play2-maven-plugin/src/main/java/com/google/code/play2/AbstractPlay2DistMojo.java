@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.google.code.play2;
@@ -76,21 +77,20 @@ public abstract class AbstractPlay2DistMojo
         File baseDir = project.getBasedir();
         File buildDirectory = new File( project.getBuild().getDirectory() );
 
-        File projectArtifactFile = new File(buildDirectory, project.getBuild().getFinalName() + ".jar");//project.getArtifact().getFile();
-        if (!projectArtifactFile.isFile())
+        File projectArtifactFile = new File( buildDirectory, project.getBuild().getFinalName() + ".jar" ); // project.getArtifact().getFile();
+        if ( !projectArtifactFile.isFile() )
         {
-            throw new MojoExecutionException( String.format( "%s not present",
-                                                             projectArtifactFile.getAbsolutePath() ) );
-            //TODO - add info about running "mvn package first"
+            throw new MojoExecutionException( String.format( "%s not present", projectArtifactFile.getAbsolutePath() ) );
+            // TODO - add info about running "mvn package first"
         }
-        
+
         if ( configFile != null && !configFile.isFile() )
         {
             throw new MojoExecutionException( String.format( "%s not present", configFile.getAbsolutePath() ) );
         }
-        
+
         String packageName = project.getArtifactId() + "-" + project.getVersion();
-        
+
         String destinationFileName = packageName + "/lib/" + projectArtifactFile.getName();
         zipArchiver.addFile( projectArtifactFile, destinationFileName );
 
@@ -146,35 +146,37 @@ public abstract class AbstractPlay2DistMojo
             {
                 dfnsb.append( '-' ).append( artifact.getClassifier() );
             }
-            dfnsb.append( ".jar" );// TODO-get the real extension?
+            dfnsb.append( ".jar" ); // TODO-get the real extension?
             String destFileName = dfnsb.toString();
-            //destinationFileName = ;
-            zipArchiver.addFile( jarFile, packageName + "/lib/" + destFileName/*jarFile.getName()*/ );
+            // destinationFileName = ;
+            zipArchiver.addFile( jarFile, packageName + "/lib/" + destFileName/* jarFile.getName() */ );
         }
 
-        File linuxStartFile = createLinuxStartFile(buildDirectory);
+        File linuxStartFile = createLinuxStartFile( buildDirectory );
         zipArchiver.addFile( linuxStartFile, packageName + "/start" );
-        
-        File windowsStartFile = createWindowsStartFile(buildDirectory);
+
+        File windowsStartFile = createWindowsStartFile( buildDirectory );
         zipArchiver.addFile( windowsStartFile, packageName + "/start.bat" );
-        
-        File readmeFile = new File(baseDir, "README");
-        if (readmeFile.isFile())
+
+        File readmeFile = new File( baseDir, "README" );
+        if ( readmeFile.isFile() )
         {
             zipArchiver.addFile( readmeFile, packageName + "/" + readmeFile.getName() );
         }
-        
-        if (configFile != null)
+
+        if ( configFile != null )
         {
             zipArchiver.addFile( configFile, packageName + "/" + configFile.getName() );
         }
 
         checkArchiverForProblems( zipArchiver );
-        
+
         return zipArchiver;
     }
 
-    private File createLinuxStartFile(File buildDirectory) throws IOException {
+    private File createLinuxStartFile( File buildDirectory )
+        throws IOException
+    {
         File result = new File( buildDirectory, "start" );
         BufferedWriter writer = createBufferedFileWriter( result, "UTF-8" );
         try
@@ -201,8 +203,10 @@ public abstract class AbstractPlay2DistMojo
         }
         return result;
     }
-    
-    private File createWindowsStartFile(File buildDirectory) throws IOException {
+
+    private File createWindowsStartFile( File buildDirectory )
+        throws IOException
+    {
         File result = new File( buildDirectory, "start.bat" );
         BufferedWriter writer = createBufferedFileWriter( result, "UTF-8" );
         try

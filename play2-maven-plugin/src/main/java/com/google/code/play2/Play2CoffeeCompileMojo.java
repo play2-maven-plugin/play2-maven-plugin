@@ -46,13 +46,13 @@ public class Play2CoffeeCompileMojo
     extends AbstractPlay2Mojo
 {
 
-    private final static String assetsSourceDirectoryName = "app/assets";
+    private static final String assetsSourceDirectoryName = "app/assets";
 
-    private final static String targetDirectoryName = "resource_managed/main";
+    private static final String targetDirectoryName = "resource_managed/main";
 
-    private final static String[] coffeeExcludes = new String[] {};
+    private static final String[] coffeeExcludes = new String[] {};
 
-    private final static String[] coffeeIncludes = new String[] { "**/*.coffee" };
+    private static final String[] coffeeIncludes = new String[] { "**/*.coffee" };
 
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -61,7 +61,9 @@ public class Play2CoffeeCompileMojo
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
         if ( !assetsSourceDirectory.isDirectory() )
+        {
             return; // nothing to do
+        }
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
@@ -116,14 +118,14 @@ public class Play2CoffeeCompileMojo
                         {
                             // ignore
                             if ( minifiedJsFile.exists() )
-                            {// TODO-check if isFile
-                                minifiedJsFile.delete();// TODO-check result
+                            { // TODO-check if isFile
+                                minifiedJsFile.delete(); // TODO-check result
                             }
                         }
                     }
                     catch ( AssetCompilationException e )
                     {
-                        throw new MojoExecutionException("CoffeeScript compilation failed", e);
+                        throw new MojoExecutionException( "CoffeeScript compilation failed", e );
                     }
                 }
             }

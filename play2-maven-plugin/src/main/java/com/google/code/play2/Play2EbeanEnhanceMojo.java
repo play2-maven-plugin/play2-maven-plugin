@@ -45,7 +45,6 @@ public class Play2EbeanEnhanceMojo
 {
     /**
      * Project classpath.
-     * 
      */
     @Parameter( property = "project.compileClasspathElements", readonly = true, required = true )
     private List<String> classpathElements;
@@ -54,7 +53,7 @@ public class Play2EbeanEnhanceMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        File outputDirectory = new File(project.getBuild().getOutputDirectory());
+        File outputDirectory = new File( project.getBuild().getOutputDirectory() );
 
         classpathElements.remove( outputDirectory.getAbsolutePath() );
         List<File> classpathFiles = new ArrayList<File>( classpathElements.size() );
@@ -81,8 +80,7 @@ public class Play2EbeanEnhanceMojo
             enhancer.setOutputDirectory( outputDirectory );
             enhancer.setClassPathUrls( classPathUrls );
 
-            //TODO-conf powinien byc "na bazie" basedir
-            enhancer.enhance( new File( "conf/application.conf" ) );
+            enhancer.enhance( new File( project.getBasedir(), "conf/application.conf" ) );
         }
         finally
         {

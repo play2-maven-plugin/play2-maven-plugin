@@ -49,11 +49,11 @@ public class Play2ScalaTemplateCompileMojo
     @Parameter( property = "play.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
 
-    private final static String appDirectoryName = "app";
+    private static final String appDirectoryName = "app";
 
-    private final static String targetDirectoryName = "src_managed/main";
+    private static final String targetDirectoryName = "src_managed/main";
 
-    private final static String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
+    private static final String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
 
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException

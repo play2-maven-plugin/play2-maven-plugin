@@ -17,14 +17,11 @@
 
 package com.google.code.play2.provider.play22;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -43,8 +40,8 @@ import com.google.code.play2.provider.Play2LessCompiler;
 public class Play22LessCompiler
     implements Play2LessCompiler
 {
-    public final static String LESS_SCRIPT = "less-1.4.2.js";
-                    
+    public static final String LESS_SCRIPT = "less-1.4.2.js";
+
     public LessCompilationResult compile( File source )
         throws AssetCompilationException, IOException
     {
@@ -58,7 +55,7 @@ public class Play22LessCompiler
         {
             Scriptable error = (Scriptable) e.getValue();
             String filename = ScriptableObject.getProperty( error, "filename" ).toString();
-            //stare File file = ( filename == source.getAbsolutePath() ? source : resolve( source, filename ) );
+            // old: File file = ( filename == source.getAbsolutePath() ? source : resolve( source, filename ) );
             File file = new File( filename );
             throw new AssetCompilationException(
                                                  file,
@@ -102,69 +99,75 @@ public class Play22LessCompiler
             "                    window = {",
             "                        document: {",
             "                            getElementById: function(id) { ",
-            "                                return [];", "                            },",
+            "                                return [];",
+            "                            },",
             "                            getElementsByTagName: function(tagName) {",
-            "                                return [];", "                            }",
+            "                                return [];",
+            "                            }",
             "                        },",
             "                        location: {",
-            "                            protocol: 'file:', ", "                            hostname: 'localhost', ",
-            "                            port: '80'", "                        },",
+            "                            protocol: 'file:', ",
+            "                            hostname: 'localhost', ",
+            "                            port: '80'",
+            "                        },",
             "                        setInterval: function(fn, time) {",
             "                            var num = timers.length;",
             "                            timers[num] = fn.call(this, null);",
-            "                            return num;", "                        }",
+            "                            return num;",
+            "                        }",
             "                    },",
             "                    document = window.document,",
             "                    location = window.location,",
             "                    setInterval = window.setInterval;",
             "",
-            "            "
-            } ), "browser.js", 1, null );
-        ctx.evaluateReader( scope, new InputStreamReader(
-                                                   getClass().getClassLoader().getResource( LESS_SCRIPT ).openConnection().getInputStream() ),
-                                                   LESS_SCRIPT, 1, null );
-        ctx.evaluateString( scope, multiLineString( new String[] {
-            "                var compile = function(source) {",
-            "",
-            "                    var compiled;",
-            "                    // Import tree context",
-            "                    var context = [source];",
-            "                    var dependencies = [source];",
-            "",
-            "                    window.less.Parser.importer = function(path, paths, fn, env) {",
-            "",
-            "                        var imported = LessCompiler.resolve(context[context.length - 1], path);",
-            "                        var importedName = String(imported.getAbsolutePath());",
-            "                        var input = String(LessCompiler.readContent(imported));",
-            "",
-            "                        // Store it in the contents, for error reporting",
-            "                        env.contents[importedName] = input;",
-            "",
-            "                        context.push(imported);",
-            "                        dependencies.push(imported)",
-            "",
-            "                        new(window.less.Parser)({",
-            "                            optimization:3,",
-            "                            filename:importedName,",
-            "                            contents:env.contents,",
-            "                            dumpLineNumbers:window.less.dumpLineNumbers",
-            "                        }).parse(input, function (e, root) {",
-            "                            fn(e, root, input);",
-            "",
-            "                            context.pop();",
-            "                        });",
-            "                    }",
-            "",
-            "                    new(window.less.Parser)({optimization:3, filename:String(source.getCanonicalPath())}).parse(String(LessCompiler.readContent(source)), function (e,root) {",
-            "                        if (e) {",
-            "                            throw e;",
-            "                        }",
-            "                        compiled = root.toCSS({compress: " + ( minify ? "true" : "false" ) + "})", "                    })",
-            "",
-            "                    return {css:compiled, dependencies:dependencies}",
-            "                }",
-            "            "
-            } ), "compiler.js", 1, null );
+            "            " } ), "browser.js", 1, null );
+        ctx.evaluateReader( scope,
+                            new InputStreamReader(
+                                                   getClass().getClassLoader().getResource( LESS_SCRIPT ).openConnection().getInputStream(),
+                                                   "UTF-8" ), LESS_SCRIPT, 1, null );
+        ctx.evaluateString( scope,
+                            multiLineString( new String[] {
+                                "                var compile = function(source) {",
+                                "",
+                                "                    var compiled;",
+                                "                    // Import tree context",
+                                "                    var context = [source];",
+                                "                    var dependencies = [source];",
+                                "",
+                                "                    window.less.Parser.importer = function(path, paths, fn, env) {",
+                                "",
+                                "                        var imported = LessCompiler.resolve(context[context.length - 1], path);",
+                                "                        var importedName = String(imported.getAbsolutePath());",
+                                "                        var input = String(LessCompiler.readContent(imported));",
+                                "",
+                                "                        // Store it in the contents, for error reporting",
+                                "                        env.contents[importedName] = input;",
+                                "",
+                                "                        context.push(imported);",
+                                "                        dependencies.push(imported)",
+                                "",
+                                "                        new(window.less.Parser)({",
+                                "                            optimization:3,",
+                                "                            filename:importedName,",
+                                "                            contents:env.contents,",
+                                "                            dumpLineNumbers:window.less.dumpLineNumbers",
+                                "                        }).parse(input, function (e, root) {",
+                                "                            fn(e, root, input);",
+                                "",
+                                "                            context.pop();",
+                                "                        });",
+                                "                    }",
+                                "",
+                                "                    new(window.less.Parser)({optimization:3, filename:String(source.getCanonicalPath())}).parse(String(LessCompiler.readContent(source)), function (e,root) {",
+                                "                        if (e) {",
+                                "                            throw e;",
+                                "                        }",
+                                "                        compiled = root.toCSS({compress: " + ( minify ? "true" : "false" ) + "})",
+                                "                    })",
+                                "",
+                                "                    return {css:compiled, dependencies:dependencies}",
+                                "                }",
+                                "            " } ), "compiler.js", 1, null );
         Function compilerFunction = (Function) scope.get( "compile", scope );
 
         Context.exit();
@@ -173,7 +176,6 @@ public class Play22LessCompiler
         String css = ScriptableObject.getProperty( result, "css" ).toString();
         NativeArray dependencies = (NativeArray) ScriptableObject.getProperty( result, "dependencies" );
 
-        // jak zwrocic te wyniki?
         List<File> deps = new ArrayList<File>();
         for ( int i = 0; i < dependencies.getLength(); i++ )
         {
@@ -191,37 +193,6 @@ public class Play22LessCompiler
 
         return new InternalCompileResult( css, deps );
 
-    }
-
-    // ??
-    public static String readContent( File file )
-        throws IOException
-    {
-        String result = null;
-
-        BufferedReader is = new BufferedReader( new InputStreamReader( new FileInputStream( file ), "UTF-8" ) );
-        try
-        {
-            StringBuilder sb = new StringBuilder();
-            String line = is.readLine();
-            while ( line != null )
-            {
-                sb.append( line ).append( '\n' );
-                line = is.readLine();
-            }
-            result = sb.toString();
-        }
-        finally
-        {
-            is.close();
-        }
-        return result;
-    }
-
-    // ???
-    public static File resolve( File originalSource, String imported )
-    {
-        return new File( originalSource.getParentFile(), imported );
     }
 
     private static class InternalCompileResult
@@ -246,7 +217,6 @@ public class Play22LessCompiler
             return dependencies;
         }
     }
-
 
     public static class CompileResult
         extends InternalCompileResult

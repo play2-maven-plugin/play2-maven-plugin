@@ -55,15 +55,15 @@ public class Play22JavascriptCompiler
 {
     private List<String> simpleCompilerOptions;
 
-    //???
+    // ???
     private List<String> fullCompilerOptions;
-    
-    public void setSimpleCompilerOptions( List<String> simpleCompilerOptions)
+
+    public void setSimpleCompilerOptions( List<String> simpleCompilerOptions )
     {
         this.simpleCompilerOptions = simpleCompilerOptions;
     }
 
-    public void setFullCompilerOptions( List<String> fullCompilerOptions)
+    public void setFullCompilerOptions( List<String> fullCompilerOptions )
     {
         this.fullCompilerOptions = fullCompilerOptions;
     }
@@ -88,7 +88,7 @@ public class Play22JavascriptCompiler
 
         String origin = readFileContent( source );
 
-        CompilerOptions options = null;//????fullCompilerOptions;
+        CompilerOptions options = null; // ????fullCompilerOptions;
         if ( options == null )
         {
             CompilerOptions defaultOptions = new CompilerOptions();
@@ -141,7 +141,7 @@ public class Play22JavascriptCompiler
         {
             x.add( JSSourceFile.fromFile( source ) );
         }
-        JSSourceFile[] input = x.toArray( new JSSourceFile[0] );
+        JSSourceFile[] input = x.toArray( new JSSourceFile[x.size()] );
 
         try
         {
@@ -153,12 +153,12 @@ public class Play22JavascriptCompiler
                 {
                     minifiedJs = compiler.toSource();
                 }
-                return new CompileResult( origin, minifiedJs, null/*was: all*/ );
+                return new CompileResult( origin, minifiedJs, null/* was: all */ );
             }
             else
             {
                 JSError error = compiler.getErrors()[0];
-                File errorFile = null;// FIXME
+                File errorFile = null; // FIXME
                 // val errorFile = all.find(f => f.getAbsolutePath() == error.sourceName);
                 throw new AssetCompilationException( errorFile, error.description, error.lineNumber, null );
             }
@@ -171,7 +171,7 @@ public class Play22JavascriptCompiler
         }
     }
 
-    public/* static*/ String minify( String source, String name )
+    public String minify( String source, String name )
         throws AssetCompilationException
     {
         Compiler compiler = new Compiler();
@@ -271,7 +271,8 @@ public class Play22JavascriptCompiler
         return result;
     }
 
-    public static class CompileResult implements JavascriptCompilationResult
+    public static class CompileResult
+        implements JavascriptCompilationResult
     {
         private String js;
 

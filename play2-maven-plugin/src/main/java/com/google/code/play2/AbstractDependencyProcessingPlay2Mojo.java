@@ -31,7 +31,8 @@ public abstract class AbstractDependencyProcessingPlay2Mojo
     extends AbstractPlay2Mojo
 {
 
-    protected Artifact getDependencyArtifact( Collection<?> classPathArtifacts, String groupId, String artifactId, String type )
+    protected Artifact getDependencyArtifact( Collection<?> classPathArtifacts, String groupId, String artifactId,
+                                              String type )
     {
         Artifact result = null;
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
@@ -46,21 +47,5 @@ public abstract class AbstractDependencyProcessingPlay2Mojo
         }
         return result;
     }
-    
-    /*protected Artifact getDependencyArtifact( Collection<?> classPathArtifacts, String groupId, String artifactId, String type, String classifier )
-    {
-        Artifact result = null;
-        for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
-        {
-            Artifact artifact = (Artifact) iter.next();
-            if ( groupId.equals( artifact.getGroupId() ) && artifactId.equals( artifact.getArtifactId() )
-                && type.equals( artifact.getType() ) && classifier.equals( artifact.getClassifier() ) )
-            {
-                result = artifact;
-                break;
-            }
-        }
-        return result;
-    }*/
-    
+
 }

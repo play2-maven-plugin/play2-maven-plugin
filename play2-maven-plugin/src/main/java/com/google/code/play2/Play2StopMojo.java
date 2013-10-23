@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.google.code.play2;
@@ -52,22 +53,22 @@ public class Play2StopMojo
             getLog().info( "Skipping execution" );
             return;
         }
-        
+
         // Make separate method for checking conf file (use in "run" and "start" mojos)
         File baseDir = project.getBasedir();
 
-        File confDir = new File(baseDir, "conf");
-        if (!confDir.isDirectory())
+        File confDir = new File( baseDir, "conf" );
+        if ( !confDir.isDirectory() )
         {
             getLog().info( "Skipping execution" );
             return;
         }
-        if (!new File(confDir, "application.conf").isFile() && !new File(confDir, "application.json").isFile())
+        if ( !new File( confDir, "application.conf" ).isFile() && !new File( confDir, "application.json" ).isFile() )
         {
             getLog().info( "Skipping execution" );
             return;
         }
-        
+
         getLog().info( "Stopping Play! Server" );
 
         stopServer();

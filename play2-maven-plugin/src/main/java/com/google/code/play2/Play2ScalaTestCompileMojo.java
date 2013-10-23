@@ -34,37 +34,33 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "testCompile"/*, defaultPhase = LifecyclePhase.TEST_COMPILE*/, requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "testCompile"/* , defaultPhase = LifecyclePhase.TEST_COMPILE */, requiresDependencyResolution = ResolutionScope.TEST )
 public class Play2ScalaTestCompileMojo
     extends AbstractPlay2ScalaCompileMojo
 {
     /**
      * Set this to 'true' to bypass compilation of test sources. Its use is NOT RECOMMENDED, but quite convenient on
      * occasion.
-     * 
      */
-    @Parameter ( property = "maven.test.skip" )
+    @Parameter( property = "maven.test.skip" )
     private boolean testCompileSkip;
 
     /**
      * The source directories containing the test-source to be compiled.
-     * 
      */
-    @Parameter ( defaultValue = "${project.testCompileSourceRoots}", readonly = true, required = true )
+    @Parameter( defaultValue = "${project.testCompileSourceRoots}", readonly = true, required = true )
     private List<String> compileSourceRoots;
 
     /**
      * Project test classpath.
-     * 
      */
-    @Parameter ( defaultValue = "${project.testClasspathElements}", required = true, readonly = true )
+    @Parameter( defaultValue = "${project.testClasspathElements}", required = true, readonly = true )
     private List<String> classpathElements;
 
     /**
      * The directory where compiled test classes go.
-     * 
      */
-    @Parameter ( defaultValue = "${project.build.testOutputDirectory}", required = true, readonly = true )
+    @Parameter( defaultValue = "${project.build.testOutputDirectory}", required = true, readonly = true )
     private File outputDirectory;
 
     @Override

@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.google.code.play2;
@@ -33,12 +34,12 @@ import org.apache.tools.ant.taskdefs.Java;
 public abstract class AbstractPlay2StartServerMojo
     extends AbstractPlay2ServerMojo
 {
-    protected Java getStartServerTask( /*ConfigurationParser configParser, String playId, */File logFile, boolean spawn )
+    protected Java getStartServerTask( File logFile, boolean spawn )
         throws MojoExecutionException, MojoFailureException, IOException
     {
         File baseDir = project.getBasedir();
 
-        File pidFile = new File( baseDir, "RUNNING_PID"/*"server.pid"*/ );
+        File pidFile = new File( baseDir, "RUNNING_PID" );
         if ( pidFile.exists() )
         {
             throw new MojoExecutionException( String.format( "Play! Server already started (\"%s\" file found)",
@@ -55,7 +56,7 @@ public abstract class AbstractPlay2StartServerMojo
             }
         }
 
-        Java javaTask = prepareAntJavaTask( /*configParser, playId, */true );
+        Java javaTask = prepareAntJavaTask( true );
         if ( spawn )
         {
             javaTask.setSpawn( true );
@@ -66,8 +67,8 @@ public abstract class AbstractPlay2StartServerMojo
             PidFileDeleter.getInstance().add( pidFile );
         }
 
-        //przeniesienie tu bylo bledem PidFileDeleter.getInstance().add( pidFile );
-        //addSystemProperty( javaTask, "pidFile", pidFile.getAbsolutePath() );
+        // moving here wasn't good PidFileDeleter.getInstance().add( pidFile );
+        // addSystemProperty( javaTask, "pidFile", pidFile.getAbsolutePath() );
 
         if ( logFile != null )
         {
@@ -84,21 +85,17 @@ public abstract class AbstractPlay2StartServerMojo
         return javaTask;
     }
 
-    protected String getRootUrl( /*ConfigurationParser configParser*/ )
+    protected String getRootUrl( )
     {
         int serverPort = 9000;
         if ( getHttpPort() != null && getHttpPort().length() > 0 )
         {
             serverPort = Integer.parseInt( getHttpPort() );
         }
-        /*else
-        {
-            String serverPortStr = configParser.getProperty( "http.port" );
-            if ( serverPortStr != null )
-            {
-                serverPort = Integer.parseInt( serverPortStr );
-            }
-        }*/
+        /*
+         * else { String serverPortStr = configParser.getProperty( "http.port" ); if ( serverPortStr != null ) {
+         * serverPort = Integer.parseInt( serverPortStr ); } }
+         */
 
         return String.format( "http://localhost:%d/", serverPort );
     }

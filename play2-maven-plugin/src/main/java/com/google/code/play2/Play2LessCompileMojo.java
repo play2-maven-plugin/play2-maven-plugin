@@ -47,15 +47,15 @@ public class Play2LessCompileMojo
     extends AbstractPlay2Mojo
 {
 
-    private final static String assetsSourceDirectoryName = "app/assets";
+    private static final String assetsSourceDirectoryName = "app/assets";
 
-    private final static String targetDirectoryName = "resource_managed/main";
+    private static final String targetDirectoryName = "resource_managed/main";
 
-    private final static String[] lessExcludes = new String[] { "**/_*" };
+    private static final String[] lessExcludes = new String[] { "**/_*" };
 
-    private final static String[] lessIncludes = new String[] { "**/*.less" };
+    private static final String[] lessIncludes = new String[] { "**/*.less" };
 
-    private final static String cacheFileName = ".less-deps";
+    private static final String cacheFileName = ".less-deps";
 
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -64,7 +64,9 @@ public class Play2LessCompileMojo
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
         if ( !assetsSourceDirectory.isDirectory() )
+        {
             return; // nothing to do
+        }
 
         LessDependencyCache allDependencies = new LessDependencyCache();
 
@@ -72,7 +74,7 @@ public class Play2LessCompileMojo
         File depsFile = new File( targetDirectory, cacheFileName );
         if ( depsFile.isFile() )
         {
-            //TODO - change file format, disable caching for now
+            // TODO - change file format, disable caching for now
             // allDependencies.readFromFile( depsFile );
         }
 
@@ -163,8 +165,8 @@ public class Play2LessCompileMojo
                         else
                         {
                             if ( minifiedCssFile.exists() )
-                            {// TODO-check if isFile
-                                minifiedCssFile.delete();// TODO-check result
+                            { // TODO-check if isFile
+                                minifiedCssFile.delete(); // TODO-check result
                             }
                         }
                         List<File> allSourceFiles = result.getDependencies();
@@ -180,12 +182,12 @@ public class Play2LessCompileMojo
                     }
                     catch ( AssetCompilationException e )
                     {
-                        throw new MojoExecutionException("Less compilation failed", e);
+                        throw new MojoExecutionException( "Less compilation failed", e );
                     }
                 }
                 newAllDependencies.set( fileName, fileDependencies );
             }
-            //TODO - change file format, disable caching for now
+            // TODO - change file format, disable caching for now
             // newAllDependencies.writeToFile( depsFile );
 
             boolean resourceAlreadyAdded = false;

@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.google.code.play2;
@@ -41,22 +42,6 @@ import org.apache.tools.ant.taskdefs.Java;
 public class Play2StartMojo
     extends AbstractPlay2StartServerMojo
 {
-//    /**
-//     * Play! id (profile) used when starting server without tests.
-//     * 
-//     * @since 1.0.0
-//     */
-//    @Parameter( property = "play.id", defaultValue = "" )
-//    private String playId;
-
-//    /**
-//     * Play! id (profile) used when starting server with tests.
-//     * 
-//     * @since 1.0.0
-//     */
-//    @Parameter( property = "play.testId", defaultValue = "test" )
-//    private String playTestId;
-
     /**
      * Allows the server startup to be skipped.
      * 
@@ -65,16 +50,9 @@ public class Play2StartMojo
     @Parameter( property = "play.startSkip", defaultValue = "false" )
     private boolean startSkip;
 
-//    /**
-//     * Start server with test profile.
-//     * 
-//     * @since 1.0.0
-//     */
-//    @Parameter( property = "play.startWithTests", defaultValue = "false" )
-//    private boolean startWithTests;
-
     /**
-     * Spawns started JVM process. See <a href="http://ant.apache.org/manual/Tasks/java.html">Ant Java task documentation</a> for details.
+     * Spawns started JVM process. See <a href="http://ant.apache.org/manual/Tasks/java.html">Ant Java task
+     * documentation</a> for details.
      * 
      * @since 1.0.0
      */
@@ -106,46 +84,29 @@ public class Play2StartMojo
             getLog().info( "Skipping execution" );
             return;
         }
-        
-//        String startPlayId = ( startWithTests ? playTestId : playId );
-        
+
         File baseDir = project.getBasedir();
 
         // Make separate method for checking conf file (use in "run" and "start" mojos)
-        File confDir = new File(baseDir, "conf");
-        if (!confDir.isDirectory())
+        File confDir = new File( baseDir, "conf" );
+        if ( !confDir.isDirectory() )
         {
             getLog().info( "Skipping execution" );
             return;
         }
-        if (!new File(confDir, "application.conf").isFile() && !new File(confDir, "application.json").isFile())
+        if ( !new File( confDir, "application.conf" ).isFile() && !new File( confDir, "application.json" ).isFile() )
         {
             getLog().info( "Skipping execution" );
             return;
         }
-        
-//        ConfigurationParser configParser =  getConfiguration( startPlayId );
-
-//        String sysOut = configParser.getProperty( "application.log.system.out" );
-//        boolean redirectSysOutToFile = !( "false".equals( sysOut ) || "off".equals( sysOut ) );
 
         File logFile = null;
-        //if ( redirectSysOutToFile )
-        //{
-            File logDirectory = new File( baseDir, "logs" );
-            logFile = new File( logDirectory, "system.out" );
-        //}
+        File logDirectory = new File( baseDir, "logs" );
+        logFile = new File( logDirectory, "system.out" );
 
-//        if ( redirectSysOutToFile )
-//        {
-            getLog().info( String.format( "Starting Play! Server, output is redirected to %s", logFile.getPath() ) );
-//        }
-//        else
-//        {
-//            getLog().info( "Starting Play! Server" );
-//        }
+        getLog().info( String.format( "Starting Play! Server, output is redirected to %s", logFile.getPath() ) );
 
-        Java javaTask = getStartServerTask( /*configParser, startPlayId, */logFile, startSpawn );
+        Java javaTask = getStartServerTask( logFile, startSpawn );
 
         JavaRunnable runner = new JavaRunnable( javaTask );
         Thread t = new Thread( runner, "Play! Server runner" );
@@ -163,16 +124,16 @@ public class Play2StartMojo
         {
             throw new MojoExecutionException( "?", startServerException );
         }
-        
+
         if ( startSynchro )
         {
-            String rootUrl = getRootUrl( /*configParser*/ );
+            String rootUrl = getRootUrl();
 
             getLog().info( String.format( "Waiting for %s", rootUrl ) );
 
             waitForServerStarted( rootUrl, runner );
         }
-        
+
         getLog().info( "Play! Server started" );
     }
 

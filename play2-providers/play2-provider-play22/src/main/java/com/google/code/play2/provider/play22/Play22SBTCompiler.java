@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.google.code.play2.provider.play22;
@@ -36,32 +37,27 @@ import scala.collection.JavaConversions;
 
 import org.apache.maven.plugin.logging.Log;
 
-public class Play22SBTCompiler implements Play2SBTCompiler
+public class Play22SBTCompiler
+    implements Play2SBTCompiler
 {
-    private static final String COMPILE_ORDER = "mixed";//Tutaj???
+    private static final String COMPILE_ORDER = "mixed"; // Tutaj???
 
-//    private boolean playEnhance = false;
-//    
-//    public void setPlayEnhance(boolean playEnhance)
-//    {
-//        this.playEnhance = playEnhance;
-//    }
-    
     public String getDefaultScalaVersion()
     {
         return "2.10.2";
     }
-    
+
     public String getDefaultSbtVersion()
     {
         return "0.13.0";
     }
-    
-    public SBTCompilationResult/*Analysis*/ compile( Log mavenLog, File scalaCompilerFile, File scalaLibraryFile, List<File> scalaExtra,
-                  File xsbtiArtifactFile, File compilerInterfaceSrcFile, List<File> classpath,
-                  List<File> sources, File outputDirectory,
-                  List<String> scalacOptions, List<String> javacOptions,
-                  File analysisCacheFile, Map<File, File> cacheMap ) throws SBTCompilationException
+
+    public SBTCompilationResult compile( Log mavenLog, File scalaCompilerFile, File scalaLibraryFile,
+                                         List<File> scalaExtra, File xsbtiArtifactFile, File compilerInterfaceSrcFile,
+                                         List<File> classpath, List<File> sources, File outputDirectory,
+                                         List<String> scalacOptions, List<String> javacOptions, File analysisCacheFile,
+                                         Map<File, File> cacheMap )
+        throws SBTCompilationException
     {
         SbtLogger sbtLogger = new SbtLogger( mavenLog );
         Setup setup =
@@ -73,10 +69,11 @@ public class Play22SBTCompiler implements Play2SBTCompiler
         }
         Compiler compiler = Compiler.create( setup, sbtLogger );
 
-        scala.Option<File> none = scala.Option.empty(); 
+        scala.Option<File> none = scala.Option.empty();
+        IncOptions incOptions = new IncOptions( 3, 0.5d, false, false, 5, none, false, none );
         Inputs inputs =
             Inputs.create( classpath, sources, outputDirectory, scalacOptions, javacOptions, analysisCacheFile,
-                           cacheMap, COMPILE_ORDER, new IncOptions(3, 0.5d, false, false, 5, none, false, none) /*incOptions: IncOptions*/, false/*mirrorAnalysisCache*/ );
+                           cacheMap, COMPILE_ORDER, incOptions, false/* mirrorAnalysisCache */ );
         if ( mavenLog.isDebugEnabled() )
         {
             Inputs.debug( inputs, sbtLogger );
@@ -93,7 +90,6 @@ public class Play22SBTCompiler implements Play2SBTCompiler
         }
     }
 
-
     public static class CompileResult
         implements SBTCompilationResult
     {
@@ -108,7 +104,7 @@ public class Play22SBTCompiler implements Play2SBTCompiler
         {
             return JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
         }
-        
+
     }
-    
+
 }

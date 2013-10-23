@@ -28,44 +28,51 @@ import com.google.code.play2.provider.Play2SBTCompiler;
 import com.google.code.play2.provider.Play2TemplateCompiler;
 
 /**
- * ...
- *
+ * Plugin provider for Play&#33; 2.1.x
+ * 
  * @plexus.component role="com.google.code.play2.provider.Play2Provider" role-hint="play22"
  */
 public class Play21Provider
     implements Play2Provider
 {
-    public Play2LessCompiler getLessCompiler() {
+    public Play2LessCompiler getLessCompiler()
+    {
         return new Play21LessCompiler();
     }
 
-    public Play2CoffeescriptCompiler getCoffeescriptCompiler() {
+    public Play2CoffeescriptCompiler getCoffeescriptCompiler()
+    {
         return new Play21CoffeescriptCompiler();
     }
 
-    public Play2JavascriptCompiler getJavascriptCompiler() {
+    public Play2JavascriptCompiler getJavascriptCompiler()
+    {
         return new Play21JavascriptCompiler();
     }
 
-    public Play2RoutesCompiler getRoutesCompiler() {
+    public Play2RoutesCompiler getRoutesCompiler()
+    {
         return new Play21RoutesCompiler();
     }
 
-    public Play2TemplateCompiler getTemplatesCompiler() {
+    public Play2TemplateCompiler getTemplatesCompiler()
+    {
         return new Play21TemplateCompiler();
     }
 
-    public Play2SBTCompiler getScalaCompiler() {
+    public Play2SBTCompiler getScalaCompiler()
+    {
         return new Play21SBTCompiler();
     }
 
-    public Play2JavaEnhancer getEnhancer() {
+    public Play2JavaEnhancer getEnhancer()
+    {
         return new Play21JavaEnhancer();
     }
 
-    public Play2EbeanEnhancer getEbeanEnhancer() {
+    public Play2EbeanEnhancer getEbeanEnhancer()
+    {
         return new Play21EbeanEnhancer();
     }
 
 }
-

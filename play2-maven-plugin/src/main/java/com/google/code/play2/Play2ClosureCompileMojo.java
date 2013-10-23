@@ -36,7 +36,6 @@ import com.google.code.play2.provider.AssetCompilationException;
 import com.google.code.play2.provider.JavascriptCompilationResult;
 import com.google.code.play2.provider.Play2JavascriptCompiler;
 
-
 /**
  * Compile JavaScript assets
  * 
@@ -48,13 +47,13 @@ public class Play2ClosureCompileMojo
     extends AbstractPlay2Mojo
 {
 
-    private final static String assetsSourceDirectoryName = "app/assets";
+    private static final String assetsSourceDirectoryName = "app/assets";
 
-    private final static String targetDirectoryName = "resource_managed/main";
+    private static final String targetDirectoryName = "resource_managed/main";
 
-    private final static String[] closureExcludes = new String[] { "**/_*" };
+    private static final String[] closureExcludes = new String[] { "**/_*" };
 
-    private final static String[] closureIncludes = new String[] { "**/*.js" };
+    private static final String[] closureIncludes = new String[] { "**/*.js" };
 
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -63,7 +62,9 @@ public class Play2ClosureCompileMojo
         File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
 
         if ( !assetsSourceDirectory.isDirectory() )
+        {
             return; // nothing to do
+        }
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
@@ -81,14 +82,14 @@ public class Play2ClosureCompileMojo
             Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
             compiler.setSimpleCompilerOptions( new ArrayList<String>() ); // TODO-add options
             compiler.setFullCompilerOptions( new ArrayList<String>() ); // TODO-add options
-            
+
             for ( String fileName : files )
             {
                 getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
                 File srcJsFile = new File( assetsSourceDirectory, fileName );
 
                 // String jsFileName = fileName.replace( ".coffee", ".js" );
-                File jsFile = new File( outputDirectory, fileName/* jsFileName */);
+                File jsFile = new File( outputDirectory, fileName/* jsFileName */ );
 
                 String minifiedJsFileName = fileName.replace( ".js", ".min.js" );
                 File minifiedJsFile = new File( outputDirectory, minifiedJsFileName );
@@ -120,14 +121,14 @@ public class Play2ClosureCompileMojo
                         else
                         {
                             if ( minifiedJsFile.exists() )
-                            {// TODO-check if isFile
-                                minifiedJsFile.delete();// TODO-check result
+                            { // TODO-check if isFile
+                                minifiedJsFile.delete(); // TODO-check result
                             }
                         }
                     }
                     catch ( AssetCompilationException e )
                     {
-                        throw new MojoExecutionException("Javascript compilation failed", e);
+                        throw new MojoExecutionException( "Javascript compilation failed", e );
                     }
                 }
             }

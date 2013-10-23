@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,13 +44,13 @@ public class Play21CoffeescriptCompiler
     implements Play2CoffeescriptCompiler
 {
 
-    private List<String> options;
-    
+    private List<String> options = Collections.emptyList();
+
     public void setOptions( List<String> options )
     {
         this.options = options;
     }
-    
+
     public CoffeescriptCompilationResult compile( File source )
         throws AssetCompilationException, IOException
     {
@@ -86,15 +87,15 @@ public class Play21CoffeescriptCompiler
 
         ctx.evaluateReader( scope,
                             new InputStreamReader(
-                                                   this.getClass().getClassLoader().getResource( "coffee-script.js" ).openConnection().getInputStream() ),
-                            "coffee-script.js", 1, null );
+                                                   this.getClass().getClassLoader().getResource( "coffee-script.js" ).openConnection().getInputStream(),
+                                                   "UTF-8" ), "coffee-script.js", 1, null );
 
         NativeObject coffee = (NativeObject) scope.get( "CoffeeScript", scope );
         Function compilerFunction = (Function) coffee.get( "compile", scope );
 
         Context.exit();
 
-        String coffeeCode = readFileContent( source );// Path(source).string.replace("\r", "");
+        String coffeeCode = readFileContent( source ); // Path(source).string.replace("\r", "");
         Scriptable options = ctx.newObject( scope );
         options.put( "bare", options, Boolean.valueOf( bare ) );
         return (String) Context.call( null, compilerFunction, scope, scope, new Object[] { coffeeCode, options } );
@@ -123,7 +124,6 @@ public class Play21CoffeescriptCompiler
         }
         return result;
     }
-
 
     public static class CompileResult
         implements CoffeescriptCompilationResult

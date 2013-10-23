@@ -21,15 +21,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-
 public interface Play2JavascriptCompiler
 {
-    void setSimpleCompilerOptions( List<String> simpleCompilerOptions);
+    void setSimpleCompilerOptions( List<String> simpleCompilerOptions );
 
-    //???
-    void setFullCompilerOptions( List<String> fullCompilerOptions);
-    
-    JavascriptCompilationResult compile( File source  )
+    // ???
+    void setFullCompilerOptions( List<String> fullCompilerOptions );
+
+    JavascriptCompilationResult compile( File source )
         throws AssetCompilationException, IOException;
 
     String minify( String source, String name )

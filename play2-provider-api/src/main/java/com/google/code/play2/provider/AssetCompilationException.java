@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Grzegorz Slowikowski (gslowikowski at gmail dot com)
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package com.google.code.play2.provider;
 
 import java.io.File;
-//import java.io.Serializable;
 
 public class AssetCompilationException
     extends Exception
@@ -62,5 +61,5 @@ public class AssetCompilationException
     {
         return source;
     }
-    
+
 }

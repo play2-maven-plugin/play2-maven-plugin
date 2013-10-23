@@ -1,17 +1,18 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
 package com.google.code.play2;
@@ -49,7 +50,7 @@ public abstract class AbstractPlay2RunMojo
     @Parameter( property = "play.runFork", defaultValue = "true" )
     private boolean runFork;
 
-    //protected abstract String getPlayId();
+    // protected abstract String getPlayId();
 
     @Override
     protected void internalExecute()
@@ -60,34 +61,34 @@ public abstract class AbstractPlay2RunMojo
             getLog().info( "Skipping execution" );
             return;
         }
-        
-        //String playId = getPlayId();
-        
+
+        // String playId = getPlayId();
+
         File baseDir = project.getBasedir();
 
         // Make separate method for checking conf file (use in "run" and "start" mojos)
-        File confDir = new File(baseDir, "conf");
-        if (!confDir.isDirectory())
+        File confDir = new File( baseDir, "conf" );
+        if ( !confDir.isDirectory() )
         {
             getLog().info( "Skipping execution" );
             return;
         }
-        if (!new File(confDir, "application.conf").isFile() && !new File(confDir, "application.json").isFile())
+        if ( !new File( confDir, "application.conf" ).isFile() && !new File( confDir, "application.json" ).isFile() )
         {
             getLog().info( "Skipping execution" );
             return;
         }
-        
-        File pidFile = new File( baseDir, "RUNNING_PID"/*"server.pid"*/ );
+
+        File pidFile = new File( baseDir, "RUNNING_PID" );
         if ( pidFile.exists() )
         {
             throw new MojoExecutionException( String.format( "Play! Server already started (\"%s\" file found)",
                                                              pidFile.getName() ) );
         }
 
-        //ConfigurationParser configParser =  getConfiguration( playId );
+        // ConfigurationParser configParser = getConfiguration( playId );
 
-        Java javaTask = prepareAntJavaTask( /*configParser, playId, */runFork );
+        Java javaTask = prepareAntJavaTask( /* configParser, playId, */runFork );
         javaTask.setFailonerror( true );
         PidFileDeleter.getInstance().add( pidFile );
 
@@ -111,7 +112,7 @@ public abstract class AbstractPlay2RunMojo
         {
             throw new MojoExecutionException( "?", runException );
         }
-        
+
         if ( !runFork )
         {
             while ( true ) // wait for Ctrl+C

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Grzegorz Slowikowski (gslowikowski at gmail dot com)
+ * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ public abstract class AbstractPlay2Mojo
 {
     /**
      * <i>Maven Internal</i>: Project to interact with.
-     * 
      */
     @Component
     protected MavenProject project;
@@ -142,8 +141,7 @@ public abstract class AbstractPlay2Mojo
                 getLog().info( String.format( "Deleting \"%s\" file", directory ) ); // TODO-more descriptive message
                 if ( !directory.delete() )
                 {
-                    throw new IOException( String.format( "Cannot delete \"%s\" file",
-                                                          directory.getCanonicalPath() ) );
+                    throw new IOException( String.format( "Cannot delete \"%s\" file", directory.getCanonicalPath() ) );
                 }
             }
         }
@@ -152,8 +150,7 @@ public abstract class AbstractPlay2Mojo
         {
             if ( !directory.mkdirs() )
             {
-                throw new IOException( String.format( "Cannot create \"%s\" directory",
-                                                      directory.getCanonicalPath() ) );
+                throw new IOException( String.format( "Cannot create \"%s\" directory", directory.getCanonicalPath() ) );
             }
         }
     }

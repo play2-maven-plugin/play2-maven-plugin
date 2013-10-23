@@ -31,7 +31,6 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import com.google.code.play2.provider.Play2RoutesCompiler;
 import com.google.code.play2.provider.RoutesCompilationException;
 
-
 /**
  * Compile routes
  * 
@@ -51,15 +50,15 @@ public class Play2RoutesCompileMojo
     @Parameter( property = "play.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
 
-    private final static String confDirectoryName = "conf";
+    private static final String confDirectoryName = "conf";
 
-    private final static String targetDirectoryName = "src_managed/main";
+    private static final String targetDirectoryName = "src_managed/main";
 
-    private final static String[] routesIncludes = new String[] { "*.routes", "routes" };
+    private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
 
-    private final static String[] javaAdditionalImports = new String[] { "play.libs.F" };
+    private static final String[] javaAdditionalImports = new String[] { "play.libs.F" };
 
-    private final static String[] scalaAdditionalImports = new String[] {};
+    private static final String[] scalaAdditionalImports = new String[] {};
 
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -76,7 +75,7 @@ public class Play2RoutesCompileMojo
             String[] files = scanner.getIncludedFiles();
             if ( files.length > 0 )
             {
-                if (!"java".equals( mainLang ) && !"scala".equals( mainLang ) )
+                if ( !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
                 {
                     throw new MojoExecutionException(
                                                       String.format( "Routes compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
@@ -101,7 +100,7 @@ public class Play2RoutesCompileMojo
                 compiler.setOutputDirectory( generatedDirectory );
                 compiler.setAdditionalImports( additionalImportsList );
 
-                for (String fileName: files)
+                for ( String fileName : files )
                 {
                     File routesFile = new File( confDirectory, fileName );
                     if ( routesFile.isFile() )
@@ -125,7 +124,7 @@ public class Play2RoutesCompileMojo
                 }
             }
         }
-        
+
     }
 
 }
