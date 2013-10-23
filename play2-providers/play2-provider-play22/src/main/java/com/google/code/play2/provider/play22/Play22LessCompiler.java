@@ -17,7 +17,9 @@
 
 package com.google.code.play2.provider.play22;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -193,6 +195,37 @@ public class Play22LessCompiler
 
         return new InternalCompileResult( css, deps );
 
+    }
+
+    // Called from Less script
+    public static String readContent( File file )
+        throws IOException
+    {
+        String result = null;
+
+        BufferedReader is = new BufferedReader( new InputStreamReader( new FileInputStream( file ), "UTF-8" ) );
+        try
+        {
+            StringBuilder sb = new StringBuilder();
+            String line = is.readLine();
+            while ( line != null )
+            {
+                sb.append( line ).append( '\n' );
+                line = is.readLine();
+            }
+            result = sb.toString();
+        }
+        finally
+        {
+            is.close();
+        }
+        return result;
+    }
+
+    // Called from Less script
+    public static File resolve( File originalSource, String imported )
+    {
+        return new File( originalSource.getParentFile(), imported );
     }
 
     private static class InternalCompileResult
