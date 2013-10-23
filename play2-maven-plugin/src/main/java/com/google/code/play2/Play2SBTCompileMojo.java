@@ -49,8 +49,8 @@ import com.google.code.play2.provider.SBTCompilationResult;
  * @since 1.0.0
  */
 @Mojo( name = "compile"/* , defaultPhase = LifecyclePhase.COMPILE */, requiresDependencyResolution = ResolutionScope.COMPILE )
-public class Play2ScalaCompileMojo
-    extends AbstractPlay2ScalaCompileMojo
+public class Play2SBTCompileMojo
+    extends AbstractPlay2SBTCompileMojo
 {
     /**
      * The source directories containing the sources to be compiled.

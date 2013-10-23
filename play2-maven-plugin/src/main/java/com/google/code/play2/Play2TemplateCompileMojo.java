@@ -37,7 +37,7 @@ import com.google.code.play2.provider.TemplateCompilationException;
  * @since 1.0.0
  */
 @Mojo( name = "template-compile" )
-public class Play2ScalaTemplateCompileMojo
+public class Play2TemplateCompileMojo
     extends AbstractPlay2Mojo
 {
 

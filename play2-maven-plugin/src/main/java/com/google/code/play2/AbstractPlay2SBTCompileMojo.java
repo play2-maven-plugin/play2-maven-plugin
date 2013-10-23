@@ -55,7 +55,7 @@ import com.google.code.play2.provider.SBTCompilationResult;
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  */
-public abstract class AbstractPlay2ScalaCompileMojo
+public abstract class AbstractPlay2SBTCompileMojo
     extends AbstractDependencyProcessingPlay2Mojo
 {
     public static final String SCALA_GROUPID = "org.scala-lang";
