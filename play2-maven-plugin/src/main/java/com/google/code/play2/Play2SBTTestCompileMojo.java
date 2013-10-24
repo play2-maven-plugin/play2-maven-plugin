@@ -19,7 +19,9 @@ package com.google.code.play2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,6 +29,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Compile Scala and Java test sources
@@ -99,6 +102,22 @@ public class Play2SBTTestCompileMojo
     protected File getAnalysisCacheFile()
     {
         return defaultTestAnalysisCacheFile( project );
+    }
+
+    @Override
+    protected Map<File, File> getAnalysisCacheMap()
+    {
+        HashMap<File, File> map = new HashMap<File, File>();
+        for ( MavenProject project : reactorProjects )
+        {
+            File analysisCacheFile = defaultAnalysisCacheFile( project );
+            File classesDirectory = new File( project.getBuild().getOutputDirectory() );
+            map.put( classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile() );
+            File testAnalysisCacheFile = defaultTestAnalysisCacheFile( project );
+            File testClassesDirectory = new File( project.getBuild().getTestOutputDirectory() );
+            map.put( testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
+        }
+        return map;
     }
 
 }

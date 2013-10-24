@@ -23,8 +23,10 @@ import java.io.IOException;
 //import java.net.URLClassLoader;
 //import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 //import java.util.Map;
 import java.util.Set;
 
@@ -36,6 +38,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
@@ -109,8 +112,23 @@ public class Play2SBTCompileMojo
     @Override
     protected File getAnalysisCacheFile()
     {
-        // FIXME TEMP return defaultAnalysisCacheFile( project );
-        return new File( project.getBuild().getDirectory(), "cache/" + project.getArtifactId() + "/compile/inc_compile" );
+        return defaultAnalysisCacheFile( project );
+    }
+
+    @Override
+    protected Map<File, File> getAnalysisCacheMap()
+    {
+        HashMap<File, File> map = new HashMap<File, File>();
+        for ( MavenProject project : reactorProjects )
+        {
+            File analysisCacheFile = defaultAnalysisCacheFile( project );
+            File classesDirectory = new File( project.getBuild().getOutputDirectory() );
+            map.put( classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile() );
+            //File testAnalysisCacheFile = defaultTestAnalysisCacheFile( project );
+            //File testClassesDirectory = new File( project.getBuild().getTestOutputDirectory() );
+            //map.put( testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
+        }
+        return map;
     }
 
     @Override

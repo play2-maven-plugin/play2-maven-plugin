@@ -28,15 +28,35 @@ import org.apache.maven.plugin.logging.Log; //?
 
 public interface Play2SBTCompiler
 {
-    // ? String getDefaultScalaVersion();
+    String getDefaultScalaVersion();
 
     String getDefaultSbtVersion();
 
-    // TODO - add setters, compile() method should have less parameters
-    SBTCompilationResult compile( Log mavenLog, File scalaCompilerFile, File scalaLibraryFile, List<File> scalaExtra,
-                                  File xsbtiArtifactFile, File compilerInterfaceSrcFile, List<File> classpath,
-                                  List<File> sources, File outputDirectory, List<String> scalacOptions,
-                                  List<String> javacOptions, File analysisCacheFile, Map<File, File> cacheMap )
+    void setLog( Log mavenLog );
+
+    void setScalaLibraryFile( File scalaLibraryFile );
+
+    void setScalaCompilerFile( File scalaCompilerFile );
+
+    void setScalaExtraFiles( List<File> scalaExtraFiles );
+
+    void setXsbtiArtifactFile( File xsbtiArtifactFile );
+
+    void setCompilerInterfaceSrcFile( File compilerInterfaceSrcFile );
+
+    void setClassPathFiles( List<File> classpathFiles );
+
+    void setOutputDirectory( File outputDirectory );
+
+    void setScalacOptions( List<String> scalacOptions );
+
+    void setJavacOptions( List<String> javacOptions );
+
+    void setAnalysisCacheFile( File analysisCacheFile );
+
+    void setAnalysisCacheMap( Map<File, File> analysisCacheMap );
+
+    SBTCompilationResult compile( List<File> sourceFiles )
         throws SBTCompilationException;
 
 }

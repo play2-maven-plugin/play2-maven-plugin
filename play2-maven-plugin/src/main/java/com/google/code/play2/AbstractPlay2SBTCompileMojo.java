@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -157,8 +157,8 @@ public abstract class AbstractPlay2SBTCompileMojo
             sourceRootDirs.add( new File( compileSourceRoot ) );
         }
 
-        List<File> sources = getSourceFiles( sourceRootDirs );
-        if ( sources.isEmpty() )
+        List<File> sourceFiles = getSourceFiles( sourceRootDirs );
+        if ( sourceFiles.isEmpty() )
         {
             getLog().info( "No sources to compile" );
 
@@ -167,6 +167,8 @@ public abstract class AbstractPlay2SBTCompileMojo
 
         try
         {
+            Play2SBTCompiler compiler = play2Provider.getScalaCompiler();
+
             Artifact scalaLibraryArtifact =
                 getDependencyArtifact( project.getArtifacts(), SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, "jar" );
             if ( scalaLibraryArtifact == null )
@@ -174,8 +176,8 @@ public abstract class AbstractPlay2SBTCompileMojo
                 throw new MojoExecutionException( String.format( "Required %s:%s:jar dependency not found",
                                                                  SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID ) );
             }
-            String scalaVersion = scalaLibraryArtifact.getVersion();
 
+            String scalaVersion = scalaLibraryArtifact.getVersion();
             Artifact scalaCompilerArtifact =
                 getResolvedArtifact( SCALA_GROUPID, SCALA_COMPILER_ARTIFACTID, scalaVersion );
             if ( scalaCompilerArtifact == null )
@@ -187,8 +189,6 @@ public abstract class AbstractPlay2SBTCompileMojo
 
             List<File> scalaExtraJars = getCompilerDependencies( scalaCompilerArtifact );
             scalaExtraJars.remove( scalaLibraryArtifact.getFile() );
-
-            Play2SBTCompiler compiler = play2Provider.getScalaCompiler();
 
             String resolvedSbtVersion = this.sbtVersion;
             if ( resolvedSbtVersion == null || resolvedSbtVersion.length() == 0 )
@@ -215,39 +215,26 @@ public abstract class AbstractPlay2SBTCompileMojo
 
             List<String> classpathElements = getClasspathElements();
             classpathElements.remove( getOutputDirectory().getAbsolutePath() );
-
-            // Resolving scalacOptions
-            List<String> resolvedScalacOptions = new ArrayList<String>( Arrays.asList( scalacOptions.split( " " ) ) );
-            if ( !resolvedScalacOptions.contains( "-encoding" ) )
-            {
-                if ( sourceEncoding != null && sourceEncoding.length() > 0 )
-                {
-                    resolvedScalacOptions.add( "-encoding" );
-                    resolvedScalacOptions.add( sourceEncoding );
-                }
-            }
-
-            // Resolving javacOptions
-            List<String> resolvedJavacOptions = new ArrayList<String>( Arrays.asList( javacOptions.split( " " ) ) );
-            if ( !resolvedJavacOptions.contains( "-encoding" ) )
-            {
-                resolvedJavacOptions.add( "-encoding" );
-                resolvedJavacOptions.add( sourceEncoding );
-            }
-
-            Map<File, File> cacheMap = getAnalysisCacheMap();
-
-            List<File> classpath = new ArrayList<File>( classpathElements.size() );
+            List<File> classpathFiles = new ArrayList<File>( classpathElements.size() );
             for ( String path : classpathElements )
             {
-                classpath.add( new File( path ) );
+                classpathFiles.add( new File( path ) );
             }
 
-            SBTCompilationResult compileResult =
-                compiler.compile( getLog(), scalaCompilerArtifact.getFile(), scalaLibraryArtifact.getFile(),
-                                  scalaExtraJars, xsbtiArtifact.getFile(), compilerInterfaceSrc.getFile(), classpath,
-                                  sources, getOutputDirectory(), resolvedScalacOptions, resolvedJavacOptions,
-                                  getAnalysisCacheFile(), cacheMap );
+            compiler.setLog( getLog() );
+            compiler.setOutputDirectory( getOutputDirectory() );
+            compiler.setScalaLibraryFile( scalaLibraryArtifact.getFile() );
+            compiler.setScalaCompilerFile( scalaCompilerArtifact.getFile() );
+            compiler.setScalaExtraFiles( scalaExtraJars );
+            compiler.setXsbtiArtifactFile( xsbtiArtifact.getFile() );
+            compiler.setCompilerInterfaceSrcFile( compilerInterfaceSrc.getFile() );
+            compiler.setScalacOptions( getScalacOprions() );
+            compiler.setJavacOptions( getJavacOprions() );
+            compiler.setAnalysisCacheFile( getAnalysisCacheFile() );
+            compiler.setAnalysisCacheMap( getAnalysisCacheMap() );
+            compiler.setClassPathFiles( classpathFiles );
+
+            SBTCompilationResult compileResult = compiler.compile( sourceFiles );
             postCompile( compileResult );
         }
         catch ( SBTCompilationException e )
@@ -280,6 +267,8 @@ public abstract class AbstractPlay2SBTCompileMojo
 
     protected abstract File getAnalysisCacheFile();
 
+    protected abstract Map<File, File> getAnalysisCacheMap();
+
     private List<File> getSourceFiles( List<File> sourceRootDirs )
     {
         List<File> sourceFiles = new ArrayList<File>();
@@ -302,14 +291,39 @@ public abstract class AbstractPlay2SBTCompileMojo
                 }
             }
         }
-        // scalac is sensible to scala file order, file system can't garanty file order => unreproductible build error
+        // scalac is sensible to scala file order, file system can't guarantee file order => unreproductible build error
         // across platform
-        // to garanty reproductible command line we order file by path (os dependend).
+        // to guarantee reproductible command line we order file by path (os dependend).
         // Collections.sort( sourceFiles );
         return sourceFiles;
     }
 
-    private Map<File, File> getAnalysisCacheMap()
+    private List<String> getScalacOprions()
+    {
+        List<String> result = new ArrayList<String>( Arrays.asList( scalacOptions.split( " " ) ) );
+        if ( !result.contains( "-encoding" ) )
+        {
+            if ( sourceEncoding != null && sourceEncoding.length() > 0 )
+            {
+                result.add( "-encoding" );
+                result.add( sourceEncoding );
+            }
+        }
+        return result;
+    }
+
+    private List<String> getJavacOprions()
+    {
+        List<String> result = new ArrayList<String>( Arrays.asList( javacOptions.split( " " ) ) );
+        if ( !result.contains( "-encoding" ) )
+        {
+            result.add( "-encoding" );
+            result.add( sourceEncoding );
+        }
+        return result;
+    }
+
+    /*private Map<File, File> getAnalysisCacheMap()
     {
         HashMap<File, File> map = new HashMap<File, File>();
         for ( MavenProject project : reactorProjects )
@@ -322,7 +336,7 @@ public abstract class AbstractPlay2SBTCompileMojo
             map.put( testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
         }
         return map;
-    }
+    }*/
 
     private File defaultAnalysisDirectory( MavenProject p )
     {

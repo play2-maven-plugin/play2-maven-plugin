@@ -30,6 +30,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -74,10 +75,20 @@ public class Play2EnhanceClassesMojo
 
     private File getAnalysisCacheFile()
     {
-        // FIXME TEMP return new File(project.getBuild().getDirectory(), "analysis/compile");
-        return new File( project.getBuild().getDirectory(), "cache/" + project.getArtifactId() + "/compile/inc_compile" );
-        // return defaultAnalysisCacheFile( project );
+        return defaultAnalysisCacheFile( project );
     }
+
+    // Copied from AbstractPlay2SBTCompileMojo
+    private File defaultAnalysisDirectory( MavenProject p )
+    {
+        return new File( p.getBuild().getDirectory(), "analysis" );
+    }
+
+    protected File defaultAnalysisCacheFile( MavenProject p )
+    {
+        return new File( defaultAnalysisDirectory( p ), "compile" );
+    }
+
 
     protected void enhanceClasses( List<File> classpathFiles )
         throws MojoExecutionException, IOException
