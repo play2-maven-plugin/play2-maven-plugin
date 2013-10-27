@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.javascript.jscomp.CompilationLevel;
@@ -53,84 +54,26 @@ import com.google.code.play2.provider.Play2JavascriptCompiler;
 public class Play22JavascriptCompiler
     implements Play2JavascriptCompiler
 {
-    private List<String> simpleCompilerOptions;
+    private List<String> compilerOptions = Collections.emptyList();
 
-    // ???
-    private List<String> fullCompilerOptions;
-
-    public void setSimpleCompilerOptions( List<String> simpleCompilerOptions )
+    public void setCompilerOptions( List<String> compilerOptions )
     {
-        this.simpleCompilerOptions = simpleCompilerOptions;
+        this.compilerOptions = compilerOptions;
     }
-
-    public void setFullCompilerOptions( List<String> fullCompilerOptions )
-    {
-        this.fullCompilerOptions = fullCompilerOptions;
-    }
-
-    // private String css = null;
-    // //?private String minifiedCss = null;
-    // private List<File> dependencies;
-
-    // public String getCss()
-    // {
-    // return css;
-    // }
-    //
-    // public List<File> getDependencies() {
-    // return dependencies;
-    // }
 
     public CompileResult compile( File source )
         throws AssetCompilationException, IOException
     {
-        boolean simpleCheck = simpleCompilerOptions.contains( "rjs" );
+        boolean requireJsMode = compilerOptions.contains( "rjs" );
 
         String origin = readFileContent( source );
 
-        CompilerOptions options = null; // ????fullCompilerOptions;
-        if ( options == null )
-        {
-            CompilerOptions defaultOptions = new CompilerOptions();
-            defaultOptions.closurePass = true;
-            if ( !simpleCheck )
-            {
-                defaultOptions.setProcessCommonJSModules( true );
-                defaultOptions.setCommonJSModulePathPrefix( source.getParent() + File.separator );
-                List<String> entryPoints = new ArrayList<String>( 1 );
-                entryPoints.add( toModuleName( source.getName() ) );
-                defaultOptions.setManageClosureDependencies( entryPoints );
-            }
-            for ( String opt : simpleCompilerOptions )
-            {
-                if ( "advancedOptimizations".equals( opt ) )
-                {
-                    CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel( defaultOptions );
-                }
-                else if ( "checkCaja".equals( opt ) )
-                {
-                    defaultOptions.setCheckCaja( true );
-                }
-                else if ( "checkControlStructures".equals( opt ) )
-                {
-                    defaultOptions.setCheckControlStructures( true );
-                }
-                else if ( "checkTypes".equals( opt ) )
-                {
-                    defaultOptions.setCheckTypes( true );
-                }
-                else if ( "checkSymbols".equals( opt ) )
-                {
-                    defaultOptions.setCheckSymbols( true );
-                }
-            }
-            options = defaultOptions;
-        }
+        CompilerOptions options = getOptions( source, requireJsMode );
 
         Compiler compiler = new Compiler();
         List<File> all = allSiblings( source );
         List<JSSourceFile> x = new ArrayList<JSSourceFile>();
-        if ( !simpleCheck )
+        if ( !requireJsMode )
         {
             for ( File f : all )
             {
@@ -149,26 +92,81 @@ public class Play22JavascriptCompiler
             if ( result.success )
             {
                 String minifiedJs = null;
-                if ( !simpleCheck )
+                if ( !requireJsMode )
                 {
                     minifiedJs = compiler.toSource();
                 }
-                return new CompileResult( origin, minifiedJs, null/* was: all */ );
+                return new CompileResult( origin, minifiedJs, null );
             }
             else
             {
+                // val error = compiler.getErrors().head
+                // val errorFile = all.find(f => f.getAbsolutePath() == error.sourceName)
+                // throw AssetCompilationException(errorFile, error.description, Some(error.lineNumber), None)
                 JSError error = compiler.getErrors()[0];
-                File errorFile = null; // FIXME
-                // val errorFile = all.find(f => f.getAbsolutePath() == error.sourceName);
+                File errorFile = null;
+                for (File f: all)
+                {
+                    if (f.getAbsolutePath().equals( error.sourceName ))
+                    {
+                        errorFile = f;
+                        break;
+                    }
+                }
                 throw new AssetCompilationException( errorFile, error.description, error.lineNumber, null );
             }
         }
         catch ( Exception e )
         {
-            // e.printStackTrace();
-            throw new AssetCompilationException( source, "Internal Closure Compiler error (see logs)", null, null );
-            // throw new MojoFailureException( "Internal Closure Compiler error (see logs)" );
+            throw new AssetCompilationException( source, "Internal Closure Compiler error (see logs)", null, null, e );
         }
+    }
+
+    private CompilerOptions getOptions( File source, boolean requireJsMode )
+    {
+        CompilerOptions defaultOptions = new CompilerOptions();
+        defaultOptions.closurePass = true;
+        for ( String opt : compilerOptions )
+        {
+            if ( "advancedOptimizations".equals( opt ) )
+            {
+                CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel( defaultOptions );
+            }
+            else if ( "checkCaja".equals( opt ) )
+            {
+                defaultOptions.setCheckCaja( true );
+            }
+            else if ( "checkControlStructures".equals( opt ) )
+            {
+                defaultOptions.setCheckControlStructures( true );
+            }
+            else if ( "checkTypes".equals( opt ) )
+            {
+                defaultOptions.setCheckTypes( true );
+            }
+            else if ( "checkSymbols".equals( opt ) )
+            {
+                defaultOptions.setCheckSymbols( true );
+            }
+            else if ( "commonJs".equals( opt ) )
+            {
+                if ( !requireJsMode )
+                {
+                    defaultOptions.setProcessCommonJSModules( true );
+                    // The compiler always expects forward slashes even on Windows.
+                    defaultOptions.setCommonJSModulePathPrefix( ( source.getParent() + File.separator ).replaceAll( "\\\\",
+                                                                                                                    "/" ) );
+                    List<String> entryPoints = new ArrayList<String>( 1 );
+                    entryPoints.add( toModuleName( source.getName() ) );
+                    defaultOptions.setManageClosureDependencies( entryPoints );
+                }
+            }
+            else if ( "ecmascript5".equals( opt ) )
+            {
+                defaultOptions.setLanguageIn(CompilerOptions.LanguageMode.ECMASCRIPT5);
+            }
+        }
+        return defaultOptions;
     }
 
     public String minify( String source, String name )

@@ -19,16 +19,11 @@ package com.google.code.play2;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-//?import com.google.javascript.jscomp.CompilerOptions;
-
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
@@ -46,10 +41,29 @@ import com.google.code.play2.provider.Play2JavascriptCompiler;
 public class Play2ClosureCompileMojo
     extends AbstractPlay2AssetsCompileMojo
 {
+    /**
+     * Javascript compiler entry points includes, separated by commas.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.javascriptEntryPointsIncludes", defaultValue = "**/*.js" )
+    private String javascriptEntryPointsIncludes;
 
-    private static final String[] closureExcludes = new String[] { "**/_*" };
+    /**
+     * Javascript compiler entry points excludes, separated by commas.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.javascriptEntryPointsExcludes", defaultValue = "**/_*" )
+    private String javascriptEntryPointsExcludes;
 
-    private static final String[] closureIncludes = new String[] { "**/*.js" };
+    /**
+     * Javascript compiler options, separated by spaces.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.closureCompilerOptions", defaultValue = "" )
+    private String closureCompilerOptions;
 
     protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
         throws AssetCompilationException, IOException
@@ -58,16 +72,24 @@ public class Play2ClosureCompileMojo
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
-        scanner.setIncludes( closureIncludes );
-        scanner.setExcludes( closureExcludes );
+        if ( javascriptEntryPointsIncludes != null )
+        {
+            scanner.setIncludes( javascriptEntryPointsIncludes.split( "," ) );
+        }
+        if ( javascriptEntryPointsExcludes != null )
+        {
+            scanner.setExcludes( javascriptEntryPointsExcludes.split( "," ) );
+        }
         scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
         if ( files.length > 0 )
         {
             Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
-            compiler.setSimpleCompilerOptions( new ArrayList<String>() ); // TODO-add options
-            compiler.setFullCompilerOptions( new ArrayList<String>() ); // TODO-add options
+            if ( closureCompilerOptions != null )
+            {
+                compiler.setCompilerOptions( Arrays.asList( closureCompilerOptions.split( " " ) ) );
+            }
 
             for ( String fileName : files )
             {
@@ -88,11 +110,7 @@ public class Play2ClosureCompileMojo
 
                 if ( modified )
                 {
-                    createDirectory( jsFile.getParentFile(), false );
                     JavascriptCompilationResult result = compiler.compile( srcJsFile );
-                    // JavascriptCompiler compiler = JavascriptCompiler.getInstance();
-                    // JavascriptCompiler.CompileResult result =
-                    // compiler.compile( srcJsFile, simpleCompilerOptions, fullCompilerOptions );
                     String jsContent = result.getJs();
                     String minifiedJsContent = result.getMinifiedJs();
                     createDirectory( jsFile.getParentFile(), false );

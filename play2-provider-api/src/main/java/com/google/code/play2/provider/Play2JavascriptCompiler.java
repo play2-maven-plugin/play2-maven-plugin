@@ -23,10 +23,7 @@ import java.util.List;
 
 public interface Play2JavascriptCompiler
 {
-    void setSimpleCompilerOptions( List<String> simpleCompilerOptions );
-
-    // ???
-    void setFullCompilerOptions( List<String> fullCompilerOptions );
+    void setCompilerOptions( List<String> compilerOptions );
 
     JavascriptCompilationResult compile( File source )
         throws AssetCompilationException, IOException;
