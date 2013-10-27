@@ -44,12 +44,8 @@ import com.google.code.play2.provider.Play2LessCompiler;
  */
 @Mojo( name = "less-compile", defaultPhase = LifecyclePhase.GENERATE_RESOURCES )
 public class Play2LessCompileMojo
-    extends AbstractPlay2Mojo
+    extends AbstractPlay2AssetsCompileMojo
 {
-
-    private static final String assetsSourceDirectoryName = "app/assets";
-
-    private static final String targetDirectoryName = "resource_managed/main";
 
     private static final String[] lessExcludes = new String[] { "**/_*" };
 
@@ -57,16 +53,10 @@ public class Play2LessCompileMojo
 
     private static final String cacheFileName = ".less-deps";
 
-    protected void internalExecute()
-        throws MojoExecutionException, MojoFailureException, IOException
+    protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
+        throws AssetCompilationException, IOException
     {
-        File basedir = project.getBasedir();
-        File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
-
-        if ( !assetsSourceDirectory.isDirectory() )
-        {
-            return; // nothing to do
-        }
+        boolean anythingCompiled = false;
 
         LessDependencyCache allDependencies = new LessDependencyCache();
 
@@ -88,9 +78,6 @@ public class Play2LessCompileMojo
         LessDependencyCache newAllDependencies = new LessDependencyCache();
         if ( files.length > 0 )
         {
-            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-            File outputDirectory = new File( generatedDirectory, "public" );
-
             for ( String fileName : files )
             {
                 getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
@@ -148,65 +135,44 @@ public class Play2LessCompileMojo
                 if ( modified )
                 {
                     Play2LessCompiler compiler = play2Provider.getLessCompiler();
-                    try
+
+                    LessCompilationResult result = compiler.compile( templateFile );
+                    String cssContent = result.getCss();
+                    String minifiedCssContent = result.getMinifiedCss();
+                    // writeOutputToFiles(new File(generatedDirectory, "public"), fileName, cssContent,
+                    // minifiedCssContent);
+                    createDirectory( cssFile.getParentFile(), false );
+                    writeToFile( cssFile, cssContent );
+                    if ( minifiedCssContent != null )
                     {
-                        LessCompilationResult result = compiler.compile( templateFile );
-                        String cssContent = result.getCss();
-                        String minifiedCssContent = result.getMinifiedCss();
-                        // writeOutputToFiles(new File(generatedDirectory, "public"), fileName, cssContent,
-                        // minifiedCssContent);
-                        createDirectory( cssFile.getParentFile(), false );
-                        writeToFile( cssFile, cssContent );
-                        if ( minifiedCssContent != null )
-                        {
-                            createDirectory( minifiedCssFile.getParentFile(), false );
-                            writeToFile( minifiedCssFile, minifiedCssContent );
-                        }
-                        else
-                        {
-                            if ( minifiedCssFile.exists() )
-                            { // TODO-check if isFile
-                                minifiedCssFile.delete(); // TODO-check result
-                            }
-                        }
-                        List<File> allSourceFiles = result.getDependencies();
-                        fileDependencies = new HashSet<String>();
-                        for ( File file : allSourceFiles )
-                        {
-                            getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
-                            fileDependencies.add( file.getPath() );
-                        }
-                        // allDependencies.put(fileName, fileDependencies);
-                        // System.out.println(allSourceFiles);
-                        // System.out.println(":::end:::");
+                        createDirectory( minifiedCssFile.getParentFile(), false );
+                        writeToFile( minifiedCssFile, minifiedCssContent );
                     }
-                    catch ( AssetCompilationException e )
+                    else
                     {
-                        throw new MojoExecutionException( "Less compilation failed", e );
+                        if ( minifiedCssFile.exists() )
+                        { // TODO-check if isFile
+                            minifiedCssFile.delete(); // TODO-check result
+                        }
                     }
+                    List<File> allSourceFiles = result.getDependencies();
+                    fileDependencies = new HashSet<String>();
+                    for ( File file : allSourceFiles )
+                    {
+                        getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
+                        fileDependencies.add( file.getPath() );
+                    }
+                    // allDependencies.put(fileName, fileDependencies);
+                    // System.out.println(allSourceFiles);
+                    // System.out.println(":::end:::");
                 }
                 newAllDependencies.set( fileName, fileDependencies );
             }
             // TODO - change file format, disable caching for now
             // newAllDependencies.writeToFile( depsFile );
-
-            boolean resourceAlreadyAdded = false;
-            for ( Resource res : (List<Resource>) project.getResources() )
-            {
-                if ( res.getDirectory().equals( generatedDirectory.getAbsolutePath() ) )
-                {
-                    resourceAlreadyAdded = true;
-                    break;
-                }
-            }
-            if ( !resourceAlreadyAdded )
-            {
-                Resource resource = new Resource();
-                resource.setDirectory( generatedDirectory.getAbsolutePath() );
-                project.addResource( resource );
-                getLog().debug( "Added resource: " + resource.getDirectory() );
-            }
+            anythingCompiled = true;
         }
+        return anythingCompiled;
     }
 
 }

@@ -43,28 +43,18 @@ import com.google.code.play2.provider.Play2JavascriptCompiler;
  */
 @Mojo( name = "coffee-compile", defaultPhase = LifecyclePhase.GENERATE_RESOURCES )
 public class Play2CoffeeCompileMojo
-    extends AbstractPlay2Mojo
+    extends AbstractPlay2AssetsCompileMojo
 {
-
-    private static final String assetsSourceDirectoryName = "app/assets";
-
-    private static final String targetDirectoryName = "resource_managed/main";
 
     private static final String[] coffeeExcludes = new String[] {};
 
     private static final String[] coffeeIncludes = new String[] { "**/*.coffee" };
 
-    protected void internalExecute()
-        throws MojoExecutionException, MojoFailureException, IOException
+    protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
+        throws AssetCompilationException, IOException
     {
-        File basedir = project.getBasedir();
-        File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
-
-        if ( !assetsSourceDirectory.isDirectory() )
-        {
-            return; // nothing to do
-        }
-
+        boolean anythingCompiled = false;
+        
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
         scanner.setIncludes( coffeeIncludes );
@@ -74,10 +64,6 @@ public class Play2CoffeeCompileMojo
         String[] files = scanner.getIncludedFiles();
         if ( files.length > 0 )
         {
-            File targetDirectory = new File( project.getBuild().getDirectory() );
-            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-            File outputDirectory = new File( generatedDirectory, "public" );
-
             Play2CoffeescriptCompiler compiler = play2Provider.getCoffeescriptCompiler();
             compiler.setOptions( new ArrayList<String>() /* TEMP */ );
 
@@ -100,53 +86,31 @@ public class Play2CoffeeCompileMojo
 
                 if ( modified )
                 {
+                    CoffeescriptCompilationResult result = compiler.compile( coffeeFile );
+                    String jsContent = result.getJs();
+                    createDirectory( jsFile.getParentFile(), false );
+                    writeToFile( jsFile, jsContent );
                     try
                     {
-                        CoffeescriptCompilationResult result = compiler.compile( coffeeFile );
-                        String jsContent = result.getJs();
-                        createDirectory( jsFile.getParentFile(), false );
-                        writeToFile( jsFile, jsContent );
-                        try
-                        {
-                            Play2JavascriptCompiler jsCompiler = play2Provider.getJavascriptCompiler();
-                            String minifiedJsContent = jsCompiler.minify( jsContent, coffeeFile.getName() );
-                            // String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
-                            createDirectory( minifiedJsFile.getParentFile(), false );
-                            writeToFile( minifiedJsFile, minifiedJsContent );
-                        }
-                        catch ( AssetCompilationException e )
-                        {
-                            // ignore
-                            if ( minifiedJsFile.exists() )
-                            { // TODO-check if isFile
-                                minifiedJsFile.delete(); // TODO-check result
-                            }
-                        }
+                        Play2JavascriptCompiler jsCompiler = play2Provider.getJavascriptCompiler();
+                        String minifiedJsContent = jsCompiler.minify( jsContent, coffeeFile.getName() );
+                        // String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
+                        createDirectory( minifiedJsFile.getParentFile(), false );
+                        writeToFile( minifiedJsFile, minifiedJsContent );
                     }
                     catch ( AssetCompilationException e )
                     {
-                        throw new MojoExecutionException( "CoffeeScript compilation failed", e );
+                        // ignore
+                        if ( minifiedJsFile.exists() )
+                        { // TODO-check if isFile
+                            minifiedJsFile.delete(); // TODO-check result
+                        }
                     }
                 }
             }
-
-            boolean resourceAlreadyAdded = false;
-            for ( Resource res : (List<Resource>) project.getResources() )
-            {
-                if ( res.getDirectory().equals( generatedDirectory.getAbsolutePath() ) )
-                {
-                    resourceAlreadyAdded = true;
-                    break;
-                }
-            }
-            if ( !resourceAlreadyAdded )
-            {
-                Resource resource = new Resource();
-                resource.setDirectory( generatedDirectory.getAbsolutePath() );
-                project.addResource( resource );
-                getLog().debug( "Added resource: " + resource.getDirectory() );
-            }
+            anythingCompiled = true;
         }
+        return anythingCompiled;
     }
 
 }

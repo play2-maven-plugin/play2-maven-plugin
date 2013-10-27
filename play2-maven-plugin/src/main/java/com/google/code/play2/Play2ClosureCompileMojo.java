@@ -44,27 +44,17 @@ import com.google.code.play2.provider.Play2JavascriptCompiler;
  */
 @Mojo( name = "closure-compile", defaultPhase = LifecyclePhase.GENERATE_RESOURCES )
 public class Play2ClosureCompileMojo
-    extends AbstractPlay2Mojo
+    extends AbstractPlay2AssetsCompileMojo
 {
-
-    private static final String assetsSourceDirectoryName = "app/assets";
-
-    private static final String targetDirectoryName = "resource_managed/main";
 
     private static final String[] closureExcludes = new String[] { "**/_*" };
 
     private static final String[] closureIncludes = new String[] { "**/*.js" };
 
-    protected void internalExecute()
-        throws MojoExecutionException, MojoFailureException, IOException
+    protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
+        throws AssetCompilationException, IOException
     {
-        File basedir = project.getBasedir();
-        File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
-
-        if ( !assetsSourceDirectory.isDirectory() )
-        {
-            return; // nothing to do
-        }
+        boolean anythingCompiled = false;
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
@@ -75,10 +65,6 @@ public class Play2ClosureCompileMojo
         String[] files = scanner.getIncludedFiles();
         if ( files.length > 0 )
         {
-            File targetDirectory = new File( project.getBuild().getDirectory() );
-            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-            File outputDirectory = new File( generatedDirectory, "public" );
-
             Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
             compiler.setSimpleCompilerOptions( new ArrayList<String>() ); // TODO-add options
             compiler.setFullCompilerOptions( new ArrayList<String>() ); // TODO-add options
@@ -103,53 +89,31 @@ public class Play2ClosureCompileMojo
                 if ( modified )
                 {
                     createDirectory( jsFile.getParentFile(), false );
-                    try
+                    JavascriptCompilationResult result = compiler.compile( srcJsFile );
+                    // JavascriptCompiler compiler = JavascriptCompiler.getInstance();
+                    // JavascriptCompiler.CompileResult result =
+                    // compiler.compile( srcJsFile, simpleCompilerOptions, fullCompilerOptions );
+                    String jsContent = result.getJs();
+                    String minifiedJsContent = result.getMinifiedJs();
+                    createDirectory( jsFile.getParentFile(), false );
+                    writeToFile( jsFile, jsContent );
+                    if ( minifiedJsContent != null )
                     {
-                        JavascriptCompilationResult result = compiler.compile( srcJsFile );
-                        // JavascriptCompiler compiler = JavascriptCompiler.getInstance();
-                        // JavascriptCompiler.CompileResult result =
-                        // compiler.compile( srcJsFile, simpleCompilerOptions, fullCompilerOptions );
-                        String jsContent = result.getJs();
-                        String minifiedJsContent = result.getMinifiedJs();
-                        createDirectory( jsFile.getParentFile(), false );
-                        writeToFile( jsFile, jsContent );
-                        if ( minifiedJsContent != null )
-                        {
-                            createDirectory( minifiedJsFile.getParentFile(), false );
-                            writeToFile( minifiedJsFile, minifiedJsContent );
-                        }
-                        else
-                        {
-                            if ( minifiedJsFile.exists() )
-                            { // TODO-check if isFile
-                                minifiedJsFile.delete(); // TODO-check result
-                            }
-                        }
+                        createDirectory( minifiedJsFile.getParentFile(), false );
+                        writeToFile( minifiedJsFile, minifiedJsContent );
                     }
-                    catch ( AssetCompilationException e )
+                    else
                     {
-                        throw new MojoExecutionException( "Javascript compilation failed", e );
+                        if ( minifiedJsFile.exists() )
+                        { // TODO-check if isFile
+                            minifiedJsFile.delete(); // TODO-check result
+                        }
                     }
                 }
             }
-
-            boolean resourceAlreadyAdded = false;
-            for ( Resource res : (List<Resource>) project.getResources() )
-            {
-                if ( res.getDirectory().equals( generatedDirectory.getAbsolutePath() ) )
-                {
-                    resourceAlreadyAdded = true;
-                    break;
-                }
-            }
-            if ( !resourceAlreadyAdded )
-            {
-                Resource resource = new Resource();
-                resource.setDirectory( generatedDirectory.getAbsolutePath() );
-                project.addResource( resource );
-                getLog().debug( "Added resource: " + resource.getDirectory() );
-            }
+            anythingCompiled = true;
         }
+        return anythingCompiled;
     }
 
 }
