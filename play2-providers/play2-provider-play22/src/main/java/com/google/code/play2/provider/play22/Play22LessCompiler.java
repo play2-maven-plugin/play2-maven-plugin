@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
+//import java.util.Collections;
 import java.util.List;
 
 import org.mozilla.javascript.Context;
@@ -44,6 +45,13 @@ public class Play22LessCompiler
 {
     public static final String LESS_SCRIPT = "less-1.4.2.js";
 
+//    private List<String> compilerOptions = Collections.emptyList();
+
+    public void setCompilerOptions( List<String> compilerOptions )
+    {
+//        this.compilerOptions = compilerOptions;
+    }
+
     public LessCompilationResult compile( File source )
         throws AssetCompilationException, IOException
     {
@@ -57,7 +65,6 @@ public class Play22LessCompiler
         {
             Scriptable error = (Scriptable) e.getValue();
             String filename = ScriptableObject.getProperty( error, "filename" ).toString();
-            // old: File file = ( filename == source.getAbsolutePath() ? source : resolve( source, filename ) );
             File file = new File( filename );
             throw new AssetCompilationException(
                                                  file,
@@ -65,7 +72,8 @@ public class Play22LessCompiler
                                                  Integer.valueOf( ( (Double) ScriptableObject.getProperty( error,
                                                                                                            "line" ) ).intValue() ),
                                                  Integer.valueOf( ( (Double) ScriptableObject.getProperty( error,
-                                                                                                           "column" ) ).intValue() ) );
+                                                                                                           "column" ) ).intValue() ),
+                                                 e );
         }
     }
 

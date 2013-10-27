@@ -19,9 +19,12 @@ package com.google.code.play2.provider;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public interface Play2LessCompiler
 {
+    void setCompilerOptions( List<String> compilerOptions );
+
     LessCompilationResult compile( File source )
         throws AssetCompilationException, IOException;
 

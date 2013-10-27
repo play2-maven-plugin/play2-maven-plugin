@@ -19,15 +19,14 @@ package com.google.code.play2;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
@@ -46,12 +45,31 @@ import com.google.code.play2.provider.Play2LessCompiler;
 public class Play2LessCompileMojo
     extends AbstractPlay2AssetsCompileMojo
 {
-
-    private static final String[] lessExcludes = new String[] { "**/_*" };
-
-    private static final String[] lessIncludes = new String[] { "**/*.less" };
-
     private static final String cacheFileName = ".less-deps";
+
+    /**
+     * Less compiler entry points includes, separated by commas.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.lessEntryPointsIncludes", defaultValue = "**/*.less" )
+    private String lessEntryPointsIncludes;
+
+    /**
+     * Less compiler entry points excludes, separated by commas.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.lessEntryPointsExcludes", defaultValue = "**/_*" )
+    private String lessEntryPointsExcludes;
+
+    /**
+     * Less compiler options, separated by spaces.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.lessOptions", defaultValue = "" )
+    private String lessOptions;
 
     protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
         throws AssetCompilationException, IOException
@@ -70,14 +88,26 @@ public class Play2LessCompileMojo
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
-        scanner.setIncludes( lessIncludes );
-        scanner.setExcludes( lessExcludes );
+        if ( lessEntryPointsIncludes != null )
+        {
+            scanner.setIncludes( lessEntryPointsIncludes.split( "," ) );
+        }
+        if ( lessEntryPointsExcludes != null )
+        {
+            scanner.setExcludes( lessEntryPointsExcludes.split( "," ) );
+        }
         scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
         LessDependencyCache newAllDependencies = new LessDependencyCache();
         if ( files.length > 0 )
         {
+            Play2LessCompiler compiler = play2Provider.getLessCompiler();
+            if ( lessOptions != null )
+            {
+                compiler.setCompilerOptions( Arrays.asList( lessOptions.split( " " ) ) );
+            }
+
             for ( String fileName : files )
             {
                 getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
@@ -134,8 +164,6 @@ public class Play2LessCompileMojo
 
                 if ( modified )
                 {
-                    Play2LessCompiler compiler = play2Provider.getLessCompiler();
-
                     LessCompilationResult result = compiler.compile( templateFile );
                     String cssContent = result.getCss();
                     String minifiedCssContent = result.getMinifiedCss();
