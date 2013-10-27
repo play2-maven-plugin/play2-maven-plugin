@@ -23,7 +23,7 @@ import java.util.List;
 
 public interface Play2CoffeescriptCompiler
 {
-    void setOptions( List<String> options );
+    void setCompilerOptions( List<String> compilerOptions );
 
     CoffeescriptCompilationResult compile( File source )
         throws AssetCompilationException, IOException;

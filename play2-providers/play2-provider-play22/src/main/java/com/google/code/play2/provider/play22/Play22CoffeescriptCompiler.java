@@ -44,11 +44,11 @@ public class Play22CoffeescriptCompiler
     implements Play2CoffeescriptCompiler
 {
 
-    private List<String> options = Collections.emptyList();
+    private List<String> compilerOptions = Collections.emptyList();
 
-    public void setOptions( List<String> options )
+    public void setCompilerOptions( List<String> compilerOptions )
     {
-        this.options = options;
+        this.compilerOptions = compilerOptions;
     }
 
     public CoffeescriptCompilationResult compile( File source )
@@ -56,7 +56,7 @@ public class Play22CoffeescriptCompiler
     {
         try
         {
-            String js = compile( source, options.contains( "bare" ) );
+            String js = compile( source, compilerOptions.contains( "bare" ) );
             return new CompileResult( js );
         }
         catch ( JavaScriptException e )

@@ -19,14 +19,11 @@ package com.google.code.play2;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
-import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 
@@ -45,10 +42,29 @@ import com.google.code.play2.provider.Play2JavascriptCompiler;
 public class Play2CoffeeCompileMojo
     extends AbstractPlay2AssetsCompileMojo
 {
+    /**
+     * CoffeeScript compiler entry points includes, separated by commas.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.coffeeEntryPointsIncludes", defaultValue = "**/*.coffee" )
+    private String coffeeEntryPointsIncludes;
 
-    private static final String[] coffeeExcludes = new String[] {};
+    /**
+     * CoffeeScript compiler entry points excludes, separated by commas.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.coffeeEntryPointsExcludes", defaultValue = "" )
+    private String coffeeEntryPointsExcludes;
 
-    private static final String[] coffeeIncludes = new String[] { "**/*.coffee" };
+    /**
+     * CoffeeScript compiler options, separated by spaces.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.coffeescriptOptions", defaultValue = "" )
+    private String coffeescriptOptions;
 
     protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
         throws AssetCompilationException, IOException
@@ -57,15 +73,24 @@ public class Play2CoffeeCompileMojo
         
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( assetsSourceDirectory );
-        scanner.setIncludes( coffeeIncludes );
-        scanner.setExcludes( coffeeExcludes );
+        if ( coffeeEntryPointsIncludes != null )
+        {
+            scanner.setIncludes( coffeeEntryPointsIncludes.split( "," ) );
+        }
+        if ( coffeeEntryPointsExcludes != null )
+        {
+            scanner.setExcludes( coffeeEntryPointsExcludes.split( "," ) );
+        }
         scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
         if ( files.length > 0 )
         {
             Play2CoffeescriptCompiler compiler = play2Provider.getCoffeescriptCompiler();
-            compiler.setOptions( new ArrayList<String>() /* TEMP */ );
+            if ( coffeescriptOptions != null )
+            {
+                compiler.setCompilerOptions( Arrays.asList( coffeescriptOptions.split( " " ) ) );
+            }
 
             for ( String fileName : files )
             {
