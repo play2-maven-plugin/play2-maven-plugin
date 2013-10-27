@@ -38,6 +38,14 @@ public class AssetCompilationException
         this.position = column;
     }
 
+    public AssetCompilationException( File source, String message, Integer atLine, Integer column, Throwable cause )
+    {
+        super( "Compilation error[" + message + "]", cause );
+        this.source = source;
+        this.line = atLine;
+        this.position = column;
+    }
+
     /**
      * Error line number, if defined.
      */
