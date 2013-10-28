@@ -42,7 +42,7 @@ public class Play2TemplateCompileMojo
 {
 
     /**
-     * Force main language (avoid autodetection).
+     * Main language ("scala" or "java").
      * 
      * @since 1.0.0
      */
@@ -58,8 +58,20 @@ public class Play2TemplateCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        if ( !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
+        {
+            throw new MojoExecutionException(
+                                              String.format( "Template compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
+                                                             mainLang ) );
+        }
+
         File basedir = project.getBasedir();
         File appDirectory = new File( basedir, appDirectoryName );
+        if ( !appDirectory.isDirectory() )
+        {
+            getLog().info( "No templates to compile" );
+            return;
+        }
 
         File targetDirectory = new File( project.getBuild().getDirectory() );
         File generatedDirectory = new File( targetDirectory, targetDirectoryName );
@@ -73,13 +85,6 @@ public class Play2TemplateCompileMojo
 
         if ( files.length > 0 )
         {
-            if ( !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
-            {
-                throw new MojoExecutionException(
-                                                  String.format( "Template compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
-                                                                 mainLang ) );
-            }
-
             Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
             compiler.setAppDirectory( appDirectory );
             compiler.setOutputDirectory( generatedDirectory );
