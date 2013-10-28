@@ -28,7 +28,7 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.google.code.play2-maven-plugin</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>1.0.0-alpha5</version>
+    <version>1.0.0-alpha6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Maven Plugin for Play! Framework 2.x</name>
@@ -37,9 +37,9 @@ under the License.
     <url>https://play2-maven-plugin.googlecode.com/svn/mavensite/${project.version}/</url>
 
     <scm>
-        <connection>scm:svn:http://play2-maven-plugin.googlecode.com/svn/tags/maven-parent-1.0.0-alpha5</connection>
-        <developerConnection>scm:svn:https://play2-maven-plugin.googlecode.com/svn/tags/maven-parent-1.0.0-alpha5</developerConnection>
-        <url>http://play2-maven-plugin.googlecode.com/svn/tags/maven-parent-1.0.0-alpha5</url>
+        <connection>scm:svn:http://play2-maven-plugin.googlecode.com/svn/trunk/plugin/</connection>
+        <developerConnection>scm:svn:https://play2-maven-plugin.googlecode.com/svn/trunk/plugin/</developerConnection>
+        <url>http://play2-maven-plugin.googlecode.com/svn/trunk/plugin/</url>
     </scm>
 
     <issueManagement>
