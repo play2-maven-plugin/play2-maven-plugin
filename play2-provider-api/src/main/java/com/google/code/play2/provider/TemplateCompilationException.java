@@ -20,46 +20,13 @@ package com.google.code.play2.provider;
 import java.io.File;
 
 public class TemplateCompilationException
-    extends Exception
+    extends SourceGenerationException
 {
     private static final long serialVersionUID = 1L;
 
-    private File source;
-
-    private int line;
-
-    private int position;
-
     public TemplateCompilationException( File source, String message, int atLine, int column )
     {
-        super( "Compilation error[" + message + "]" );
-        this.source = source;
-        this.line = atLine;
-        this.position = column;
-    }
-
-    /**
-     * Error line number, if defined.
-     */
-    public int line()
-    {
-        return line;
-    }
-
-    /**
-     * Column position, if defined.
-     */
-    public int position()
-    {
-        return position;
-    }
-
-    /**
-     * Source file.
-     */
-    public File source()
-    {
-        return source;
+        super( source, message, atLine, column );
     }
 
 }

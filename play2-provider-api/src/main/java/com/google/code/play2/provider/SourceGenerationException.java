@@ -19,14 +19,47 @@ package com.google.code.play2.provider;
 
 import java.io.File;
 
-public class RoutesCompilationException
-    extends SourceGenerationException
+public class SourceGenerationException
+    extends Exception
 {
     private static final long serialVersionUID = 1L;
 
-    public RoutesCompilationException( File source, String message, Integer atLine, Integer column )
+    private File source;
+
+    private int line;
+
+    private int position;
+
+    public SourceGenerationException( File source, String message, int atLine, int column )
     {
-        super( source, message, atLine, column );
+        super( "Compilation error[" + message + "]" );
+        this.source = source;
+        this.line = atLine;
+        this.position = column;
+    }
+
+    /**
+     * Error line number, if defined.
+     */
+    public int line()
+    {
+        return line;
+    }
+
+    /**
+     * Column position, if defined.
+     */
+    public int position()
+    {
+        return position;
+    }
+
+    /**
+     * Source file.
+     */
+    public File source()
+    {
+        return source;
     }
 
 }
