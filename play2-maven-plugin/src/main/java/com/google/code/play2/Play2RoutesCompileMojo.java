@@ -66,48 +66,51 @@ public class Play2RoutesCompileMojo
 
         File basedir = project.getBasedir();
         File confDirectory = new File( basedir, confDirectoryName );
-        if ( confDirectory.isDirectory() )
+        if ( !confDirectory.isDirectory() )
         {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( confDirectory );
-            scanner.setIncludes( routesIncludes );
-            scanner.addDefaultExcludes();
-            scanner.scan();
-            String[] files = scanner.getIncludedFiles();
-            if ( files.length > 0 )
-            {
-                File targetDirectory = new File( project.getBuild().getDirectory() );
-                File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-
-                Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
-                compiler.setMainLang( mainLang );
-                compiler.setOutputDirectory( generatedDirectory );
-
-                for ( String fileName : files )
-                {
-                    File routesFile = new File( confDirectory, fileName );
-                    if ( routesFile.isFile() )
-                    {
-                        try
-                        {
-                            compiler.compile( routesFile );
-                        }
-                        catch ( RoutesCompilationException e )
-                        {
-                            throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
-                                                                             routesFile.getPath() ), e );
-                        }
-                    }
-                }
-
-                if ( !project.getCompileSourceRoots().contains( generatedDirectory.getAbsolutePath() ) )
-                {
-                    project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
-                    getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
-                }
-            }
+            getLog().info( "No routes to compile" );
+            return;
         }
 
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( confDirectory );
+        scanner.setIncludes( routesIncludes );
+        scanner.addDefaultExcludes();
+        scanner.scan();
+        String[] files = scanner.getIncludedFiles();
+
+        if ( files.length > 0 )
+        {
+            File targetDirectory = new File( project.getBuild().getDirectory() );
+            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
+
+            Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
+            compiler.setMainLang( mainLang );
+            compiler.setOutputDirectory( generatedDirectory );
+
+            for ( String fileName : files )
+            {
+                File routesFile = new File( confDirectory, fileName );
+                if ( routesFile.isFile() )
+                {
+                    try
+                    {
+                        compiler.compile( routesFile );
+                    }
+                    catch ( RoutesCompilationException e )
+                    {
+                        throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
+                                                                         routesFile.getPath() ), e );
+                    }
+                }
+            }
+
+            if ( !project.getCompileSourceRoots().contains( generatedDirectory.getAbsolutePath() ) )
+            {
+                project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
+                getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
+            }
+        }
     }
 
 }
