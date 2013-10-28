@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 import com.google.code.play2.provider.AssetCompilationException;
 
@@ -42,27 +43,45 @@ public abstract class AbstractPlay2AssetsCompileMojo
 
         if ( !assetsSourceDirectory.isDirectory() )
         {
-            return; // nothing to do
+            return; // nothing to do, log something?
         }
 
-        File targetDirectory = new File( project.getBuild().getDirectory() );
-        File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-        File outputDirectory = new File( generatedDirectory, "public" );
-
-        try
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( assetsSourceDirectory );
+        if ( getAssetsIncludes() != null )
         {
-            if ( compileAssets( assetsSourceDirectory, outputDirectory ) )
+            scanner.setIncludes( getAssetsIncludes().split( "," ) );
+        }
+        if ( getAssetsExcludes() != null )
+        {
+            scanner.setExcludes( getAssetsExcludes().split( "," ) );
+        }
+        scanner.addDefaultExcludes();
+        scanner.scan();
+        String[] fileNames = scanner.getIncludedFiles();
+        if ( fileNames.length > 0 )
+        {
+            File targetDirectory = new File( project.getBuild().getDirectory() );
+            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
+            File outputDirectory = new File( generatedDirectory, "public" );
+
+            try
             {
+                compileAssets( assetsSourceDirectory, fileNames, outputDirectory );
                 addTargetDirectoryToResources();
             }
-        }
-        catch ( AssetCompilationException e )
-        {
-            throw new MojoExecutionException( "Assets compilation failed", e );
+            catch ( AssetCompilationException e )
+            {
+                throw new MojoExecutionException( "Assets compilation failed", e );
+            }
         }
     }
 
-    protected abstract boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
+    protected abstract String getAssetsIncludes();
+
+    protected abstract String getAssetsExcludes();
+
+    protected abstract void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException;
 
     private void addTargetDirectoryToResources()

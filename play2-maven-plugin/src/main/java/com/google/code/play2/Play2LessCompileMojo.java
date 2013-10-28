@@ -28,8 +28,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import org.codehaus.plexus.util.DirectoryScanner;
-
 import com.google.code.play2.less.LessDependencyCache;
 import com.google.code.play2.provider.AssetCompilationException;
 import com.google.code.play2.provider.LessCompilationResult;
@@ -71,11 +69,19 @@ public class Play2LessCompileMojo
     @Parameter( property = "play.lessOptions", defaultValue = "" )
     private String lessOptions;
 
-    protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
+    protected String getAssetsIncludes()
+    {
+        return lessEntryPointsIncludes;
+    }
+
+    protected String getAssetsExcludes()
+    {
+        return lessEntryPointsExcludes;
+    }
+
+    protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException
     {
-        boolean anythingCompiled = false;
-
         LessDependencyCache allDependencies = new LessDependencyCache();
 
         File targetDirectory = new File( project.getBuild().getDirectory() );
@@ -86,121 +92,104 @@ public class Play2LessCompileMojo
             // allDependencies.readFromFile( depsFile );
         }
 
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( assetsSourceDirectory );
-        if ( lessEntryPointsIncludes != null )
-        {
-            scanner.setIncludes( lessEntryPointsIncludes.split( "," ) );
-        }
-        if ( lessEntryPointsExcludes != null )
-        {
-            scanner.setExcludes( lessEntryPointsExcludes.split( "," ) );
-        }
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        String[] files = scanner.getIncludedFiles();
         LessDependencyCache newAllDependencies = new LessDependencyCache();
-        if ( files.length > 0 )
+
+        Play2LessCompiler compiler = play2Provider.getLessCompiler();
+        if ( lessOptions != null )
         {
-            Play2LessCompiler compiler = play2Provider.getLessCompiler();
-            if ( lessOptions != null )
+            compiler.setCompilerOptions( Arrays.asList( lessOptions.split( " " ) ) );
+        }
+
+        for ( String fileName : fileNames )
+        {
+            getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
+            File templateFile = new File( assetsSourceDirectory, fileName );
+
+            String cssFileName = fileName.replace( ".less", ".css" );
+            File cssFile = new File( outputDirectory, cssFileName );
+
+            String minifiedCssFileName = fileName.replace( ".less", ".min.css" );
+            File minifiedCssFile = new File( outputDirectory, minifiedCssFileName );
+
+            // previous dependencies
+            Set<String> fileDependencies = null;
+            // if ( allDependencies != null )
+            // {
+            fileDependencies = allDependencies.get( fileName );
+            // }
+
+            // check if file needs recompilation
+            boolean modified = false;
+            if ( fileDependencies == null )
             {
-                compiler.setCompilerOptions( Arrays.asList( lessOptions.split( " " ) ) );
+                modified = true; // first compilation
             }
-
-            for ( String fileName : files )
+            else
             {
-                getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
-                File templateFile = new File( assetsSourceDirectory, fileName );
-
-                String cssFileName = fileName.replace( ".less", ".css" );
-                File cssFile = new File( outputDirectory, cssFileName );
-
-                String minifiedCssFileName = fileName.replace( ".less", ".min.css" );
-                File minifiedCssFile = new File( outputDirectory, minifiedCssFileName );
-
-                // previous dependencies
-                Set<String> fileDependencies = null;
-                // if ( allDependencies != null )
-                // {
-                fileDependencies = allDependencies.get( fileName );
-                // }
-
-                // check if file needs recompilation
-                boolean modified = false;
-                if ( fileDependencies == null )
+                if ( cssFile.isFile() )
                 {
-                    modified = true; // first compilation
-                }
-                else
-                {
-                    if ( cssFile.isFile() )
+                    long cssFileLastModified = cssFile.lastModified();
+                    for ( String fName : fileDependencies )
                     {
-                        long cssFileLastModified = cssFile.lastModified();
-                        for ( String fName : fileDependencies )
+                        File srcFile = new File( fName );
+                        if ( srcFile.isFile() )
                         {
-                            File srcFile = new File( fName );
-                            if ( srcFile.isFile() )
-                            {
-                                if ( cssFileLastModified < srcFile.lastModified() )
-                                {
-                                    modified = true;
-                                    break;
-                                }
-                            }
-                            else
-                            // source file or it's dependency deleted
+                            if ( cssFileLastModified < srcFile.lastModified() )
                             {
                                 modified = true;
                                 break;
                             }
                         }
-                    }
-                    else
-                    {
-                        modified = true; // missing destination .css file
-                    }
-                }
-
-                if ( modified )
-                {
-                    LessCompilationResult result = compiler.compile( templateFile );
-                    String cssContent = result.getCss();
-                    String minifiedCssContent = result.getMinifiedCss();
-                    // writeOutputToFiles(new File(generatedDirectory, "public"), fileName, cssContent,
-                    // minifiedCssContent);
-                    createDirectory( cssFile.getParentFile(), false );
-                    writeToFile( cssFile, cssContent );
-                    if ( minifiedCssContent != null )
-                    {
-                        createDirectory( minifiedCssFile.getParentFile(), false );
-                        writeToFile( minifiedCssFile, minifiedCssContent );
-                    }
-                    else
-                    {
-                        if ( minifiedCssFile.exists() )
-                        { // TODO-check if isFile
-                            minifiedCssFile.delete(); // TODO-check result
+                        else
+                        // source file or it's dependency deleted
+                        {
+                            modified = true;
+                            break;
                         }
                     }
-                    List<File> allSourceFiles = result.getDependencies();
-                    fileDependencies = new HashSet<String>();
-                    for ( File file : allSourceFiles )
-                    {
-                        getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
-                        fileDependencies.add( file.getPath() );
-                    }
-                    // allDependencies.put(fileName, fileDependencies);
-                    // System.out.println(allSourceFiles);
-                    // System.out.println(":::end:::");
                 }
-                newAllDependencies.set( fileName, fileDependencies );
+                else
+                {
+                    modified = true; // missing destination .css file
+                }
             }
-            // TODO - change file format, disable caching for now
-            // newAllDependencies.writeToFile( depsFile );
-            anythingCompiled = true;
+
+            if ( modified )
+            {
+                LessCompilationResult result = compiler.compile( templateFile );
+                String cssContent = result.getCss();
+                String minifiedCssContent = result.getMinifiedCss();
+                // writeOutputToFiles(new File(generatedDirectory, "public"), fileName, cssContent,
+                // minifiedCssContent);
+                createDirectory( cssFile.getParentFile(), false );
+                writeToFile( cssFile, cssContent );
+                if ( minifiedCssContent != null )
+                {
+                    createDirectory( minifiedCssFile.getParentFile(), false );
+                    writeToFile( minifiedCssFile, minifiedCssContent );
+                }
+                else
+                {
+                    if ( minifiedCssFile.exists() )
+                    { // TODO-check if isFile
+                        minifiedCssFile.delete(); // TODO-check result
+                    }
+                }
+                List<File> allSourceFiles = result.getDependencies();
+                fileDependencies = new HashSet<String>();
+                for ( File file : allSourceFiles )
+                {
+                    getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
+                    fileDependencies.add( file.getPath() );
+                }
+                // allDependencies.put(fileName, fileDependencies);
+                // System.out.println(allSourceFiles);
+                // System.out.println(":::end:::");
+            }
+            newAllDependencies.set( fileName, fileDependencies );
         }
-        return anythingCompiled;
+        // TODO - change file format, disable caching for now
+        // newAllDependencies.writeToFile( depsFile );
     }
 
 }

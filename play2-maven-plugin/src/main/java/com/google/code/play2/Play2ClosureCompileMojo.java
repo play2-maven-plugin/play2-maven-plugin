@@ -25,8 +25,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import org.codehaus.plexus.util.DirectoryScanner;
-
 import com.google.code.play2.provider.AssetCompilationException;
 import com.google.code.play2.provider.JavascriptCompilationResult;
 import com.google.code.play2.provider.Play2JavascriptCompiler;
@@ -65,73 +63,63 @@ public class Play2ClosureCompileMojo
     @Parameter( property = "play.closureCompilerOptions", defaultValue = "" )
     private String closureCompilerOptions;
 
-    protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
+    protected String getAssetsIncludes()
+    {
+        return javascriptEntryPointsIncludes;
+    }
+
+    protected String getAssetsExcludes()
+    {
+        return javascriptEntryPointsExcludes;
+    }
+
+    protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException
     {
-        boolean anythingCompiled = false;
+        Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
+        if ( closureCompilerOptions != null )
+        {
+            compiler.setCompilerOptions( Arrays.asList( closureCompilerOptions.split( " " ) ) );
+        }
 
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( assetsSourceDirectory );
-        if ( javascriptEntryPointsIncludes != null )
+        for ( String fileName : fileNames )
         {
-            scanner.setIncludes( javascriptEntryPointsIncludes.split( "," ) );
-        }
-        if ( javascriptEntryPointsExcludes != null )
-        {
-            scanner.setExcludes( javascriptEntryPointsExcludes.split( "," ) );
-        }
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        String[] files = scanner.getIncludedFiles();
-        if ( files.length > 0 )
-        {
-            Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
-            if ( closureCompilerOptions != null )
+            getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
+            File srcJsFile = new File( assetsSourceDirectory, fileName );
+
+            // String jsFileName = fileName.replace( ".coffee", ".js" );
+            File jsFile = new File( outputDirectory, fileName/* jsFileName */);
+
+            String minifiedJsFileName = fileName.replace( ".js", ".min.js" );
+            File minifiedJsFile = new File( outputDirectory, minifiedJsFileName );
+
+            boolean modified = true;
+            if ( jsFile.isFile() )
             {
-                compiler.setCompilerOptions( Arrays.asList( closureCompilerOptions.split( " " ) ) );
+                modified = ( jsFile.lastModified() < srcJsFile.lastModified() );
             }
 
-            for ( String fileName : files )
+            if ( modified )
             {
-                getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
-                File srcJsFile = new File( assetsSourceDirectory, fileName );
-
-                // String jsFileName = fileName.replace( ".coffee", ".js" );
-                File jsFile = new File( outputDirectory, fileName/* jsFileName */ );
-
-                String minifiedJsFileName = fileName.replace( ".js", ".min.js" );
-                File minifiedJsFile = new File( outputDirectory, minifiedJsFileName );
-
-                boolean modified = true;
-                if ( jsFile.isFile() )
+                JavascriptCompilationResult result = compiler.compile( srcJsFile );
+                String jsContent = result.getJs();
+                String minifiedJsContent = result.getMinifiedJs();
+                createDirectory( jsFile.getParentFile(), false );
+                writeToFile( jsFile, jsContent );
+                if ( minifiedJsContent != null )
                 {
-                    modified = ( jsFile.lastModified() < srcJsFile.lastModified() );
+                    createDirectory( minifiedJsFile.getParentFile(), false );
+                    writeToFile( minifiedJsFile, minifiedJsContent );
                 }
-
-                if ( modified )
+                else
                 {
-                    JavascriptCompilationResult result = compiler.compile( srcJsFile );
-                    String jsContent = result.getJs();
-                    String minifiedJsContent = result.getMinifiedJs();
-                    createDirectory( jsFile.getParentFile(), false );
-                    writeToFile( jsFile, jsContent );
-                    if ( minifiedJsContent != null )
-                    {
-                        createDirectory( minifiedJsFile.getParentFile(), false );
-                        writeToFile( minifiedJsFile, minifiedJsContent );
-                    }
-                    else
-                    {
-                        if ( minifiedJsFile.exists() )
-                        { // TODO-check if isFile
-                            minifiedJsFile.delete(); // TODO-check result
-                        }
+                    if ( minifiedJsFile.exists() )
+                    { // TODO-check if isFile
+                        minifiedJsFile.delete(); // TODO-check result
                     }
                 }
             }
-            anythingCompiled = true;
         }
-        return anythingCompiled;
     }
 
 }

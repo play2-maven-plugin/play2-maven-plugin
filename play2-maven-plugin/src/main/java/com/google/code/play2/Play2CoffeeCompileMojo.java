@@ -25,8 +25,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import org.codehaus.plexus.util.DirectoryScanner;
-
 import com.google.code.play2.provider.AssetCompilationException;
 import com.google.code.play2.provider.CoffeescriptCompilationResult;
 import com.google.code.play2.provider.Play2CoffeescriptCompiler;
@@ -66,76 +64,66 @@ public class Play2CoffeeCompileMojo
     @Parameter( property = "play.coffeescriptOptions", defaultValue = "" )
     private String coffeescriptOptions;
 
-    protected boolean compileAssets( File assetsSourceDirectory, File outputDirectory )
+    protected String getAssetsIncludes()
+    {
+        return coffeeEntryPointsIncludes;
+    }
+
+    protected String getAssetsExcludes()
+    {
+        return coffeeEntryPointsExcludes;
+    }
+
+    protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException
     {
-        boolean anythingCompiled = false;
-        
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( assetsSourceDirectory );
-        if ( coffeeEntryPointsIncludes != null )
+        Play2CoffeescriptCompiler compiler = play2Provider.getCoffeescriptCompiler();
+        if ( coffeescriptOptions != null )
         {
-            scanner.setIncludes( coffeeEntryPointsIncludes.split( "," ) );
+            compiler.setCompilerOptions( Arrays.asList( coffeescriptOptions.split( " " ) ) );
         }
-        if ( coffeeEntryPointsExcludes != null )
+
+        for ( String fileName : fileNames )
         {
-            scanner.setExcludes( coffeeEntryPointsExcludes.split( "," ) );
-        }
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        String[] files = scanner.getIncludedFiles();
-        if ( files.length > 0 )
-        {
-            Play2CoffeescriptCompiler compiler = play2Provider.getCoffeescriptCompiler();
-            if ( coffeescriptOptions != null )
+            getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
+            File coffeeFile = new File( assetsSourceDirectory, fileName );
+
+            String jsFileName = fileName.replace( ".coffee", ".js" );
+            File jsFile = new File( outputDirectory, jsFileName );
+
+            String minifiedJsFileName = fileName.replace( ".coffee", ".min.js" );
+            File minifiedJsFile = new File( outputDirectory, minifiedJsFileName );
+
+            boolean modified = true;
+            if ( jsFile.isFile() )
             {
-                compiler.setCompilerOptions( Arrays.asList( coffeescriptOptions.split( " " ) ) );
+                modified = ( jsFile.lastModified() < coffeeFile.lastModified() );
             }
 
-            for ( String fileName : files )
+            if ( modified )
             {
-                getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
-                File coffeeFile = new File( assetsSourceDirectory, fileName );
-
-                String jsFileName = fileName.replace( ".coffee", ".js" );
-                File jsFile = new File( outputDirectory, jsFileName );
-
-                String minifiedJsFileName = fileName.replace( ".coffee", ".min.js" );
-                File minifiedJsFile = new File( outputDirectory, minifiedJsFileName );
-
-                boolean modified = true;
-                if ( jsFile.isFile() )
+                CoffeescriptCompilationResult result = compiler.compile( coffeeFile );
+                String jsContent = result.getJs();
+                createDirectory( jsFile.getParentFile(), false );
+                writeToFile( jsFile, jsContent );
+                try
                 {
-                    modified = ( jsFile.lastModified() < coffeeFile.lastModified() );
+                    Play2JavascriptCompiler jsCompiler = play2Provider.getJavascriptCompiler();
+                    String minifiedJsContent = jsCompiler.minify( jsContent, coffeeFile.getName() );
+                    // String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
+                    createDirectory( minifiedJsFile.getParentFile(), false );
+                    writeToFile( minifiedJsFile, minifiedJsContent );
                 }
-
-                if ( modified )
+                catch ( AssetCompilationException e )
                 {
-                    CoffeescriptCompilationResult result = compiler.compile( coffeeFile );
-                    String jsContent = result.getJs();
-                    createDirectory( jsFile.getParentFile(), false );
-                    writeToFile( jsFile, jsContent );
-                    try
-                    {
-                        Play2JavascriptCompiler jsCompiler = play2Provider.getJavascriptCompiler();
-                        String minifiedJsContent = jsCompiler.minify( jsContent, coffeeFile.getName() );
-                        // String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
-                        createDirectory( minifiedJsFile.getParentFile(), false );
-                        writeToFile( minifiedJsFile, minifiedJsContent );
-                    }
-                    catch ( AssetCompilationException e )
-                    {
-                        // ignore
-                        if ( minifiedJsFile.exists() )
-                        { // TODO-check if isFile
-                            minifiedJsFile.delete(); // TODO-check result
-                        }
+                    // ignore
+                    if ( minifiedJsFile.exists() )
+                    { // TODO-check if isFile
+                        minifiedJsFile.delete(); // TODO-check result
                     }
                 }
             }
-            anythingCompiled = true;
         }
-        return anythingCompiled;
     }
 
 }
