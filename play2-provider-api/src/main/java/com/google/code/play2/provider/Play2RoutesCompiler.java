@@ -18,14 +18,12 @@
 package com.google.code.play2.provider;
 
 import java.io.File;
-//?import java.io.IOException;
-import java.util.List;
 
 public interface Play2RoutesCompiler
 {
-    void setOutputDirectory( File outputDirectory );
+    void setMainLang( String mainLang );
 
-    void setAdditionalImports( List<String> additionalImports );
+    void setOutputDirectory( File outputDirectory );
 
     void compile( File routesFile )
         throws RoutesCompilationException;

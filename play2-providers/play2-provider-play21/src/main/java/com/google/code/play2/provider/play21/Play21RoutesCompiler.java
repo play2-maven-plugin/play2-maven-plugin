@@ -18,8 +18,7 @@
 package com.google.code.play2.provider.play21;
 
 import java.io.File;
-//?import java.io.IOException;
-import java.util.List;
+import java.util.Arrays;
 
 import scala.collection.JavaConversions;
 
@@ -32,27 +31,41 @@ import com.google.code.play2.provider.RoutesCompilationException;
 public class Play21RoutesCompiler
     implements Play2RoutesCompiler
 {
+    private static final String[] javaAdditionalImports = new String[] { "play.libs.F" };
+
+    private static final String[] scalaAdditionalImports = new String[] {};
+
+    private String mainLang;
+
     private File outputDirectory;
 
-    private List<String> additionalImports;
+    public void setMainLang( String mainLang )
+    {
+        this.mainLang = mainLang;
+    }
 
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
-    public void setAdditionalImports( List<String> additionalImports )
-    {
-        this.additionalImports = additionalImports;
-    }
-
     public void compile( File routesFile )
         throws RoutesCompilationException
     {
+        String[] additionalImports = {};
+        if ( "java".equalsIgnoreCase( mainLang ) )
+        {
+            additionalImports = javaAdditionalImports;
+        }
+        else if ( "scala".equalsIgnoreCase( mainLang ) )
+        {
+            additionalImports = scalaAdditionalImports;
+        }
+
         try
         {
             RoutesCompiler$.MODULE$.compile( routesFile, outputDirectory,
-                                             JavaConversions.asScalaBuffer( additionalImports ) );
+                                             JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ) );
         }
         catch ( RoutesCompilationError e )
         {

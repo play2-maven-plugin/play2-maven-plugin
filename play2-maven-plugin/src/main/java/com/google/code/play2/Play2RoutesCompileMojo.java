@@ -19,8 +19,6 @@ package com.google.code.play2;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -43,7 +41,7 @@ public class Play2RoutesCompileMojo
 {
 
     /**
-     * Force main language (avoid autodetection).
+     * Main language ("scala" or "java").
      * 
      * @since 1.0.0
      */
@@ -56,13 +54,16 @@ public class Play2RoutesCompileMojo
 
     private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
 
-    private static final String[] javaAdditionalImports = new String[] { "play.libs.F" };
-
-    private static final String[] scalaAdditionalImports = new String[] {};
-
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        if ( !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
+        {
+            throw new MojoExecutionException(
+                                              String.format( "Routes compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
+                                                             mainLang ) );
+        }
+
         File basedir = project.getBasedir();
         File confDirectory = new File( basedir, confDirectoryName );
         if ( confDirectory.isDirectory() )
@@ -75,30 +76,12 @@ public class Play2RoutesCompileMojo
             String[] files = scanner.getIncludedFiles();
             if ( files.length > 0 )
             {
-                if ( !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
-                {
-                    throw new MojoExecutionException(
-                                                      String.format( "Routes compilation failed  - unsupported <mainLang> configuration parameter value \"%s\"",
-                                                                     mainLang ) );
-                }
-
                 File targetDirectory = new File( project.getBuild().getDirectory() );
                 File generatedDirectory = new File( targetDirectory, targetDirectoryName );
 
-                String[] additionalImports = {};
-                if ( "java".equalsIgnoreCase( mainLang ) )
-                {
-                    additionalImports = javaAdditionalImports;
-                }
-                else if ( "scala".equalsIgnoreCase( mainLang ) )
-                {
-                    additionalImports = scalaAdditionalImports;
-                }
-                List<String> additionalImportsList = Arrays.asList( additionalImports );
-
                 Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
+                compiler.setMainLang( mainLang );
                 compiler.setOutputDirectory( generatedDirectory );
-                compiler.setAdditionalImports( additionalImportsList );
 
                 for ( String fileName : files )
                 {
