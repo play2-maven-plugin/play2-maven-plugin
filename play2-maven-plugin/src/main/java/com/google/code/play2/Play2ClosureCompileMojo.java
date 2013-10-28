@@ -88,7 +88,7 @@ public class Play2ClosureCompileMojo
             File srcJsFile = new File( assetsSourceDirectory, fileName );
 
             // String jsFileName = fileName.replace( ".coffee", ".js" );
-            File jsFile = new File( outputDirectory, fileName/* jsFileName */);
+            File jsFile = new File( outputDirectory, fileName/* jsFileName */ );
 
             String minifiedJsFileName = fileName.replace( ".js", ".min.js" );
             File minifiedJsFile = new File( outputDirectory, minifiedJsFileName );

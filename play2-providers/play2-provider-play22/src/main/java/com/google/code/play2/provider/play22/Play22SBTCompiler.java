@@ -82,12 +82,12 @@ public class Play22SBTCompiler
         this.mavenLog = mavenLog;
     }
 
-    public void setScalaLibraryFile( File scalaLibraryFile)
+    public void setScalaLibraryFile( File scalaLibraryFile )
     {
         this.scalaLibraryFile = scalaLibraryFile;
     }
 
-    public void setScalaCompilerFile( File scalaCompilerFile)
+    public void setScalaCompilerFile( File scalaCompilerFile )
     {
         this.scalaCompilerFile = scalaCompilerFile;
     }

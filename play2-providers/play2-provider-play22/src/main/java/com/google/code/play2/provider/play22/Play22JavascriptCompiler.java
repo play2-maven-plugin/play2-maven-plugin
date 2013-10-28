@@ -105,9 +105,9 @@ public class Play22JavascriptCompiler
                 // throw AssetCompilationException(errorFile, error.description, Some(error.lineNumber), None)
                 JSError error = compiler.getErrors()[0];
                 File errorFile = null;
-                for (File f: all)
+                for ( File f: all )
                 {
-                    if (f.getAbsolutePath().equals( error.sourceName ))
+                    if ( f.getAbsolutePath().equals( error.sourceName ) )
                     {
                         errorFile = f;
                         break;
