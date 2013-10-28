@@ -163,7 +163,7 @@ public class Play22JavascriptCompiler
             }
             else if ( "ecmascript5".equals( opt ) )
             {
-                defaultOptions.setLanguageIn(CompilerOptions.LanguageMode.ECMASCRIPT5);
+                defaultOptions.setLanguageIn( CompilerOptions.LanguageMode.ECMASCRIPT5 );
             }
         }
         return defaultOptions;
