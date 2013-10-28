@@ -46,6 +46,10 @@ import com.google.code.play2.provider.Play2JavaEnhancer;
 public class Play2EnhanceClassesMojo
     extends AbstractPlay2Mojo
 {
+    private static final String appDirectoryName = "app";
+
+    private static final String srcManagedDirectoryName = "src_managed/main";
+
     /**
      * Project classpath.
      */
@@ -117,7 +121,11 @@ public class Play2EnhanceClassesMojo
                 lastEnhanced = Long.parseLong( line );
             }
 
-            File scannerBaseDir = new File( project.getBasedir(), "app" ); // TODO-parametrize
+            File scannerBaseDir = new File( project.getBasedir(), appDirectoryName ); // TODO-parametrize
+            if ( !scannerBaseDir.isDirectory() )
+            {
+                return;
+            }
             DirectoryScanner scanner = new DirectoryScanner();
             scanner.setBasedir( scannerBaseDir );
             scanner.setIncludes( new String[] { "**/*.java" } );
@@ -144,7 +152,7 @@ public class Play2EnhanceClassesMojo
                 }
             }
 
-            scannerBaseDir = new File( project.getBuild().getDirectory(), "src_managed/main" ); // TODO-parametrize
+            scannerBaseDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName ); // TODO-parametrize
             if ( scannerBaseDir.isDirectory() )
             {
                 scanner = new DirectoryScanner();
@@ -187,7 +195,7 @@ public class Play2EnhanceClassesMojo
                 managedClassesSet.addAll( Arrays.asList( managedClasses ) );
             }
 
-            scannerBaseDir = new File( project.getBuild().getDirectory(), "src_managed/main" ); // TODO-parametrize
+            scannerBaseDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName ); // TODO-parametrize
             if ( scannerBaseDir.isDirectory() )
             {
                 scanner = new DirectoryScanner();
