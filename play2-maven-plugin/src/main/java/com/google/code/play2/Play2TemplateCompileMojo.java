@@ -73,9 +73,6 @@ public class Play2TemplateCompileMojo
             return;
         }
 
-        File targetDirectory = new File( project.getBuild().getDirectory() );
-        File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( appDirectory );
         scanner.setIncludes( scalaTemplatesIncludes );
@@ -85,6 +82,9 @@ public class Play2TemplateCompileMojo
 
         if ( files.length > 0 )
         {
+            File targetDirectory = new File( project.getBuild().getDirectory() );
+            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
+
             Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
             compiler.setAppDirectory( appDirectory );
             compiler.setOutputDirectory( generatedDirectory );
