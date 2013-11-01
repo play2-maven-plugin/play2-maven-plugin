@@ -151,7 +151,7 @@ public class Play21SBTCompiler
 
         Inputs inputs =
             Inputs.create( classpathFiles, sourceFiles, outputDirectory, scalacOptions, javacOptions, analysisCacheFile,
-                           analysisCacheMap, COMPILE_ORDER );
+                           analysisCacheMap, COMPILE_ORDER, mavenLog.isDebugEnabled()/* mirrorAnalysisCache */ );
         if ( mavenLog.isDebugEnabled() )
         {
             Inputs.debug( inputs, sbtLogger );
