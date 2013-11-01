@@ -29,8 +29,6 @@ public interface Play2Provider
 
     Play2TemplateCompiler getTemplatesCompiler();
 
-    Play2SBTCompiler getScalaCompiler();
-
     Play2JavaEnhancer getEnhancer();
 
     Play2EbeanEnhancer getEbeanEnhancer();

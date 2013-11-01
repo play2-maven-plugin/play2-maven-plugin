@@ -24,7 +24,6 @@ import com.google.code.play2.provider.Play2JavascriptCompiler;
 import com.google.code.play2.provider.Play2LessCompiler;
 import com.google.code.play2.provider.Play2Provider;
 import com.google.code.play2.provider.Play2RoutesCompiler;
-import com.google.code.play2.provider.Play2SBTCompiler;
 import com.google.code.play2.provider.Play2TemplateCompiler;
 
 /**
@@ -58,11 +57,6 @@ public class Play21Provider
     public Play2TemplateCompiler getTemplatesCompiler()
     {
         return new Play21TemplateCompiler();
-    }
-
-    public Play2SBTCompiler getScalaCompiler()
-    {
-        return new Play21SBTCompiler();
     }
 
     public Play2JavaEnhancer getEnhancer()
