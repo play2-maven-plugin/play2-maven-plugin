@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package com.google.code.play2;
+package com.google.code.sbt;
 
 import java.io.File;
 //?import java.io.IOException;

@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package com.google.code.play2;
+package com.google.code.sbt;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,57 +27,55 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
+//import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Compile Scala and Java test sources
+ * Compile Scala and Java sources
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "testCompile", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.TEST )
-public class Play2SBTTestCompileMojo
+@Mojo( name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE )
+public class Play2SBTCompileMojo
     extends AbstractPlay2SBTCompileMojo
 {
     /**
-     * Set this to 'true' to bypass compilation of test sources. Its use is NOT RECOMMENDED, but quite convenient on
-     * occasion.
+     * The source directories containing the sources to be compiled.
      */
-    @Parameter( property = "maven.test.skip" )
-    private boolean testCompileSkip;
-
-    /**
-     * The source directories containing the test-source to be compiled.
-     */
-    @Parameter( defaultValue = "${project.testCompileSourceRoots}", readonly = true, required = true )
+    @Parameter( defaultValue = "${project.compileSourceRoots}", readonly = true, required = true )
     private List<String> compileSourceRoots;
 
     /**
-     * Project test classpath.
+     * Project classpath.
      */
-    @Parameter( defaultValue = "${project.testClasspathElements}", required = true, readonly = true )
+    @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
     private List<String> classpathElements;
 
     /**
-     * The directory where compiled test classes go.
+     * The directory for compiled classes.
      */
-    @Parameter( defaultValue = "${project.build.testOutputDirectory}", required = true, readonly = true )
+    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true, readonly = true )
     private File outputDirectory;
+
+    /**
+     * Project's main artifact.
+     */
+    @Parameter( defaultValue = "${project.artifact}", readonly = true, required = true )
+    private Artifact projectArtifact;
 
     @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        if ( testCompileSkip )
+        super.internalExecute();
+
+        if ( outputDirectory.isDirectory() )
         {
-            getLog().info( "Not compiling test sources" );
-        }
-        else
-        {
-            super.internalExecute();
+            projectArtifact.setFile( outputDirectory );
         }
     }
 
@@ -102,7 +100,7 @@ public class Play2SBTTestCompileMojo
     @Override
     protected File getAnalysisCacheFile()
     {
-        return defaultTestAnalysisCacheFile( project );
+        return defaultAnalysisCacheFile( project );
     }
 
     @Override
@@ -121,21 +119,6 @@ public class Play2SBTTestCompileMojo
                     {
                         //getLog().info( String.format( "map.add %s:%s", reactorProjectArtifactFile.getAbsolutePath(), analysisCacheFile.getAbsolutePath() ) );
                         map.put( reactorProjectArtifactFile.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile() );
-                    }
-                }
-                
-                File testAnalysisCacheFile = defaultTestAnalysisCacheFile( reactorProject );
-                if ( testAnalysisCacheFile.isFile() )
-                {
-                    List<Artifact> reactorProjectattachedArtifacts = reactorProject.getAttachedArtifacts();
-                    for ( Artifact artifact: reactorProjectattachedArtifacts )
-                    {
-                        if ( "tests".equals( artifact.getClassifier() ))
-                        {
-                            //getLog().info( String.format( "map.add %s:%s", artifact.getFile().getAbsolutePath(), testAnalysisCacheFile.getAbsolutePath() ) );
-                            map.put( artifact.getFile().getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
-                            break;
-                        }
                     }
                 }
             }
