@@ -48,7 +48,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 
 import com.google.code.play2.provider.Play2SBTCompiler;
 import com.google.code.play2.provider.SBTCompilationException;
-import com.google.code.play2.provider.SBTCompilationResult;
+//import com.google.code.play2.provider.SBTCompilationResult;
 
 /**
  * Abstract base class for Play! Mojos.
@@ -234,8 +234,7 @@ public abstract class AbstractPlay2SBTCompileMojo
             compiler.setAnalysisCacheMap( getAnalysisCacheMap() );
             compiler.setClassPathFiles( classpathFiles );
 
-            SBTCompilationResult compileResult = compiler.compile( sourceFiles );
-            postCompile( compileResult );
+            /*SBTCompilationResult compileResult = */compiler.compile( sourceFiles );
         }
         catch ( SBTCompilationException e )
         {
@@ -351,11 +350,6 @@ public abstract class AbstractPlay2SBTCompileMojo
     protected File defaultTestAnalysisCacheFile( MavenProject p )
     {
         return new File( defaultAnalysisDirectory( p ), "test-compile" );
-    }
-
-    protected void postCompile( SBTCompilationResult compileResult )
-        throws MojoExecutionException, IOException
-    {
     }
 
     // Private utility methods
