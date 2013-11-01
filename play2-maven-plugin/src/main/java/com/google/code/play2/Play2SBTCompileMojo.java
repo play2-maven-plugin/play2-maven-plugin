@@ -19,16 +19,9 @@ package com.google.code.play2;
 
 import java.io.File;
 import java.io.IOException;
-//import java.net.URL;
-//import java.net.URLClassLoader;
-//import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-//import java.util.Map;
-import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,11 +32,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-
-import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
-
-import com.google.code.play2.provider.SBTCompilationResult;
 
 /**
  * Compile Scala and Java sources
@@ -74,7 +62,7 @@ public class Play2SBTCompileMojo
     private File outputDirectory;
 
     /**
-     * Projects main artifact.
+     * Project's main artifact.
      */
     @Parameter( defaultValue = "${project.artifact}", readonly = true, required = true )
     private Artifact projectArtifact;
@@ -129,84 +117,6 @@ public class Play2SBTCompileMojo
             //map.put( testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
         }
         return map;
-    }
-
-    @Override
-    protected void postCompile( SBTCompilationResult compileResult )
-        throws MojoExecutionException, IOException
-    {
-        try
-        {
-            // PlayCommands:392
-            File managedClassesDirectory =
-                new File( getOutputDirectory().getParentFile(), getOutputDirectory().getName() + "_managed" );
-            Set<String> managedClassesSet = new HashSet<String>();
-            if ( managedClassesDirectory.isDirectory() )
-            {
-                DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( managedClassesDirectory );
-                scanner.scan();
-                String[] managedClasses = scanner.getIncludedFiles();
-                managedClassesSet.addAll( Arrays.asList( managedClasses ) );
-            }
-
-            File scannerBaseDir = new File( project.getBuild().getDirectory(), "src_managed/main" ); // TODO-parametrize
-            if ( scannerBaseDir.isDirectory() )
-            {
-                DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( scannerBaseDir );
-                scanner.setIncludes( new String[] { "**/*.scala", "**/*.java" } );
-                scanner.scan();
-                String[] managedSources = scanner.getIncludedFiles();
-                if ( managedSources.length > 0 )
-                {
-                    if ( !managedClassesDirectory.exists() )
-                    {
-                        if ( !managedClassesDirectory.mkdirs() )
-                        {
-                            // ??
-                        }
-                    }
-                }
-                for ( String source : managedSources )
-                {
-                    File sourceFile = new File( scannerBaseDir, source );
-                    Set<File> sourceProducts = compileResult.getProducts( sourceFile );
-                    // sbt.IO$.MODULE$.copy(ma byc Seq sourceProducts, sbt.IO$.MODULE$.copy$default$2(),
-                    // sbt.IO$.MODULE$.copyDirectory$default$3());
-                    // System.out.println("outdir: " + getOutputDirectory().getPath());
-                    for ( File file : sourceProducts )
-                    {
-                        // System.out.println("path: " + file.getPath());
-                        // String relativePath = PathTool.getRelativePath( getOutputDirectory().getPath(),
-                        // file.getPath() );
-                        String relativePath = file.getPath().substring( getOutputDirectory().getPath().length() );
-                        if ( relativePath.startsWith( File.separator ) )
-                        {
-                            relativePath = relativePath.substring( 1 );
-                        }
-                        // System.out.println("product: " + relativePath);
-                        File destinationFile = new File( managedClassesDirectory, relativePath );
-                        FileUtils.copyFile( file, destinationFile );
-                        managedClassesSet.remove( relativePath );
-                    }
-                }
-            }
-
-            for ( String managedClassPath : managedClassesSet )
-            {
-                // System.out.println('*' + managedClsssPath);
-                File fileToDelete = new File( managedClassesDirectory, managedClassPath );
-                if ( !fileToDelete.delete() )
-                {
-                    // ??
-                }
-            }
-        }
-        catch ( Exception e )// TODO-???
-        {
-            throw new MojoExecutionException( "?", e );
-        }
     }
 
 }
