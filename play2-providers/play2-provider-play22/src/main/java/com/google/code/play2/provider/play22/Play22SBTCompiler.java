@@ -154,7 +154,7 @@ public class Play22SBTCompiler
         IncOptions incOptions = new IncOptions( 3, 0.5d, false, false, 5, none, false, none );
         Inputs inputs =
             Inputs.create( classpathFiles, sourceFiles, outputDirectory, scalacOptions, javacOptions, analysisCacheFile,
-                           analysisCacheMap, COMPILE_ORDER, incOptions, false/* mirrorAnalysisCache */ );
+                           analysisCacheMap, COMPILE_ORDER, incOptions, mavenLog.isDebugEnabled()/* mirrorAnalysisCache */ );
         if ( mavenLog.isDebugEnabled() )
         {
             Inputs.debug( inputs, sbtLogger );
