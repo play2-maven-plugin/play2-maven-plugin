@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-//import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 //import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -39,7 +39,7 @@ import org.apache.maven.project.MavenProject;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "compile"/* , defaultPhase = LifecyclePhase.COMPILE */, requiresDependencyResolution = ResolutionScope.COMPILE )
+@Mojo( name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE )
 public class Play2SBTCompileMojo
     extends AbstractPlay2SBTCompileMojo
 {

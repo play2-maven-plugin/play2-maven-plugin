@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -35,7 +36,7 @@ import com.google.code.play2.provider.RoutesCompilationException;
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
-@Mojo( name = "routes-compile" )
+@Mojo( name = "routes-compile", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class Play2RoutesCompileMojo
     extends AbstractPlay2Mojo
 {
