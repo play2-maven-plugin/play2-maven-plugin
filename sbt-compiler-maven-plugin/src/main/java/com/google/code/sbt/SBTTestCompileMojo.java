@@ -39,8 +39,8 @@ import org.apache.maven.project.MavenProject;
  * @since 1.0.0
  */
 @Mojo( name = "testCompile", defaultPhase = LifecyclePhase.TEST_COMPILE, requiresDependencyResolution = ResolutionScope.TEST )
-public class Play2SBTTestCompileMojo
-    extends AbstractPlay2SBTCompileMojo
+public class SBTTestCompileMojo
+    extends AbstractSBTCompileMojo
 {
     /**
      * Set this to 'true' to bypass compilation of test sources. Its use is NOT RECOMMENDED, but quite convenient on

@@ -34,7 +34,7 @@ import com.typesafe.zinc.Setup;
 
 import org.apache.maven.plugin.logging.Log;
 
-public class Play22SBTCompiler
+public class SBTCompiler
 {
     private static final String COMPILE_ORDER = "mixed"; // Tutaj???
 

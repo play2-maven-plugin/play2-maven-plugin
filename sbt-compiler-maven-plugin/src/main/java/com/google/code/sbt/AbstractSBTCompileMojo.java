@@ -54,7 +54,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  */
-public abstract class AbstractPlay2SBTCompileMojo
+public abstract class AbstractSBTCompileMojo
     extends AbstractMojo
 {
     public static final String SCALA_GROUPID = "org.scala-lang";
@@ -192,7 +192,7 @@ public abstract class AbstractPlay2SBTCompileMojo
 
         try
         {
-            Play22SBTCompiler compiler = new Play22SBTCompiler();
+            SBTCompiler compiler = new SBTCompiler();
 
             Artifact scalaLibraryArtifact =
                 getDependencyArtifact( project.getArtifacts(), SCALA_GROUPID, SCALA_LIBRARY_ARTIFACTID, "jar" );

@@ -40,8 +40,8 @@ import org.apache.maven.project.MavenProject;
  * @since 1.0.0
  */
 @Mojo( name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE )
-public class Play2SBTCompileMojo
-    extends AbstractPlay2SBTCompileMojo
+public class SBTCompileMojo
+    extends AbstractSBTCompileMojo
 {
     /**
      * The source directories containing the sources to be compiled.
