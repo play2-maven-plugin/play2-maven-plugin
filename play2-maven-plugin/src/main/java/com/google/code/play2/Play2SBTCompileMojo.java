@@ -107,14 +107,21 @@ public class Play2SBTCompileMojo
     protected Map<File, File> getAnalysisCacheMap()
     {
         HashMap<File, File> map = new HashMap<File, File>();
-        for ( MavenProject project : reactorProjects )
+        for ( MavenProject reactorProject : reactorProjects )
         {
-            File analysisCacheFile = defaultAnalysisCacheFile( project );
-            File classesDirectory = new File( project.getBuild().getOutputDirectory() );
-            map.put( classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile() );
-            //File testAnalysisCacheFile = defaultTestAnalysisCacheFile( project );
-            //File testClassesDirectory = new File( project.getBuild().getTestOutputDirectory() );
-            //map.put( testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
+            if ( reactorProject != project)
+            {
+                File analysisCacheFile = defaultAnalysisCacheFile( reactorProject );
+                if ( analysisCacheFile.isFile() )
+                {
+                    File reactorProjectArtifactFile = reactorProject.getArtifact().getFile();
+                    if ( reactorProjectArtifactFile != null )
+                    {
+                        //getLog().info( String.format( "map.add %s:%s", reactorProjectArtifactFile.getAbsolutePath(), analysisCacheFile.getAbsolutePath() ) );
+                        map.put( reactorProjectArtifactFile.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile() );
+                    }
+                }
+            }
         }
         return map;
     }

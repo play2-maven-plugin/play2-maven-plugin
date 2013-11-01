@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 //import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -108,14 +109,36 @@ public class Play2SBTTestCompileMojo
     protected Map<File, File> getAnalysisCacheMap()
     {
         HashMap<File, File> map = new HashMap<File, File>();
-        for ( MavenProject project : reactorProjects )
+        for ( MavenProject reactorProject : reactorProjects )
         {
-            File analysisCacheFile = defaultAnalysisCacheFile( project );
-            File classesDirectory = new File( project.getBuild().getOutputDirectory() );
-            map.put( classesDirectory.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile() );
-            File testAnalysisCacheFile = defaultTestAnalysisCacheFile( project );
-            File testClassesDirectory = new File( project.getBuild().getTestOutputDirectory() );
-            map.put( testClassesDirectory.getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
+            if ( reactorProject != project)
+            {
+                File analysisCacheFile = defaultAnalysisCacheFile( reactorProject );
+                if ( analysisCacheFile.isFile() )
+                {
+                    File reactorProjectArtifactFile = reactorProject.getArtifact().getFile();
+                    if ( reactorProjectArtifactFile != null )
+                    {
+                        //getLog().info( String.format( "map.add %s:%s", reactorProjectArtifactFile.getAbsolutePath(), analysisCacheFile.getAbsolutePath() ) );
+                        map.put( reactorProjectArtifactFile.getAbsoluteFile(), analysisCacheFile.getAbsoluteFile() );
+                    }
+                }
+                
+                File testAnalysisCacheFile = defaultTestAnalysisCacheFile( reactorProject );
+                if ( testAnalysisCacheFile.isFile() )
+                {
+                    List<Artifact> reactorProjectattachedArtifacts = reactorProject.getAttachedArtifacts();
+                    for ( Artifact artifact: reactorProjectattachedArtifacts )
+                    {
+                        if ( "tests".equals( artifact.getClassifier() ))
+                        {
+                            //getLog().info( String.format( "map.add %s:%s", artifact.getFile().getAbsolutePath(), testAnalysisCacheFile.getAbsolutePath() ) );
+                            map.put( artifact.getFile().getAbsoluteFile(), testAnalysisCacheFile.getAbsoluteFile() );
+                            break;
+                        }
+                    }
+                }
+            }
         }
         return map;
     }
