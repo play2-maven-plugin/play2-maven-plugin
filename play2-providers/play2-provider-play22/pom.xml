@@ -37,7 +37,7 @@ under the License.
     </prerequisites>
 
     <properties>
-        <play2.version>2.2.0</play2.version>
+        <play2.version>2.2.1</play2.version>
     </properties>
 
     <repositories>
