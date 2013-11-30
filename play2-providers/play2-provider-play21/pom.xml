@@ -59,21 +59,10 @@ under the License.
             <version>${project.version}</version>
         </dependency>
 
-        <!-- remove scala-lang and scala-compiler dependencies? -->
         <dependency>
-            <groupId>com.typesafe.zinc</groupId>
-            <artifactId>zinc</artifactId>
-            <version>0.2.5</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-compiler</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.typesafe.sbt</groupId>
+            <artifactId>incremental-compiler</artifactId>
+            <version>0.12.0</version>
         </dependency>
 
         <dependency>
@@ -132,14 +121,6 @@ under the License.
             <groupId>play</groupId>
             <artifactId>templates-compiler_2.9.2</artifactId>
             <version>${play2.version}</version>
-        </dependency>
-
-        <!-- required by templates-compiler -->
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-compiler</artifactId>
-            <version>2.9.2</version>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- contains PropertiesEnhancer -->

@@ -58,21 +58,10 @@ under the License.
             <version>${project.version}</version>
         </dependency>
 
-        <!-- remove scala-lang and scala-compiler dependencies? -->
         <dependency>
-            <groupId>com.typesafe.zinc</groupId>
-            <artifactId>zinc</artifactId>
-            <version>0.3.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-compiler</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.typesafe.sbt</groupId>
+            <artifactId>incremental-compiler</artifactId>
+            <version>0.13.0</version>
         </dependency>
 
         <dependency>
