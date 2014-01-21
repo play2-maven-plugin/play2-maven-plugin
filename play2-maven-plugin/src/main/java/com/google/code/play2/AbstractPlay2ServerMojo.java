@@ -101,11 +101,11 @@ public abstract class AbstractPlay2ServerMojo
 
             if ( httpPort != null && httpPort.length() > 0 )
             {
-                javaTask.createArg().setValue( "--http.port=" + httpPort );
+                addSystemProperty( javaTask, "http.port", httpPort );
             }
             if ( httpsPort != null && httpsPort.length() > 0 )
             {
-                javaTask.createArg().setValue( "--https.port=" + httpsPort );
+                addSystemProperty( javaTask, "https.port", httpsPort );
             }
         }
         else
