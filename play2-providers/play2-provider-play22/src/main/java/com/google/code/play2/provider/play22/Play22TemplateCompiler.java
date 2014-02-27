@@ -83,29 +83,18 @@ public class Play22TemplateCompiler
         this.outputDirectory = outputDirectory;
     }
 
+    public boolean isSupportedType( String type )
+    {
+        return getFileType( type ) >= 0;
+    }
+
     public void compile( File templateFile )
         throws TemplateCompilationException
     {
         String fileName = templateFile.getName();
         String ext = fileName.substring( fileName.lastIndexOf( "." ) + 1 );
         String importsAsString = getImportsAsString( ext );
-        int index = -1;
-        if ( "html".equals( ext ) )
-        {
-            index = 0;
-        }
-        else if ( "txt".equals( ext ) )
-        {
-            index = 1;
-        }
-        else if ( "xml".equals( ext ) )
-        {
-            index = 2;
-        }
-        else if ( "js".equals( ext ) )
-        {
-            index = 3;
-        }
+        int index = getFileType( ext );
         if ( index >= 0 )
         {
             String formatterType = formatterTypes[index];
@@ -119,6 +108,28 @@ public class Play22TemplateCompiler
                 throw new TemplateCompilationException( e.source(), e.message(), e.line(), e.column() );
             }
         }
+    }
+
+    private int getFileType(String ext)
+    {
+        int result = -1;
+        if ( "html".equals( ext ) )
+        {
+            result = 0;
+        }
+        else if ( "txt".equals( ext ) )
+        {
+            result = 1;
+        }
+        else if ( "xml".equals( ext ) )
+        {
+            result = 2;
+        }
+        else if ( "js".equals( ext ) )
+        {
+            result = 3;
+        }
+        return result;
     }
 
     private String getImportsAsString( String format )

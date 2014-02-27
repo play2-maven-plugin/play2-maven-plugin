@@ -29,6 +29,8 @@ public interface Play2TemplateCompiler
 
     void setOutputDirectory( File outputDirectory );
 
+    public boolean isSupportedType( String type );
+
     void compile( File templateFile )
         throws TemplateCompilationException; //IOException?
 

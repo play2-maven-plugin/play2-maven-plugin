@@ -22,10 +22,14 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
 import org.codehaus.plexus.util.DirectoryScanner;
+
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.provider.Play2RoutesCompiler;
 import com.google.code.play2.provider.RoutesCompilationException;
@@ -48,6 +52,12 @@ public class Play2RoutesCompileMojo
      */
     @Parameter( property = "play.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
+
+    /**
+     * For M2E integration.
+     */
+    @Component
+    private BuildContext buildContext;
 
     private static final String confDirectoryName = "conf";
 
@@ -80,7 +90,12 @@ public class Play2RoutesCompileMojo
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
 
-        if ( files.length > 0 )
+        if ( files.length == 0 )
+        {
+            getLog().debug( "No routes to compile" );
+            return;
+        }
+        else
         {
             File targetDirectory = new File( project.getBuild().getDirectory() );
             File generatedDirectory = new File( targetDirectory, targetDirectoryName );
@@ -92,17 +107,24 @@ public class Play2RoutesCompileMojo
             for ( String fileName : files )
             {
                 File routesFile = new File( confDirectory, fileName );
-                if ( routesFile.isFile() )
+
+                if ( isUpToDate( routesFile, generatedDirectory ) )
                 {
-                    try
-                    {
-                        compiler.compile( routesFile );
-                    }
-                    catch ( RoutesCompilationException e )
-                    {
-                        throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
-                                                                         routesFile.getPath() ), e );
-                    }
+                    getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
+                    continue;
+                }
+
+                getLog().debug( String.format( "Processing \"%s\"", fileName ) );
+
+                try
+                {
+                    compiler.compile( routesFile );
+                    buildContextRefresh( routesFile, generatedDirectory );
+                }
+                catch ( RoutesCompilationException e )
+                {
+                    throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
+                                                                     routesFile.getPath() ), e );
                 }
             }
 
@@ -112,6 +134,44 @@ public class Play2RoutesCompileMojo
                 getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
             }
         }
+    }
+
+    private boolean isUpToDate( File routesFile, File generatedDirectory )
+    {
+        File fileTargetDir = generatedDirectory;
+        String routesFileName = routesFile.getName();
+        if ( routesFileName.endsWith( ".routes" ) )
+        {
+            String namespace = routesFileName.substring( 0, routesFileName.length() - ".routes".length() );
+            String packageDir = namespace.replace( ".", "/" );
+            fileTargetDir = new File( generatedDirectory, packageDir );
+        }
+        File targetFile = new File( fileTargetDir, "routes_routing.scala" );
+        boolean result =
+            targetFile.exists() && targetFile.isFile() && targetFile.lastModified() > routesFile.lastModified();
+        return result;
+    }
+
+    private void buildContextRefresh( File routesFile, File generatedDirectory )
+    {
+        File fileTargetDir = generatedDirectory;
+        String routesFileName = routesFile.getName();
+        if ( routesFileName.endsWith( ".routes" ) )
+        {
+            String namespace = routesFileName.substring( 0, routesFileName.length() - ".routes".length() );
+            String packageDir = namespace.replace( ".", "/" );
+            fileTargetDir = new File( generatedDirectory, packageDir );
+        }
+
+        File generatedFile = new File( fileTargetDir, "routes_routing.scala" );
+        buildContext.refresh( generatedFile );
+        generatedFile = new File( fileTargetDir, "routes_reverseRouting.scala" );
+        if ( generatedFile.exists() )
+        {
+            buildContext.refresh( generatedFile );
+        }
+        generatedFile = new File( generatedDirectory, "controllers/routes.java" );
+        buildContext.refresh( generatedFile );
     }
 
 }

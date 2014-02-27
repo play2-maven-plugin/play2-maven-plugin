@@ -22,11 +22,14 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
+
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.provider.Play2TemplateCompiler;
 import com.google.code.play2.provider.TemplateCompilationException;
@@ -49,6 +52,12 @@ public class Play2TemplateCompileMojo
      */
     @Parameter( property = "play.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
+
+    /**
+     * For M2E integration.
+     */
+    @Component
+    private BuildContext buildContext;
 
     private static final String appDirectoryName = "app";
 
@@ -81,7 +90,12 @@ public class Play2TemplateCompileMojo
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
 
-        if ( files.length > 0 )
+        if ( files.length == 0 )
+        {
+            getLog().debug( "No templates to compile" );
+            return;
+        }
+        else
         {
             File targetDirectory = new File( project.getBuild().getDirectory() );
             File generatedDirectory = new File( targetDirectory, targetDirectoryName );
@@ -93,11 +107,26 @@ public class Play2TemplateCompileMojo
 
             for ( String fileName : files )
             {
+                String fileExt = fileName.substring( fileName.lastIndexOf( '.' ) + 1 );
+                if ( !compiler.isSupportedType( fileExt ))
+                {
+                    getLog().debug( String.format( "Template \"%s\" skipped - \"%s\" type not supported", fileName, fileExt ) );
+                    continue;
+                }
+
+                if ( isUpToDate( appDirectory, fileName, generatedDirectory ) )
+                {
+                    getLog().debug( String.format( "Template \"%s\" skipped - no changes", fileName ) );
+                    continue;
+                }
+
                 getLog().debug( String.format( "Processing template \"%s\"", fileName ) );
+
                 File templateFile = new File( appDirectory, fileName );
                 try
                 {
                     compiler.compile( templateFile );
+                    buildContextRefresh( fileName, generatedDirectory );
                 }
                 catch ( TemplateCompilationException e )
                 {
@@ -112,6 +141,34 @@ public class Play2TemplateCompileMojo
                 getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
             }
         }
+    }
+
+    private boolean isUpToDate( File appDirectory, String templateFileName, File generatedDirectory )
+    {
+        File sourceFile = new File( appDirectory, templateFileName );
+        String targetFileName = getGeneratedFileName( templateFileName );
+        File targetFile = new File( generatedDirectory, targetFileName );
+        boolean result =
+            targetFile.exists() && targetFile.isFile() && targetFile.lastModified() > sourceFile.lastModified();
+        return result;
+    }
+
+    private void buildContextRefresh( String templateFileName, File generatedDirectory )
+    {
+        String generatedFileName = getGeneratedFileName( templateFileName );
+        File generatedFile = new File( generatedDirectory, generatedFileName );
+        buildContext.refresh( generatedFile );
+    }
+
+    private String getGeneratedFileName( String templateFileName )
+    {
+        File templateFile = new File( templateFileName );
+        String parentPath = templateFile.getParent();
+        String name = templateFile.getName();
+        String fileExt = name.substring( name.lastIndexOf( '.' ) + 1 );
+        String baseName = name.substring( 0, name.length() - ( ".scala.".length() + fileExt.length() ) );
+
+        return parentPath + File.separatorChar + fileExt + File.separatorChar + baseName + ".template.scala";
     }
 
 }
