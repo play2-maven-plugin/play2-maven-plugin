@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Grzegorz Slowikowski (gslowikowski at gmail dot com)
+ * Copyright 2013-2014 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
