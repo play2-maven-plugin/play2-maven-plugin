@@ -21,9 +21,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.provider.AssetCompilationException;
 import com.google.code.play2.provider.JavascriptCompilationResult;
@@ -63,6 +66,12 @@ public class Play2ClosureCompileMojo
     @Parameter( property = "play.closureCompilerOptions", defaultValue = "" )
     private String closureCompilerOptions;
 
+    /**
+     * For M2E integration.
+     */
+    @Component
+    private BuildContext buildContext;
+
     protected String getAssetsIncludes()
     {
         return javascriptEntryPointsIncludes;
@@ -84,7 +93,6 @@ public class Play2ClosureCompileMojo
 
         for ( String fileName : fileNames )
         {
-            getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
             File srcJsFile = new File( assetsSourceDirectory, fileName );
 
             // String jsFileName = fileName.replace( ".coffee", ".js" );
@@ -101,23 +109,32 @@ public class Play2ClosureCompileMojo
 
             if ( modified )
             {
+                getLog().debug( String.format( "Processing \"%s\"", fileName ) );
+
                 JavascriptCompilationResult result = compiler.compile( srcJsFile );
                 String jsContent = result.getJs();
                 String minifiedJsContent = result.getMinifiedJs();
                 createDirectory( jsFile.getParentFile(), false );
                 writeToFile( jsFile, jsContent );
+                buildContext.refresh( jsFile );
+
                 if ( minifiedJsContent != null )
                 {
                     createDirectory( minifiedJsFile.getParentFile(), false );
                     writeToFile( minifiedJsFile, minifiedJsContent );
+                    buildContext.refresh( minifiedJsFile );
                 }
                 else
                 {
-                    if ( minifiedJsFile.exists() )
-                    { // TODO-check if isFile
-                        minifiedJsFile.delete(); // TODO-check result
+                    if ( minifiedJsFile.exists() && minifiedJsFile.isFile() && minifiedJsFile.delete() )
+                    {
+                        buildContext.refresh( minifiedJsFile );
                     }
                 }
+            }
+            else
+            {
+                getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
             }
         }
     }

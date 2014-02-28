@@ -107,24 +107,32 @@ public class Play2RoutesCompileMojo
             for ( String fileName : files )
             {
                 File routesFile = new File( confDirectory, fileName );
+                String generatedFileName = getGeneratedFileName( fileName );
+                File generatedFile = new File( generatedDirectory, generatedFileName );
+                boolean modified = true;
+                if ( generatedFile.isFile() )
+                {
+                    modified = ( generatedFile.lastModified() < routesFile.lastModified() );
+                }
 
-                if ( isUpToDate( routesFile, generatedDirectory ) )
+                if ( modified )
+                {
+                    getLog().debug( String.format( "Processing \"%s\"", fileName ) );
+
+                    try
+                    {
+                        compiler.compile( routesFile );
+                        buildContextRefresh( generatedDirectory, generatedFileName );
+                    }
+                    catch ( RoutesCompilationException e )
+                    {
+                        throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
+                                                                         routesFile.getPath() ), e );
+                    }
+                }
+                else
                 {
                     getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
-                    continue;
-                }
-
-                getLog().debug( String.format( "Processing \"%s\"", fileName ) );
-
-                try
-                {
-                    compiler.compile( routesFile );
-                    buildContextRefresh( routesFile, generatedDirectory );
-                }
-                catch ( RoutesCompilationException e )
-                {
-                    throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
-                                                                     routesFile.getPath() ), e );
                 }
             }
 
@@ -136,33 +144,22 @@ public class Play2RoutesCompileMojo
         }
     }
 
-    private boolean isUpToDate( File routesFile, File generatedDirectory )
+    private String getGeneratedFileName( String routesFileName )
     {
-        File fileTargetDir = generatedDirectory;
-        String routesFileName = routesFile.getName();
+        String result = "routes_routing.scala";
         if ( routesFileName.endsWith( ".routes" ) )
         {
             String namespace = routesFileName.substring( 0, routesFileName.length() - ".routes".length() );
-            String packageDir = namespace.replace( ".", "/" );
-            fileTargetDir = new File( generatedDirectory, packageDir );
+            String packageDir = namespace.replace( '.', File.separatorChar );
+            result = packageDir + File.separatorChar + result;
         }
-        File targetFile = new File( fileTargetDir, "routes_routing.scala" );
-        boolean result =
-            targetFile.exists() && targetFile.isFile() && targetFile.lastModified() > routesFile.lastModified();
+
         return result;
     }
 
-    private void buildContextRefresh( File routesFile, File generatedDirectory )
+    private void buildContextRefresh( File generatedDirectory, String generatedFileName )
     {
-        File fileTargetDir = generatedDirectory;
-        String routesFileName = routesFile.getName();
-        if ( routesFileName.endsWith( ".routes" ) )
-        {
-            String namespace = routesFileName.substring( 0, routesFileName.length() - ".routes".length() );
-            String packageDir = namespace.replace( ".", "/" );
-            fileTargetDir = new File( generatedDirectory, packageDir );
-        }
-
+        File fileTargetDir = new File( generatedDirectory, generatedFileName ).getParentFile();
         File generatedFile = new File( fileTargetDir, "routes_routing.scala" );
         buildContext.refresh( generatedFile );
         generatedFile = new File( fileTargetDir, "routes_reverseRouting.scala" );

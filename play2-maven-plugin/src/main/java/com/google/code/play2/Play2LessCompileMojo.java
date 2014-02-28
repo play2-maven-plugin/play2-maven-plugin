@@ -24,9 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.less.LessDependencyCache;
 import com.google.code.play2.provider.AssetCompilationException;
@@ -69,6 +72,12 @@ public class Play2LessCompileMojo
     @Parameter( property = "play.lessOptions", defaultValue = "" )
     private String lessOptions;
 
+    /**
+     * For M2E integration.
+     */
+    @Component
+    private BuildContext buildContext;
+
     protected String getAssetsIncludes()
     {
         return lessEntryPointsIncludes;
@@ -102,7 +111,6 @@ public class Play2LessCompileMojo
 
         for ( String fileName : fileNames )
         {
-            getLog().debug( String.format( "Processing file \"%s\"", fileName ) );
             File templateFile = new File( assetsSourceDirectory, fileName );
 
             String cssFileName = fileName.replace( ".less", ".css" );
@@ -156,6 +164,8 @@ public class Play2LessCompileMojo
 
             if ( modified )
             {
+                getLog().debug( String.format( "Processing \"%s\"", fileName ) );
+
                 LessCompilationResult result = compiler.compile( templateFile );
                 String cssContent = result.getCss();
                 String minifiedCssContent = result.getMinifiedCss();
@@ -163,30 +173,36 @@ public class Play2LessCompileMojo
                 // minifiedCssContent);
                 createDirectory( cssFile.getParentFile(), false );
                 writeToFile( cssFile, cssContent );
+                buildContext.refresh( cssFile );
                 if ( minifiedCssContent != null )
                 {
                     createDirectory( minifiedCssFile.getParentFile(), false );
                     writeToFile( minifiedCssFile, minifiedCssContent );
+                    buildContext.refresh( minifiedCssFile );
                 }
                 else
                 {
-                    if ( minifiedCssFile.exists() )
-                    { // TODO-check if isFile
-                        minifiedCssFile.delete(); // TODO-check result
+                    if ( minifiedCssFile.exists() && minifiedCssFile.isFile() && minifiedCssFile.delete() )
+                    {
+                        buildContext.refresh( minifiedCssFile );
                     }
                 }
                 List<File> allSourceFiles = result.getDependencies();
                 fileDependencies = new HashSet<String>();
                 for ( File file : allSourceFiles )
                 {
-                    getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
+                    //getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
                     fileDependencies.add( file.getPath() );
                 }
                 // allDependencies.put(fileName, fileDependencies);
                 // System.out.println(allSourceFiles);
                 // System.out.println(":::end:::");
+                newAllDependencies.set( fileName, fileDependencies );
             }
-            newAllDependencies.set( fileName, fileDependencies );
+            else
+            {
+                getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
+            }
         }
         // TODO - change file format, disable caching for now
         // newAllDependencies.writeToFile( depsFile );

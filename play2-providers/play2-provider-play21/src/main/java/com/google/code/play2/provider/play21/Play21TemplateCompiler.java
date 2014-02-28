@@ -20,6 +20,9 @@ package com.google.code.play2.provider.play21;
 import java.io.File;
 //?import java.io.IOException;
 
+
+
+
 import play.templates.ScalaTemplateCompiler;
 import play.templates.TemplateCompilationError;
 
@@ -90,6 +93,14 @@ public class Play21TemplateCompiler
     public boolean isSupportedType( String type )
     {
         return getFileType( type ) >= 0;
+    }
+
+    public String getGeneratedFileName( String templateFileName )
+    {
+        File templateFile = new File( appDirectory, templateFileName );
+        String ext = templateFileName.substring( templateFileName.lastIndexOf( "." ) + 1 );
+        String templateName = ScalaTemplateCompiler.source2TemplateName( templateFile, appDirectory, ext, "", "views", true );
+        return templateName.replace( '.', File.separatorChar ) + ".template.scala";
     }
 
     public void compile( File templateFile )
