@@ -20,8 +20,7 @@ package com.google.code.play2.provider.play21;
 import java.io.File;
 //?import java.io.IOException;
 
-
-
+import scala.Option;
 
 import play.templates.ScalaTemplateCompiler;
 import play.templates.TemplateCompilationError;
@@ -32,6 +31,11 @@ import com.google.code.play2.provider.TemplateCompilationException;
 public class Play21TemplateCompiler
     implements Play2TemplateCompiler
 {
+    private static final String[] templateExts = {
+        "html",
+        "txt",
+        "xml" };
+
     private static final String[] resultTypes = {
         "play.api.templates.Html",
         "play.api.templates.Txt",
@@ -90,56 +94,44 @@ public class Play21TemplateCompiler
         this.outputDirectory = outputDirectory;
     }
 
-    public boolean isSupportedType( String type )
-    {
-        return getFileType( type ) >= 0;
-    }
-
-    public String getGeneratedFileName( String templateFileName )
-    {
-        File templateFile = new File( appDirectory, templateFileName );
-        String ext = templateFileName.substring( templateFileName.lastIndexOf( "." ) + 1 );
-        String templateName = ScalaTemplateCompiler.source2TemplateName( templateFile, appDirectory, ext, "", "views", true );
-        return templateName.replace( '.', File.separatorChar ) + ".template.scala";
-    }
-
-    public void compile( File templateFile )
+    public File compile( File templateFile )
         throws TemplateCompilationException
     {
+        File result = null;
+
         String fileName = templateFile.getName();
         String ext = fileName.substring( fileName.lastIndexOf( "." ) + 1 );
         String importsAsString = getImportsAsString( ext );
-        int index = getFileType( ext );
+        int index = getTemplateExtIndex( ext );
         if ( index >= 0 )
         {
             String resultType = resultTypes[index];
             String formatterType = formatterTypes[index];
             try
             {
-                ScalaTemplateCompiler.compile( templateFile, appDirectory, outputDirectory, resultType, formatterType,
-                                               importsAsString );
+                Option<File> resultOption =
+                    ScalaTemplateCompiler.compile( templateFile, appDirectory, outputDirectory, resultType,
+                                                   formatterType, importsAsString );
+                result = resultOption.isDefined() ? resultOption.get() : null;
             }
             catch ( TemplateCompilationError e )
             {
                 throw new TemplateCompilationException( e.source(), e.message(), e.line(), e.column() );
             }
         }
+        return result;
     }
 
-    private int getFileType(String ext)
+    private int getTemplateExtIndex(String ext)
     {
         int result = -1;
-        if ( "html".equals( ext ) )
+        for ( int i = 0; i < templateExts.length; i++ )
         {
-            result = 0;
-        }
-        else if ( "txt".equals( ext ) )
-        {
-            result = 1;
-        }
-        else if ( "xml".equals( ext ) )
-        {
-            result = 2;
+            if ( templateExts[i].equals( ext ) )
+            {
+                result = i;
+                break;
+            }
         }
         return result;
     }

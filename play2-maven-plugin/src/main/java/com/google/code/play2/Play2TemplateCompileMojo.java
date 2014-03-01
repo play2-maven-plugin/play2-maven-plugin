@@ -107,40 +107,24 @@ public class Play2TemplateCompileMojo
 
             for ( String fileName : files )
             {
-                String fileExt = fileName.substring( fileName.lastIndexOf( '.' ) + 1 );
-                if ( !compiler.isSupportedType( fileExt ))
-                {
-                    getLog().debug( String.format( "\"%s\" skipped - \"%s\" type not supported", fileName, fileExt ) );
-                    continue;
-                }
-
                 File templateFile = new File( appDirectory, fileName );
-                String generatedFileName = compiler.getGeneratedFileName( fileName );
-                File generatedFile = new File( generatedDirectory, generatedFileName );
-                boolean modified = true;
-                if ( generatedFile.isFile() )
+                try
                 {
-                    modified = ( generatedFile.lastModified() < templateFile.lastModified() );
-                }
-
-                if ( modified )
-                {
-                    getLog().debug( String.format( "Processing \"%s\"", fileName ) );
-
-                    try
+                    File generatedFile = compiler.compile( templateFile );
+                    if ( generatedFile != null )
                     {
-                        compiler.compile( templateFile );
+                        getLog().debug( String.format( "\"%s\" processed", fileName ) );
                         buildContext.refresh( generatedFile );
                     }
-                    catch ( TemplateCompilationException e )
+                    else
                     {
-                        throw new MojoExecutionException( String.format( "Template compilation failed (%s)",
-                                                                         templateFile.getPath() ), e );
+                        getLog().debug( String.format( "\"%s\" skipped", fileName ) );
                     }
                 }
-                else
+                catch ( TemplateCompilationException e )
                 {
-                    getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
+                    throw new MojoExecutionException( String.format( "Template compilation failed (%s)",
+                                                                     templateFile.getPath() ), e );
                 }
             }
 

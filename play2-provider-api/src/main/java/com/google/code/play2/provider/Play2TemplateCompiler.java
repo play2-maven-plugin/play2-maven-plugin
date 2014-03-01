@@ -29,11 +29,7 @@ public interface Play2TemplateCompiler
 
     void setOutputDirectory( File outputDirectory );
 
-    boolean isSupportedType( String type );
-
-    String getGeneratedFileName( String templateFileName );
-
-    void compile( File templateFile )
+    File compile( File templateFile )
         throws TemplateCompilationException; //IOException?
 
 }
