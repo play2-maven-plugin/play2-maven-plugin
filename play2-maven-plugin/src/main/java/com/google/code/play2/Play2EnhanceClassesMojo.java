@@ -83,12 +83,19 @@ public class Play2EnhanceClassesMojo
         return defaultAnalysisCacheFile( project );
     }
 
-    // Copied from AbstractPlay2SBTCompileMojo
+    // Copied from AbstractSBTCompileMojo (http://code.google.com/p/sbt-compiler-maven-plugin/ project)
     private File defaultAnalysisDirectory( MavenProject p )
     {
-        return new File( p.getBuild().getDirectory(), "analysis" );
+        return new File( p.getBuild().getDirectory(), "cache" );
     }
 
+    /**
+     * Returns incremental main compilation analysis cache file location for a project.
+     * 
+     * @param p Maven project
+     * @return analysis cache file location
+     */
+    // Copied from AbstractSBTCompileMojo (http://code.google.com/p/sbt-compiler-maven-plugin/ project)
     protected File defaultAnalysisCacheFile( MavenProject p )
     {
         return new File( defaultAnalysisDirectory( p ), "compile" );
@@ -98,9 +105,18 @@ public class Play2EnhanceClassesMojo
     protected void enhanceClasses( List<File> classpathFiles )
         throws MojoExecutionException, IOException
     {
-        Play2JavaEnhancer enhancer = play2Provider.getEnhancer();
-        enhancer.setAnalysisCacheFile( getAnalysisCacheFile() );
+        File analysisCacheFile = getAnalysisCacheFile();
+        if ( !analysisCacheFile.exists() )
+        {
+            throw new MojoExecutionException( String.format( "Analysis cache file \"%s\" not found", analysisCacheFile.getAbsolutePath() ) );
+        }
+        if ( !analysisCacheFile.isFile() )
+        {
+            throw new MojoExecutionException( String.format( "Analysis cache \"%s\" is not a file", analysisCacheFile.getAbsolutePath() ) );
+        }
 
+        Play2JavaEnhancer enhancer = play2Provider.getEnhancer();
+        enhancer.setAnalysisCacheFile( analysisCacheFile );
         try
         {
             /*StringBuilder sb = new StringBuilder();
@@ -175,7 +191,6 @@ public class Play2EnhanceClassesMojo
 
     private void enhanceTemplateClasses( long lastEnhanced, Play2JavaEnhancer enhancer ) throws Exception
     {
-
         File scannerBaseDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName ); // TODO-parametrize
         if ( scannerBaseDir.isDirectory() )
         {
