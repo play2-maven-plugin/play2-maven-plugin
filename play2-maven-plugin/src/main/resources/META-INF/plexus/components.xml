@@ -40,7 +40,7 @@ under the License.
                 com.google.code.play2-maven-plugin:play2-maven-plugin:routes-compile,
                 com.google.code.play2-maven-plugin:play2-maven-plugin:template-compile
               </generate-sources>
-              <!-- add in the ptoject, if needed <generate-resources>
+              <!-- add in the project, if needed <generate-resources>
                 com.google.code.play2-maven-plugin:play2-maven-plugin:closure-compile,
                 com.google.code.play2-maven-plugin:play2-maven-plugin:coffee-compile,
                 com.google.code.play2-maven-plugin:play2-maven-plugin:less-compile
