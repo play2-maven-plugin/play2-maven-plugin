@@ -69,11 +69,11 @@ public class Play2StopMojo
             return;
         }
 
-        getLog().info( "Stopping Play! Server" );
+        getLog().info( "Stopping Play! server" );
 
         stopServer();
 
-        getLog().info( "Play! Server stopped" );
+        getLog().info( "Play! server stopped" );
     }
 
 }
