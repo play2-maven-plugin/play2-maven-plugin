@@ -20,6 +20,7 @@ package com.google.code.play2;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -85,7 +86,7 @@ public abstract class AbstractPlay2StartServerMojo
         return javaTask;
     }
 
-    protected String getRootUrl( )
+    protected String getRootUrl( String relativeUrl )
     {
         int serverPort = 9000;
         if ( getHttpPort() != null && getHttpPort().length() > 0 )
@@ -97,30 +98,39 @@ public abstract class AbstractPlay2StartServerMojo
          * serverPort = Integer.parseInt( serverPortStr ); } }
          */
 
-        return String.format( "http://localhost:%d/", serverPort );
+        return String.format( "http://localhost:%d%s", serverPort, relativeUrl );
     }
 
-    protected void waitForServerStarted( String rootUrl, JavaRunnable runner )
-        throws MojoExecutionException, IOException
+    // startTimeout in milliseconds
+    protected void waitForServerStarted( String rootUrl, JavaRunnable runner, int startTimeout )
+        throws MojoExecutionException, MojoFailureException, IOException
     {
-        // boolean timedOut = false;
-
-        /*
-         * TimerTask timeoutTask = null; if (timeout > 0) { TimerTask task = new TimerTask() { public void run() {
-         * timedOut = true; } }; timer.schedule( task, timeout * 1000 ); //timeoutTask = timer.runAfter(timeout * 1000,
-         * { // timedOut = true; //}) }
-         */
-
+        long endTimeMillis = startTimeout > 0  ? System.currentTimeMillis() + startTimeout : 0L;
         boolean started = false;
 
         URL connectUrl = new URL( rootUrl );
         int verifyWaitDelay = 1000;
         while ( !started )
         {
-            // if (timedOut) {
-            // throw new
-            // MojoExecutionException("Unable to verify if Play! Server was started in the given time ($timeout seconds)");
-            // }
+            if ( startTimeout > 0 && endTimeMillis - System.currentTimeMillis() < 0L )
+            {
+                InternalPlay2StopMojo internalStop = new InternalPlay2StopMojo();
+                internalStop.project = project;
+                try
+                {
+                    internalStop.execute();
+                }
+                catch ( MojoExecutionException e )
+                {
+                    // just ignore
+                }
+                catch ( MojoFailureException e )
+                {
+                    // just ignore
+                }
+                throw new MojoExecutionException( String.format( "Failed to start Play! Server in %d ms",
+                                                                 startTimeout ) );
+            }
 
             Exception runnerException = runner.getException();
             if ( runnerException != null )
@@ -130,6 +140,17 @@ public abstract class AbstractPlay2StartServerMojo
 
             try
             {
+                URLConnection conn = connectUrl.openConnection();
+                if ( startTimeout > 0 )
+                {
+                    int connectTimeOut =
+                        Long.valueOf( Math.min( endTimeMillis - System.currentTimeMillis(),
+                                                Integer.valueOf( Integer.MAX_VALUE ).longValue() ) ).intValue();
+                    if ( connectTimeOut > 0 )
+                    {
+                        conn.setConnectTimeout( connectTimeOut );
+                    }
+                }
                 connectUrl.openConnection().getContent();
                 started = true;
             }
@@ -140,20 +161,34 @@ public abstract class AbstractPlay2StartServerMojo
 
             if ( !started )
             {
-                try
-                {
-                    Thread.sleep( verifyWaitDelay );
+                long sleepTime = verifyWaitDelay;
+                if ( startTimeout > 0 ) {
+                    sleepTime = Math.min( sleepTime, endTimeMillis - System.currentTimeMillis() );
                 }
-                catch ( InterruptedException e )
+                if (sleepTime > 0 )
                 {
-                    throw new MojoExecutionException( "?", e );
+                    try
+                    {
+                        Thread.sleep( sleepTime );
+                    }
+                    catch ( InterruptedException e )
+                    {
+                        throw new MojoExecutionException( "?", e );
+                    }
                 }
             }
         }
+    }
 
-        /*
-         * if (timeoutTask != null) { timeoutTask.cancel(); }
-         */
+    private static class InternalPlay2StopMojo
+        extends AbstractPlay2StopServerMojo
+    {
+        @Override
+        protected void internalExecute()
+            throws MojoExecutionException, MojoFailureException, IOException
+        {
+            stopServer();
+        }
     }
 
 }

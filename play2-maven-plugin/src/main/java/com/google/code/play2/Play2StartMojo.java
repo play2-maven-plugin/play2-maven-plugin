@@ -60,12 +60,38 @@ public class Play2StartMojo
     private boolean startSpawn;
 
     /**
-     * After starting server wait for "http://localhost:${httpPort}/" URL to be available.
+     * Start server synchronously.
+     * 
+     * After starting server wait for "http://localhost:${httpPort}${startCheckUrl}" URL
+     * to be available.
      * 
      * @since 1.0.0
      */
     @Parameter( property = "play.startSynchro", defaultValue = "false" )
     private boolean startSynchro;
+
+    /**
+     * Server start timeout in milliseconds.
+     * 
+     * Used only if startSynchro is true.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.startTimeout", defaultValue = "0" )
+    int startTimeout;
+
+    /**
+     * URL to check periodically when server is starting.
+     * Server is started when connection to this URL returns any content
+     * (does not throw IOException).
+     * Has to starts with slash character (like URLs in "conf/routes" file).
+     * 
+     * Used only if startSynchro is true.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play.startCheckUrl", defaultValue = "/" )
+    String startCheckUrl;
 
     /**
      * Get the executed project from the forked lifecycle.
@@ -104,12 +130,12 @@ public class Play2StartMojo
         File logDirectory = new File( baseDir, "logs" );
         logFile = new File( logDirectory, "system.out" );
 
-        getLog().info( String.format( "Starting Play! Server, output is redirected to %s", logFile.getPath() ) );
+        getLog().info( String.format( "Starting Play! server, output is redirected to %s", logFile.getPath() ) );
 
         Java javaTask = getStartServerTask( logFile, startSpawn );
 
         JavaRunnable runner = new JavaRunnable( javaTask );
-        Thread t = new Thread( runner, "Play! Server runner" );
+        Thread t = new Thread( runner, "Play! server runner" );
         t.start();
         try
         {
@@ -117,6 +143,7 @@ public class Play2StartMojo
         }
         catch ( InterruptedException e )
         {
+            t.interrupt();
             throw new MojoExecutionException( "?", e );
         }
         Exception startServerException = runner.getException();
@@ -127,14 +154,14 @@ public class Play2StartMojo
 
         if ( startSynchro )
         {
-            String rootUrl = getRootUrl();
+            String rootUrl = getRootUrl( startCheckUrl );
 
             getLog().info( String.format( "Waiting for %s", rootUrl ) );
 
-            waitForServerStarted( rootUrl, runner );
+            waitForServerStarted( rootUrl, runner, startTimeout );
         }
 
-        getLog().info( "Play! Server started" );
+        getLog().info( "Play! server started" );
     }
 
     @Override
