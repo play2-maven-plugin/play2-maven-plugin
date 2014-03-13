@@ -31,6 +31,7 @@ under the License.
 
     <name>Maven Plugin for Play! Framework 2.x : Play! 2.x Maven Plugin</name>
     <description>Maven Plugin for Play! Framework 2.x : Play! 2.x Maven Plugin</description>
+    <inceptionYear>2013</inceptionYear>
 
     <prerequisites>
         <maven>2.2.1</maven>
