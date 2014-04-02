@@ -31,6 +31,7 @@ import org.codehaus.plexus.util.DirectoryScanner;
 
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import com.google.code.play2.provider.api.Play2Provider;
 import com.google.code.play2.provider.api.Play2TemplateCompiler;
 import com.google.code.play2.provider.api.TemplateCompilationException;
 
@@ -100,6 +101,7 @@ public class Play2TemplateCompileMojo
             File targetDirectory = new File( project.getBuild().getDirectory() );
             File generatedDirectory = new File( targetDirectory, targetDirectoryName );
 
+            Play2Provider play2Provider = getProvider();
             Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
             compiler.setAppDirectory( appDirectory );
             compiler.setOutputDirectory( generatedDirectory );

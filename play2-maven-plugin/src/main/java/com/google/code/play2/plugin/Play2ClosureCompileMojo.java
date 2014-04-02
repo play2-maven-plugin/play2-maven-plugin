@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -31,6 +32,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import com.google.code.play2.provider.api.AssetCompilationException;
 import com.google.code.play2.provider.api.JavascriptCompilationResult;
 import com.google.code.play2.provider.api.Play2JavascriptCompiler;
+import com.google.code.play2.provider.api.Play2Provider;
 
 /**
  * Compile JavaScript assets
@@ -83,8 +85,9 @@ public class Play2ClosureCompileMojo
     }
 
     protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
-        throws AssetCompilationException, IOException
+        throws AssetCompilationException, IOException, MojoExecutionException
     {
+        Play2Provider play2Provider = getProvider();
         Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
         if ( closureCompilerOptions != null )
         {

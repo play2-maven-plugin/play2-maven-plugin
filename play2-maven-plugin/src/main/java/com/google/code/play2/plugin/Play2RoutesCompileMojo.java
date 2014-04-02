@@ -28,9 +28,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
-
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import com.google.code.play2.provider.api.Play2Provider;
 import com.google.code.play2.provider.api.Play2RoutesCompiler;
 import com.google.code.play2.provider.api.RoutesCompilationException;
 
@@ -100,6 +100,7 @@ public class Play2RoutesCompileMojo
             File targetDirectory = new File( project.getBuild().getDirectory() );
             File generatedDirectory = new File( targetDirectory, targetDirectoryName );
 
+            Play2Provider play2Provider = getProvider();
             Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
             compiler.setMainLang( mainLang );
             compiler.setOutputDirectory( generatedDirectory );

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -34,6 +35,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import com.google.code.play2.provider.api.AssetCompilationException;
 import com.google.code.play2.provider.api.LessCompilationResult;
 import com.google.code.play2.provider.api.Play2LessCompiler;
+import com.google.code.play2.provider.api.Play2Provider;
 
 /**
  * Compile Less assets
@@ -88,7 +90,7 @@ public class Play2LessCompileMojo
     }
 
     protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
-        throws AssetCompilationException, IOException
+        throws AssetCompilationException, IOException, MojoExecutionException
     {
         LessDependencyCache allDependencies = new LessDependencyCache();
 
@@ -102,6 +104,7 @@ public class Play2LessCompileMojo
 
         LessDependencyCache newAllDependencies = new LessDependencyCache();
 
+        Play2Provider play2Provider = getProvider();
         Play2LessCompiler compiler = play2Provider.getLessCompiler();
         if ( lessOptions != null )
         {

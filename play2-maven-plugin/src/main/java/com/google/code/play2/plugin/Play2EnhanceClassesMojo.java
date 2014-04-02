@@ -32,10 +32,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.google.code.play2.provider.api.Play2JavaEnhancer;
+import com.google.code.play2.provider.api.Play2Provider;
 
 /**
  * Java classes enhance
@@ -115,6 +117,7 @@ public class Play2EnhanceClassesMojo
             throw new MojoExecutionException( String.format( "Analysis cache \"%s\" is not a file", analysisCacheFile.getAbsolutePath() ) );
         }
 
+        Play2Provider play2Provider = getProvider();
         Play2JavaEnhancer enhancer = play2Provider.getEnhancer();
         enhancer.setAnalysisCacheFile( analysisCacheFile );
         try

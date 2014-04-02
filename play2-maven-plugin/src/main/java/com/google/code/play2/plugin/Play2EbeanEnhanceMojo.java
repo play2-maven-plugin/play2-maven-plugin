@@ -34,6 +34,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
+import com.google.code.play2.provider.api.Play2Provider;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
@@ -110,6 +111,7 @@ public class Play2EbeanEnhanceMojo
 
             Thread.currentThread().setContextClassLoader( new URLClassLoader( cp, ClassLoader.getSystemClassLoader() ) );
 
+            Play2Provider play2Provider = getProvider();
             Play2EbeanEnhancer enhancer = play2Provider.getEbeanEnhancer();
             enhancer.setOutputDirectory( outputDirectory );
             enhancer.setClassPathUrls( classPathUrls );

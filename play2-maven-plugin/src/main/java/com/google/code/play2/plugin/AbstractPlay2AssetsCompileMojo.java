@@ -82,7 +82,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
     protected abstract String getAssetsExcludes();
 
     protected abstract void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
-        throws AssetCompilationException, IOException;
+        throws AssetCompilationException, IOException, MojoExecutionException;
 
     private void addTargetDirectoryToResources()
     {
