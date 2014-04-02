@@ -21,7 +21,7 @@ under the License.
 
     <parent>
         <groupId>com.google.code.play2-maven-plugin</groupId>
-        <artifactId>maven-parent</artifactId>
+        <artifactId>play2</artifactId>
         <version>1.0.0-alpha6-SNAPSHOT</version>
     </parent>
 
@@ -29,12 +29,45 @@ under the License.
     <artifactId>play2-providers</artifactId>
     <packaging>pom</packaging>
 
-    <name>Maven Plugin for Play! Framework 2.x : Play! 2.x Providers</name>
-    <description>Maven Plugin for Play! Framework 2.x : Play! 2.x Providers</description>
+    <name>Play! 2.x Providers</name>
+    <description>Play! 2.x Providers</description>
 
     <modules>
         <module>play2-provider-play21</module>
         <module>play2-provider-play22</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>play2-provider-api</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-component-annotations</artifactId>
+            <version>1.5.5</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+                <version>1.5.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

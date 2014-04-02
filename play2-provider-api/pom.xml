@@ -21,7 +21,7 @@ under the License.
 
     <parent>
         <groupId>com.google.code.play2-maven-plugin</groupId>
-        <artifactId>maven-parent</artifactId>
+        <artifactId>play2</artifactId>
         <version>1.0.0-alpha6-SNAPSHOT</version>
     </parent>
 
@@ -29,15 +29,7 @@ under the License.
     <artifactId>play2-provider-api</artifactId>
     <packaging>jar</packaging>
 
-    <name>Maven Plugin for Play! Framework 2.x : Play! 2.x Provider API</name>
-    <description>Maven Plugin for Play! Framework 2.x : Play! 2.x Provider API</description>
-
-    <prerequisites>
-        <maven>2.2.1</maven>
-    </prerequisites>
-
-    <properties>
-        <maven.version>2.2.1</maven.version>
-    </properties>
+    <name>Play! 2.x Provider API</name>
+    <description>Play! 2.x Provider API</description>
 
 </project>

@@ -29,12 +29,8 @@ under the License.
     <artifactId>play2-provider-play22</artifactId>
     <packaging>jar</packaging>
 
-    <name>Maven Plugin for Play! Framework 2.x : Play! 2.x Providers : Play! 2.2.x</name>
-    <description>Maven Plugin for Play! Framework 2.x : Play! 2.x Providers : Play! 2.2.x</description>
-
-    <prerequisites>
-        <maven>2.2.1</maven>
-    </prerequisites>
+    <name>Play! 2.x Provider for Play! 2.2.x</name>
+    <description>Play! 2.x Provider for Play! 2.2.x</description>
 
     <properties>
         <play2.version>2.2.1</play2.version>
@@ -53,15 +49,19 @@ under the License.
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>play2-provider-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.typesafe.sbt</groupId>
             <artifactId>incremental-compiler</artifactId>
             <version>0.13.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-compiler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -91,15 +91,15 @@ under the License.
         </dependency>
 
         <dependency>
-            <groupId>com.typesafe</groupId>
-            <artifactId>config</artifactId>
-            <version>1.0.2</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>routes-compiler_2.10</artifactId>
             <version>${play2.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -121,36 +121,5 @@ under the License.
             <version>1.7R4</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <configuration>
-                        <links>
-                            <link>http://download.oracle.com/javase/5/docs/api/</link>
-                        </links>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-maven-plugin</artifactId>
-                <version>1.3.8</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>descriptor</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
