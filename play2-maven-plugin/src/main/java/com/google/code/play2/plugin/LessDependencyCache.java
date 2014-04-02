@@ -15,7 +15,7 @@
  * under the License.
  */
 
-package com.google.code.play2.plugin.less;
+package com.google.code.play2.plugin;
 
 import java.io.File;
 import java.io.FileInputStream;

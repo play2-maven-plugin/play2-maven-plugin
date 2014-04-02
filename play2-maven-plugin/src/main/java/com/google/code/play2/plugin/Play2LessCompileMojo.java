@@ -31,7 +31,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import com.google.code.play2.plugin.less.LessDependencyCache;
 import com.google.code.play2.provider.api.AssetCompilationException;
 import com.google.code.play2.provider.api.LessCompilationResult;
 import com.google.code.play2.provider.api.Play2LessCompiler;

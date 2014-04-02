@@ -26,11 +26,12 @@ import com.google.code.play2.provider.api.Play2Provider;
 import com.google.code.play2.provider.api.Play2RoutesCompiler;
 import com.google.code.play2.provider.api.Play2TemplateCompiler;
 
+import org.codehaus.plexus.component.annotations.Component;
+
 /**
  * Plugin provider for Play&#33; 2.2.x
- * 
- * @plexus.component role="com.google.code.play2.provider.Play2Provider" role-hint="play22"
  */
+@Component( role = Play2Provider.class, hint = "play22", description = "Play! 2.2.x")
 public class Play22Provider
     implements Play2Provider
 {
