@@ -104,12 +104,24 @@ under the License.
             <groupId>play</groupId>
             <artifactId>routes-compiler_2.9.2</artifactId>
             <version>${play2.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.typesafe.akka</groupId>
+                    <artifactId>akka-actor</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>play</groupId>
             <artifactId>templates-compiler_2.9.2</artifactId>
             <version>${play2.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.typesafe.akka</groupId>
+                    <artifactId>akka-actor</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- contains PropertiesEnhancer -->

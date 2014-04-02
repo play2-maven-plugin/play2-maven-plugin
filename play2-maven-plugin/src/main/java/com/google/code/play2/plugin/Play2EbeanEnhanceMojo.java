@@ -23,6 +23,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -32,6 +34,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
+
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigValue;
 
 /**
  * Ebean enhance
@@ -53,6 +60,33 @@ public class Play2EbeanEnhanceMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        File applicationConfFile = new File( project.getBasedir(), "conf/application.conf" );
+        Config config = ConfigFactory.load( ConfigFactory.parseFileAnySyntax( applicationConfFile ) );
+
+        String models = null;
+        try
+        {
+            Set<Map.Entry<String, ConfigValue>> entries = config.getConfig( "ebean" ).entrySet();
+            for ( Map.Entry<String, ConfigValue> entry : entries )
+            {
+                ConfigValue configValue = entry.getValue();
+                Object configValueUnwrapped = configValue.unwrapped();
+                // TODO-optimize
+                if ( models == null )
+                {
+                    models = configValueUnwrapped.toString();
+                }
+                else
+                {
+                    models = models + "," + configValueUnwrapped.toString();
+                }
+            }
+        }
+        catch ( ConfigException.Missing e )
+        {
+            models = "models.*";
+        }
+
         File outputDirectory = new File( project.getBuild().getOutputDirectory() );
 
         classpathElements.remove( outputDirectory.getAbsolutePath() );
@@ -72,7 +106,7 @@ public class Play2EbeanEnhanceMojo
                 classPathUrls.add( classpathFile.toURI().toURL() );
             }
             classPathUrls.add( outputDirectory.toURI().toURL() );
-            URL[] cp = classPathUrls.toArray( new URL[] {} );
+            URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
 
             Thread.currentThread().setContextClassLoader( new URLClassLoader( cp, ClassLoader.getSystemClassLoader() ) );
 
@@ -80,7 +114,7 @@ public class Play2EbeanEnhanceMojo
             enhancer.setOutputDirectory( outputDirectory );
             enhancer.setClassPathUrls( classPathUrls );
 
-            enhancer.enhance( new File( project.getBasedir(), "conf/application.conf" ) );
+            enhancer.enhance( models );
         }
         finally
         {

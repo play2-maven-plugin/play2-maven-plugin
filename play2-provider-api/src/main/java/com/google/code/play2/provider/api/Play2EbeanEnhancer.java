@@ -27,6 +27,6 @@ public interface Play2EbeanEnhancer
 
     void setClassPathUrls( List<URL> classPathUrls ); /* change the name? */
 
-    void enhance( File applicationConfFile/* String models */ ); // ???throws /*AssetCompilationException, */IOException;
+    void enhance( String models ); // ???throws /*AssetCompilationException, */IOException;
 
 }

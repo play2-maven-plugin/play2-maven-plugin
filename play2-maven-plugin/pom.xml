@@ -56,6 +56,12 @@ under the License.
             <version>${ant.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>1.2.0</version> <!-- binary compatible with 1.0.x -->
+        </dependency>
+
         <!-- Maven -->
 
         <dependency>
