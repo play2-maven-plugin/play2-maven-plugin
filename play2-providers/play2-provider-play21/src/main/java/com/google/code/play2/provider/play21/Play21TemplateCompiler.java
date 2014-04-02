@@ -25,8 +25,8 @@ import scala.Option;
 import play.templates.ScalaTemplateCompiler;
 import play.templates.TemplateCompilationError;
 
-import com.google.code.play2.provider.Play2TemplateCompiler;
-import com.google.code.play2.provider.TemplateCompilationException;
+import com.google.code.play2.provider.api.Play2TemplateCompiler;
+import com.google.code.play2.provider.api.TemplateCompilationException;
 
 public class Play21TemplateCompiler
     implements Play2TemplateCompiler

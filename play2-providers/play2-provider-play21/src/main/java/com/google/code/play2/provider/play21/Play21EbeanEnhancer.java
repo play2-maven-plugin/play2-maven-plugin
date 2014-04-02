@@ -29,7 +29,7 @@ import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
 
-import com.google.code.play2.provider.Play2EbeanEnhancer;
+import com.google.code.play2.provider.api.Play2EbeanEnhancer;
 
 import com.avaje.ebean.enhance.agent.Transformer;
 import com.avaje.ebean.enhance.ant.OfflineFileTransform;

@@ -35,9 +35,9 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
 
-import com.google.code.play2.provider.AssetCompilationException;
-import com.google.code.play2.provider.LessCompilationResult;
-import com.google.code.play2.provider.Play2LessCompiler;
+import com.google.code.play2.provider.api.AssetCompilationException;
+import com.google.code.play2.provider.api.LessCompilationResult;
+import com.google.code.play2.provider.api.Play2LessCompiler;
 
 // Based on Play! 2.1.0 framework/src/sbt-plugin/src/main/scala/less/LessCompiler.scala
 public class Play21LessCompiler

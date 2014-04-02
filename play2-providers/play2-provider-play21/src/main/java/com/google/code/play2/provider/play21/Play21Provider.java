@@ -17,14 +17,14 @@
 
 package com.google.code.play2.provider.play21;
 
-import com.google.code.play2.provider.Play2CoffeescriptCompiler;
-import com.google.code.play2.provider.Play2EbeanEnhancer;
-import com.google.code.play2.provider.Play2JavaEnhancer;
-import com.google.code.play2.provider.Play2JavascriptCompiler;
-import com.google.code.play2.provider.Play2LessCompiler;
-import com.google.code.play2.provider.Play2Provider;
-import com.google.code.play2.provider.Play2RoutesCompiler;
-import com.google.code.play2.provider.Play2TemplateCompiler;
+import com.google.code.play2.provider.api.Play2CoffeescriptCompiler;
+import com.google.code.play2.provider.api.Play2EbeanEnhancer;
+import com.google.code.play2.provider.api.Play2JavaEnhancer;
+import com.google.code.play2.provider.api.Play2JavascriptCompiler;
+import com.google.code.play2.provider.api.Play2LessCompiler;
+import com.google.code.play2.provider.api.Play2Provider;
+import com.google.code.play2.provider.api.Play2RoutesCompiler;
+import com.google.code.play2.provider.api.Play2TemplateCompiler;
 
 /**
  * Plugin provider for Play&#33; 2.1.x

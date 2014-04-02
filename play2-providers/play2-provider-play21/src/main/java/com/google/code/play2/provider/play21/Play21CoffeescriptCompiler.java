@@ -35,9 +35,9 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.tools.shell.Global;
 
-import com.google.code.play2.provider.AssetCompilationException;
-import com.google.code.play2.provider.CoffeescriptCompilationResult;
-import com.google.code.play2.provider.Play2CoffeescriptCompiler;
+import com.google.code.play2.provider.api.AssetCompilationException;
+import com.google.code.play2.provider.api.CoffeescriptCompilationResult;
+import com.google.code.play2.provider.api.Play2CoffeescriptCompiler;
 
 //Based on Play! 2.1.0 framework/src/sbt-plugin/src/main/scala/coffeescript/CoffeeScriptCompiler.scala
 public class Play21CoffeescriptCompiler

@@ -46,9 +46,9 @@ import com.google.javascript.jscomp.Result;
 //import org.mozilla.javascript.*;
 //import org.mozilla.javascript.tools.shell.*;
 
-import com.google.code.play2.provider.AssetCompilationException;
-import com.google.code.play2.provider.JavascriptCompilationResult;
-import com.google.code.play2.provider.Play2JavascriptCompiler;
+import com.google.code.play2.provider.api.AssetCompilationException;
+import com.google.code.play2.provider.api.JavascriptCompilationResult;
+import com.google.code.play2.provider.api.Play2JavascriptCompiler;
 
 //Based on Play! 2.1.0 framework/src/sbt-plugin/src/main/scala/jscompile/JavascriptCompiler.scala
 public class Play21JavascriptCompiler

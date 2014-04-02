@@ -28,7 +28,7 @@ import sbt.inc.Analysis;
 
 import play.core.enhancers.PropertiesEnhancer;
 
-import com.google.code.play2.provider.Play2JavaEnhancer;
+import com.google.code.play2.provider.api.Play2JavaEnhancer;
 
 public class Play22JavaEnhancer
     implements Play2JavaEnhancer
