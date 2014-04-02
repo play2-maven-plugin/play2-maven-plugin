@@ -128,7 +128,7 @@ under the License.
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <links>
-                            <link>http://docs.oracle.com/javase/1.5.0/docs/api/</link>
+                            <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
                             <link>http://maven.apache.org/ref/${maven.version}/maven-artifact/apidocs/</link>
                             <link>http://maven.apache.org/ref/${maven.version}/maven-plugin-api/apidocs/</link>
                             <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
