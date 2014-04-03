@@ -31,10 +31,10 @@ public interface Play2JavaEnhancer
 
     Set<File> getProducts( File sourceFile );
 
-    void enhanceJavaClass( File classFile )
+    boolean enhanceJavaClass( File classFile )
         throws Exception;
 
-    void enhanceTemplateClass( File classFile )
+    boolean enhanceTemplateClass( File classFile )
         throws Exception;
 
 }

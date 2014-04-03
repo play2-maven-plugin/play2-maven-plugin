@@ -65,17 +65,23 @@ public class Play21JavaEnhancer
         return JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
     }
 
-    public void enhanceJavaClass( File classFile )
+    public boolean enhanceJavaClass( File classFile )
         throws Exception
     {
+        long prevTimeStamp = classFile.lastModified();
         PropertiesEnhancer.generateAccessors( classpath, classFile );
         PropertiesEnhancer.rewriteAccess( classpath, classFile );
+        long timeStamp = classFile.lastModified();
+        return timeStamp != prevTimeStamp;
     }
 
-    public void enhanceTemplateClass( File classFile )
+    public boolean enhanceTemplateClass( File classFile )
         throws Exception
     {
+        long prevTimeStamp = classFile.lastModified();
         PropertiesEnhancer.rewriteAccess( classpath, classFile );
+        long timeStamp = classFile.lastModified();
+        return timeStamp != prevTimeStamp;
     }
 
 }

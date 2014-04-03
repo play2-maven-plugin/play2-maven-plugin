@@ -65,17 +65,19 @@ public class Play22JavaEnhancer
         return JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
     }
 
-    public void enhanceJavaClass( File classFile )
+    public boolean enhanceJavaClass( File classFile )
         throws Exception
     {
-        PropertiesEnhancer.generateAccessors( classpath, classFile );
-        PropertiesEnhancer.rewriteAccess( classpath, classFile );
+        boolean enhanced = PropertiesEnhancer.generateAccessors( classpath, classFile );
+        enhanced = enhanced || PropertiesEnhancer.rewriteAccess( classpath, classFile );
+        return enhanced;
     }
 
-    public void enhanceTemplateClass( File classFile )
+    public boolean enhanceTemplateClass( File classFile )
         throws Exception
     {
-        PropertiesEnhancer.rewriteAccess( classpath, classFile );
+        boolean enhanced = PropertiesEnhancer.rewriteAccess( classpath, classFile );
+        return enhanced;
     }
 
 }

@@ -163,63 +163,107 @@ public class Play2EnhanceClassesMojo
         File scannerBaseDir = new File( project.getBasedir(), appDirectoryName );
         if ( !scannerBaseDir.isDirectory() )
         {
+            getLog().info( "No classes to enhance" );
             return;
         }
+
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( scannerBaseDir );
         scanner.setIncludes( new String[] { "**/*.java" } );
         scanner.addDefaultExcludes();
         scanner.scan();
         String[] javaSources = scanner.getIncludedFiles();
-        for ( String source : javaSources )
+
+        int processedFiles = 0;
+        int enhancedFiles = 0;
+
+        if ( javaSources.length > 0 )
         {
-            File sourceFile = new File( scannerBaseDir, source );
-            // System.out.println( String.format( "'%s'", sourceFile.getAbsolutePath() ) );
-            if ( enhancer.getCompilationTime( sourceFile ) > lastEnhanced )
-            // if ( analysis.apis().internalAPI( sourceFile ).compilation().startTime() > lastEnhanced )
+            for ( String source : javaSources )
             {
-                Set<File> javaClasses = enhancer.getProducts( sourceFile );
-                // Set<File> javaClasses = JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile )
-                // );
-                for ( File classFile : javaClasses )
+                File sourceFile = new File( scannerBaseDir, source );
+                if ( enhancer.getCompilationTime( sourceFile ) > lastEnhanced )
                 {
-                    // System.out.println( String.format( "- '%s'", classFile.getAbsolutePath() ) );
-                    enhancer.enhanceJavaClass( classFile );
-                    // PropertiesEnhancer.generateAccessors( classpath, classFile );
-                    // PropertiesEnhancer.rewriteAccess( classpath, classFile );
+                    Set<File> javaClasses = enhancer.getProducts( sourceFile );
+                    for ( File classFile : javaClasses )
+                    {
+                        processedFiles++;
+                        if ( enhancer.enhanceJavaClass( classFile ) )
+                        {
+                            enhancedFiles++;
+                            getLog().debug( String.format( "\"%s\" processed", classFile.getPath() ) );
+                        }
+                        else
+                        {
+                            getLog().debug( String.format( "\"%s\" skipped", classFile.getPath() ) );
+                        }
+                    }
                 }
             }
+        }
+
+        if ( processedFiles > 0 )
+        {
+            getLog().info( String.format( "%d classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+                                          Integer.valueOf( enhancedFiles ) ) );
+        }
+        else
+        {
+            getLog().info( "No classes to enhance" );
         }
     }
 
     private void enhanceTemplateClasses( long lastEnhanced, Play2JavaEnhancer enhancer ) throws Exception
     {
         File scannerBaseDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName ); // TODO-parametrize
-        if ( scannerBaseDir.isDirectory() )
+        if ( !scannerBaseDir.isDirectory() )
         {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( scannerBaseDir );
-            scanner.setIncludes( new String[] { "**/*.template.scala" } );
-            scanner.scan();
-            String[] scalaTemplateSources = scanner.getIncludedFiles();
+            getLog().info( "No templates to enhance" );
+            return;
+        }
+
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir( scannerBaseDir );
+        scanner.setIncludes( new String[] { "**/*.template.scala" } );
+        scanner.scan();
+        String[] scalaTemplateSources = scanner.getIncludedFiles();
+
+        int processedFiles = 0;
+        int enhancedFiles = 0;
+
+        if ( scalaTemplateSources.length > 0 )
+        {
             for ( String source : scalaTemplateSources )
             {
                 File sourceFile = new File( scannerBaseDir, source );
-                // System.out.println( String.format( "'%s'", sourceFile.getAbsolutePath() ) );
                 if ( enhancer.getCompilationTime( sourceFile ) > lastEnhanced )
-                // if ( analysis.apis().internalAPI( sourceFile ).compilation().startTime() > lastEnhanced )
                 {
                     Set<File> templateClasses = enhancer.getProducts( sourceFile );
-                    // Set<File> templateClasses = JavaConversions.setAsJavaSet( analysis.relations().products(
-                    // sourceFile ) );
                     for ( File classFile : templateClasses )
                     {
-                        // System.out.println( String.format( "- '%s'", classFile.getAbsolutePath() ) );
-                        enhancer.enhanceTemplateClass( classFile );
-                        // PropertiesEnhancer.rewriteAccess( classpath, classFile );
+                        processedFiles++;
+                        if ( enhancer.enhanceTemplateClass( classFile ) )
+                        {
+                            enhancedFiles++;
+                            getLog().debug( String.format( "\"%s\" processed", classFile.getPath() ) );
+                        }
+                        else
+                        {
+                            getLog().debug( String.format( "\"%s\" skipped", classFile.getPath() ) );
+                        }
                     }
                 }
             }
+        }
+
+        if ( processedFiles > 0 )
+        {
+            getLog().info( String.format( "%d templates processed, %d enhanced", Integer.valueOf( processedFiles ),
+                                          Integer.valueOf( enhancedFiles ) ) );
+        }
+        else
+        {
+            getLog().info( "No templates to enhance" );
         }
     }
 
