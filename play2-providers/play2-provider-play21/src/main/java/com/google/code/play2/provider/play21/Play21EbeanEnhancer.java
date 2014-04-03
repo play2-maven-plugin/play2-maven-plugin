@@ -34,17 +34,20 @@ public class Play21EbeanEnhancer
 
     private List<URL> classPathUrls = Collections.emptyList();
 
+    @Override
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
+    @Override
     public void setClassPathUrls( List<URL> classPathUrls )
     {
         this.classPathUrls = classPathUrls;
     }
 
     // TODO - add setter for models?
+    @Override
     public void enhance( String models ) // what about exceptions?
     {
         URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );

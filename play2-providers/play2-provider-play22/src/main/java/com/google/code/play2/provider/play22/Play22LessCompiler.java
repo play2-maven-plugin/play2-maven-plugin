@@ -47,11 +47,13 @@ public class Play22LessCompiler
 
 //    private List<String> compilerOptions = Collections.emptyList();
 
+    @Override
     public void setCompilerOptions( List<String> compilerOptions )
     {
 //        this.compilerOptions = compilerOptions;
     }
 
+    @Override
     public LessCompilationResult compile( File source )
         throws AssetCompilationException, IOException
     {
@@ -92,7 +94,7 @@ public class Play22LessCompiler
         return sb.toString();
     }
 
-    public InternalCompileResult compile( File source, boolean minify )
+    private InternalCompileResult compile( File source, boolean minify )
         throws IOException
     {
         Context ctx = Context.enter();
@@ -209,7 +211,7 @@ public class Play22LessCompiler
 
     }
 
-    // Called from Less script
+    // Called from Less script, must be "public"
     public static String readContent( File file )
         throws IOException
     {
@@ -234,7 +236,7 @@ public class Play22LessCompiler
         return result;
     }
 
-    // Called from Less script
+    // Called from Less script, must be "public"
     public static File resolve( File originalSource, String imported )
     {
         return new File( originalSource.getParentFile(), imported );
@@ -275,6 +277,7 @@ public class Play22LessCompiler
             this.minifiedCss = minifiedCss;
         }
 
+        @Override
         public String getMinifiedCss()
         {
             return minifiedCss;

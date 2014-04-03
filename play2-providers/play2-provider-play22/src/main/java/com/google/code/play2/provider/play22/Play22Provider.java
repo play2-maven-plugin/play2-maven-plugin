@@ -35,36 +35,43 @@ import org.codehaus.plexus.component.annotations.Component;
 public class Play22Provider
     implements Play2Provider
 {
+    @Override
     public Play2LessCompiler getLessCompiler()
     {
         return new Play22LessCompiler();
     }
 
+    @Override
     public Play2CoffeescriptCompiler getCoffeescriptCompiler()
     {
         return new Play22CoffeescriptCompiler();
     }
 
+    @Override
     public Play2JavascriptCompiler getJavascriptCompiler()
     {
         return new Play22JavascriptCompiler();
     }
 
+    @Override
     public Play2RoutesCompiler getRoutesCompiler()
     {
         return new Play22RoutesCompiler();
     }
 
+    @Override
     public Play2TemplateCompiler getTemplatesCompiler()
     {
         return new Play22TemplateCompiler();
     }
 
+    @Override
     public Play2JavaEnhancer getEnhancer()
     {
         return new Play22JavaEnhancer();
     }
 
+    @Override
     public Play2EbeanEnhancer getEbeanEnhancer()
     {
         return new Play22EbeanEnhancer();

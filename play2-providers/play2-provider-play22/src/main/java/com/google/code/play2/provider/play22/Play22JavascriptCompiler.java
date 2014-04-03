@@ -56,11 +56,13 @@ public class Play22JavascriptCompiler
 {
     private List<String> compilerOptions = Collections.emptyList();
 
+    @Override
     public void setCompilerOptions( List<String> compilerOptions )
     {
         this.compilerOptions = compilerOptions;
     }
 
+    @Override
     public CompileResult compile( File source )
         throws AssetCompilationException, IOException
     {
@@ -169,6 +171,7 @@ public class Play22JavascriptCompiler
         return defaultOptions;
     }
 
+    @Override
     public String minify( String source, String name )
         throws AssetCompilationException
     {
@@ -285,16 +288,19 @@ public class Play22JavascriptCompiler
             this.dependencies = dependencies;
         }
 
+        @Override
         public String getJs()
         {
             return js;
         }
 
+        @Override
         public String getMinifiedJs()
         {
             return minifiedJs;
         }
 
+        @Override
         public List<File> getDependencies()
         {
             return dependencies;

@@ -39,16 +39,19 @@ public class Play22RoutesCompiler
 
     private File outputDirectory;
 
+    @Override
     public void setMainLang( String mainLang )
     {
         this.mainLang = mainLang;
     }
 
+    @Override
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
+    @Override
     public void compile( File routesFile )
         throws RoutesCompilationException
     {

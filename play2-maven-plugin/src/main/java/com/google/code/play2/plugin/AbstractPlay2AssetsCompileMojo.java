@@ -35,6 +35,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
 
     private static final String targetDirectoryName = "resource_managed/main";
     
+    @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {

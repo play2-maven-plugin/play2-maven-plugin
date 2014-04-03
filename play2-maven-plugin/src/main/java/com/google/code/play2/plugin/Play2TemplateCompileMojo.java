@@ -65,6 +65,7 @@ public class Play2TemplateCompileMojo
 
     private static final String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
 
+    @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {

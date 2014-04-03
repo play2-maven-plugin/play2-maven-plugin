@@ -74,16 +74,19 @@ public class Play2ClosureCompileMojo
     @Component
     private BuildContext buildContext;
 
+    @Override
     protected String getAssetsIncludes()
     {
         return javascriptEntryPointsIncludes;
     }
 
+    @Override
     protected String getAssetsExcludes()
     {
         return javascriptEntryPointsExcludes;
     }
 
+    @Override
     protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException, MojoExecutionException
     {

@@ -46,11 +46,13 @@ public class Play21CoffeescriptCompiler
 
     private List<String> compilerOptions = Collections.emptyList();
 
+    @Override
     public void setCompilerOptions( List<String> compilerOptions )
     {
         this.compilerOptions = compilerOptions;
     }
 
+    @Override
     public CoffeescriptCompilationResult compile( File source )
         throws AssetCompilationException, IOException
     {
@@ -135,6 +137,7 @@ public class Play21CoffeescriptCompiler
             this.js = js;
         }
 
+        @Override
         public String getJs()
         {
             return js;

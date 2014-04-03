@@ -79,21 +79,25 @@ public class Play21TemplateCompiler
 
     private File outputDirectory;
 
+    @Override
     public void setMainLang( String mainLang )
     {
         this.mainLang = mainLang;
     }
 
+    @Override
     public void setSourceDirectory( File sourceDirectory )
     {
         this.sourceDirectory = sourceDirectory;
     }
 
+    @Override
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
     }
 
+    @Override
     public File compile( File templateFile )
         throws TemplateCompilationException
     {

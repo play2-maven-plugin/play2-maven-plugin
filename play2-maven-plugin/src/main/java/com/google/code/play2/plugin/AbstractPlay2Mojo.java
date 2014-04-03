@@ -128,6 +128,7 @@ public abstract class AbstractPlay2Mojo
     @Parameter( property = "plugin.version", readonly = true, required = true )
     private String pluginVersion;
 
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

@@ -28,6 +28,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
+
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.provider.api.Play2Provider;
@@ -65,6 +66,7 @@ public class Play2RoutesCompileMojo
 
     private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
 
+    @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {

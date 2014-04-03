@@ -65,6 +65,7 @@ public class Play2EnhanceClassesMojo
     @Parameter( defaultValue = "${project.build.outputDirectory}", required = true, readonly = true )
     private File outputDirectory;
 
+    @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
@@ -98,13 +99,13 @@ public class Play2EnhanceClassesMojo
      * @return analysis cache file location
      */
     // Copied from AbstractSBTCompileMojo (http://code.google.com/p/sbt-compiler-maven-plugin/ project)
-    protected File defaultAnalysisCacheFile( MavenProject p )
+    private File defaultAnalysisCacheFile( MavenProject p )
     {
         return new File( defaultAnalysisDirectory( p ), "compile" );
     }
 
 
-    protected void enhanceClasses( List<File> classpathFiles )
+    private void enhanceClasses( List<File> classpathFiles )
         throws MojoExecutionException, IOException
     {
         File analysisCacheFile = getAnalysisCacheFile();

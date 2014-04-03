@@ -90,6 +90,7 @@ public class Play2DistMojo
     @Component
     private MavenProjectHelper projectHelper;
 
+    @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {

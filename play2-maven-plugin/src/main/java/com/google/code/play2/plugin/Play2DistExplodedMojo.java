@@ -50,6 +50,7 @@ public class Play2DistExplodedMojo
     @Parameter( property = "play.distExplodedSkip", defaultValue = "false" )
     private boolean distExplodedSkip;
 
+    @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {

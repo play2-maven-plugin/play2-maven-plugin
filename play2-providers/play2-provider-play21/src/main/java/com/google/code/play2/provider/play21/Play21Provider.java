@@ -35,36 +35,43 @@ import org.codehaus.plexus.component.annotations.Component;
 public class Play21Provider
     implements Play2Provider
 {
+    @Override
     public Play2LessCompiler getLessCompiler()
     {
         return new Play21LessCompiler();
     }
 
+    @Override
     public Play2CoffeescriptCompiler getCoffeescriptCompiler()
     {
         return new Play21CoffeescriptCompiler();
     }
 
+    @Override
     public Play2JavascriptCompiler getJavascriptCompiler()
     {
         return new Play21JavascriptCompiler();
     }
 
+    @Override
     public Play2RoutesCompiler getRoutesCompiler()
     {
         return new Play21RoutesCompiler();
     }
 
+    @Override
     public Play2TemplateCompiler getTemplatesCompiler()
     {
         return new Play21TemplateCompiler();
     }
 
+    @Override
     public Play2JavaEnhancer getEnhancer()
     {
         return new Play21JavaEnhancer();
     }
 
+    @Override
     public Play2EbeanEnhancer getEbeanEnhancer()
     {
         return new Play21EbeanEnhancer();

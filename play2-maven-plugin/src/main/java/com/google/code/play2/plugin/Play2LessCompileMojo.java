@@ -79,16 +79,19 @@ public class Play2LessCompileMojo
     @Component
     private BuildContext buildContext;
 
+    @Override
     protected String getAssetsIncludes()
     {
         return lessEntryPointsIncludes;
     }
 
+    @Override
     protected String getAssetsExcludes()
     {
         return lessEntryPointsExcludes;
     }
 
+    @Override
     protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException, MojoExecutionException
     {

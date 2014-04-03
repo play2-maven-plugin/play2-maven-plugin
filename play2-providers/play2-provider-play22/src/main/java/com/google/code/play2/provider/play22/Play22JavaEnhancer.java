@@ -37,11 +37,13 @@ public class Play22JavaEnhancer
 
     private String classpath;
 
+    @Override
     public void setAnalysisCacheFile( File analysisCacheFile )
     {
         this.analysis = IC.readAnalysis( analysisCacheFile );
     }
 
+    @Override
     public void setClasspathFiles( List<File> classpathFiles )
     {
         StringBuilder sb = new StringBuilder();
@@ -55,16 +57,19 @@ public class Play22JavaEnhancer
         // this.classpath = sb.toString();
     }
 
+    @Override
     public long getCompilationTime( File sourceFile )
     {
         return analysis.apis().internalAPI( sourceFile ).compilation().startTime();
     }
 
+    @Override
     public Set<File> getProducts( File sourceFile )
     {
         return JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
     }
 
+    @Override
     public boolean enhanceJavaClass( File classFile )
         throws Exception
     {
@@ -73,6 +78,7 @@ public class Play22JavaEnhancer
         return enhanced;
     }
 
+    @Override
     public boolean enhanceTemplateClass( File classFile )
         throws Exception
     {

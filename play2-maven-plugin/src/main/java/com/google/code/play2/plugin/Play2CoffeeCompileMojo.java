@@ -75,16 +75,19 @@ public class Play2CoffeeCompileMojo
     @Component
     private BuildContext buildContext;
 
+    @Override
     protected String getAssetsIncludes()
     {
         return coffeeEntryPointsIncludes;
     }
 
+    @Override
     protected String getAssetsExcludes()
     {
         return coffeeEntryPointsExcludes;
     }
 
+    @Override
     protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException, MojoExecutionException
     {
