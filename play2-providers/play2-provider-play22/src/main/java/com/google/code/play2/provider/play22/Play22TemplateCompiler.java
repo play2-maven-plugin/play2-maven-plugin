@@ -72,7 +72,7 @@ public class Play22TemplateCompiler
 
     private String mainLang;
 
-    private File appDirectory;
+    private File sourceDirectory;
 
     private File outputDirectory;
 
@@ -81,9 +81,9 @@ public class Play22TemplateCompiler
         this.mainLang = mainLang;
     }
 
-    public void setAppDirectory( File appDirectory )
+    public void setSourceDirectory( File sourceDirectory )
     {
-        this.appDirectory = appDirectory;
+        this.sourceDirectory = sourceDirectory;
     }
 
     public void setOutputDirectory( File outputDirectory )
@@ -106,7 +106,7 @@ public class Play22TemplateCompiler
             try
             {
                 Option<File> resultOption =
-                    ScalaTemplateCompiler.compile( templateFile, appDirectory, outputDirectory, formatterType,
+                    ScalaTemplateCompiler.compile( templateFile, sourceDirectory, outputDirectory, formatterType,
                                                    importsAsString );
                 result = resultOption.isDefined() ? resultOption.get() : null;
             }

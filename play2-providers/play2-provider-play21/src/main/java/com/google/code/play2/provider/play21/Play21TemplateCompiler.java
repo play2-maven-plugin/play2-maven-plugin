@@ -75,7 +75,7 @@ public class Play21TemplateCompiler
 
     private String mainLang;
 
-    private File appDirectory;
+    private File sourceDirectory;
 
     private File outputDirectory;
 
@@ -84,9 +84,9 @@ public class Play21TemplateCompiler
         this.mainLang = mainLang;
     }
 
-    public void setAppDirectory( File appDirectory )
+    public void setSourceDirectory( File sourceDirectory )
     {
-        this.appDirectory = appDirectory;
+        this.sourceDirectory = sourceDirectory;
     }
 
     public void setOutputDirectory( File outputDirectory )
@@ -110,7 +110,7 @@ public class Play21TemplateCompiler
             try
             {
                 Option<File> resultOption =
-                    ScalaTemplateCompiler.compile( templateFile, appDirectory, outputDirectory, resultType,
+                    ScalaTemplateCompiler.compile( templateFile, sourceDirectory, outputDirectory, resultType,
                                                    formatterType, importsAsString );
                 result = resultOption.isDefined() ? resultOption.get() : null;
             }

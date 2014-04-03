@@ -25,7 +25,7 @@ public interface Play2TemplateCompiler
 {
     void setMainLang( String mainLang );
 
-    void setAppDirectory( File appDirectory );
+    void setSourceDirectory( File sourceDirectory );
 
     void setOutputDirectory( File outputDirectory );
 

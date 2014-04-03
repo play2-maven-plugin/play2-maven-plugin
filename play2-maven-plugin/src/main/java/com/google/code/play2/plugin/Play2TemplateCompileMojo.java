@@ -19,6 +19,7 @@ package com.google.code.play2.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -60,8 +61,6 @@ public class Play2TemplateCompileMojo
     @Component
     private BuildContext buildContext;
 
-    private static final String appDirectoryName = "app";
-
     private static final String targetDirectoryName = "src_managed/main";
 
     private static final String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
@@ -76,66 +75,78 @@ public class Play2TemplateCompileMojo
                                                              mainLang ) );
         }
 
-        File basedir = project.getBasedir();
-        File appDirectory = new File( basedir, appDirectoryName );
-        if ( !appDirectory.isDirectory() )
+        File targetDirectory = new File( project.getBuild().getDirectory() );
+        File generatedDirectory = new File( targetDirectory, targetDirectoryName );
+
+        List<String> compileSourceRoots = project.getCompileSourceRoots();
+        int processedFiles = 0;
+        int compiledFiles = 0;
+
+        Play2Provider play2Provider = getProvider();
+        Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
+        compiler.setOutputDirectory( generatedDirectory );
+        compiler.setMainLang( mainLang );
+
+        for ( String sourceRoot : compileSourceRoots )
         {
-            getLog().info( "No templates to compile" );
-            return;
-        }
-
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( appDirectory );
-        scanner.setIncludes( scalaTemplatesIncludes );
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        String[] files = scanner.getIncludedFiles();
-
-        if ( files.length == 0 )
-        {
-            getLog().debug( "No templates to compile" );
-            return;
-        }
-        else
-        {
-            File targetDirectory = new File( project.getBuild().getDirectory() );
-            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-
-            Play2Provider play2Provider = getProvider();
-            Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
-            compiler.setAppDirectory( appDirectory );
-            compiler.setOutputDirectory( generatedDirectory );
-            compiler.setMainLang( mainLang );
-
-            for ( String fileName : files )
+            File sourceRootDirectory = new File( sourceRoot );
+            if ( sourceRootDirectory.isDirectory()
+                && !sourceRootDirectory.getAbsolutePath().equals( generatedDirectory.getAbsolutePath() ) )
             {
-                File templateFile = new File( appDirectory, fileName );
-                try
+                DirectoryScanner scanner = new DirectoryScanner();
+                scanner.setBasedir( sourceRootDirectory );
+                scanner.setIncludes( scalaTemplatesIncludes );
+                scanner.addDefaultExcludes();
+                scanner.scan();
+                String[] files = scanner.getIncludedFiles();
+
+                if ( files.length > 0 )
                 {
-                    File generatedFile = compiler.compile( templateFile );
-                    if ( generatedFile != null )
+                    compiler.setSourceDirectory( sourceRootDirectory );
+
+                    for ( String fileName : files )
                     {
-                        getLog().debug( String.format( "\"%s\" processed", fileName ) );
-                        buildContext.refresh( generatedFile );
+                        File templateFile = new File( sourceRootDirectory, fileName );
+                        try
+                        {
+                            File generatedFile = compiler.compile( templateFile );
+                            processedFiles++;
+                            if ( generatedFile != null )
+                            {
+                                compiledFiles++;
+                                getLog().debug( String.format( "\"%s\" processed", fileName ) );
+                                buildContext.refresh( generatedFile );
+                            }
+                            else
+                            {
+                                getLog().debug( String.format( "\"%s\" skipped", fileName ) );
+                            }
+                        }
+                        catch ( TemplateCompilationException e )
+                        {
+                            throw new MojoExecutionException( String.format( "Template compilation failed (%s)",
+                                                                             templateFile.getPath() ), e );
+                        }
                     }
-                    else
-                    {
-                        getLog().debug( String.format( "\"%s\" skipped", fileName ) );
-                    }
-                }
-                catch ( TemplateCompilationException e )
-                {
-                    throw new MojoExecutionException( String.format( "Template compilation failed (%s)",
-                                                                     templateFile.getPath() ), e );
                 }
             }
+        }
 
+        if ( processedFiles > 0 )
+        {
+            getLog().info( String.format( "%d templates processed, %d compiled", Integer.valueOf( processedFiles ),
+                                          Integer.valueOf( compiledFiles ) ) );
             if ( !project.getCompileSourceRoots().contains( generatedDirectory.getAbsolutePath() ) )
             {
                 project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
                 getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
             }
         }
+        else
+        {
+            getLog().info( "No templates to compile" );
+        }
+
     }
 
 }
