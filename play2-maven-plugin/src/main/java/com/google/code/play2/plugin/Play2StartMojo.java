@@ -137,20 +137,25 @@ public class Play2StartMojo
         JavaRunnable runner = new JavaRunnable( javaTask );
         Thread t = new Thread( runner, "Play! server runner" );
         t.start();
-        try
+
+        if ( startSpawn )
         {
-            t.join();
+            try
+            {
+                t.join();
+            }
+            catch ( InterruptedException e )
+            {
+                t.interrupt();
+                throw new MojoExecutionException( "?", e );
+            }
+            Exception startServerException = runner.getException();
+            if ( startServerException != null )
+            {
+                throw new MojoExecutionException( "?", startServerException );
+            }
         }
-        catch ( InterruptedException e )
-        {
-            t.interrupt();
-            throw new MojoExecutionException( "?", e );
-        }
-        Exception startServerException = runner.getException();
-        if ( startServerException != null )
-        {
-            throw new MojoExecutionException( "?", startServerException );
-        }
+        // else don't invoke t.join(), it will lead to a deadlock
 
         if ( startSynchro )
         {
@@ -158,7 +163,7 @@ public class Play2StartMojo
 
             getLog().info( String.format( "Waiting for %s", rootUrl ) );
 
-            waitForServerStarted( rootUrl, runner, startTimeout );
+            waitForServerStarted( rootUrl, runner, startTimeout, startSpawn );
         }
 
         getLog().info( "Play! server started" );

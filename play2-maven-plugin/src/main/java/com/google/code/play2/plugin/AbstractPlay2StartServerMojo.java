@@ -102,7 +102,7 @@ public abstract class AbstractPlay2StartServerMojo
     }
 
     // startTimeout in milliseconds
-    protected void waitForServerStarted( String rootUrl, JavaRunnable runner, int startTimeout )
+    protected void waitForServerStarted( String rootUrl, JavaRunnable runner, int startTimeout, boolean spawned )
         throws MojoExecutionException, MojoFailureException, IOException
     {
         long endTimeMillis = startTimeout > 0  ? System.currentTimeMillis() + startTimeout : 0L;
@@ -114,19 +114,22 @@ public abstract class AbstractPlay2StartServerMojo
         {
             if ( startTimeout > 0 && endTimeMillis - System.currentTimeMillis() < 0L )
             {
-                InternalPlay2StopMojo internalStop = new InternalPlay2StopMojo();
-                internalStop.project = project;
-                try
+                if ( spawned )
                 {
-                    internalStop.execute();
-                }
-                catch ( MojoExecutionException e )
-                {
-                    // just ignore
-                }
-                catch ( MojoFailureException e )
-                {
-                    // just ignore
+                    InternalPlay2StopMojo internalStop = new InternalPlay2StopMojo();
+                    internalStop.project = project;
+                    try
+                    {
+                        internalStop.execute();
+                    }
+                    catch ( MojoExecutionException e )
+                    {
+                        // just ignore
+                    }
+                    catch ( MojoFailureException e )
+                    {
+                        // just ignore
+                    }
                 }
                 throw new MojoExecutionException( String.format( "Failed to start Play! Server in %d ms",
                                                                  startTimeout ) );
@@ -162,10 +165,11 @@ public abstract class AbstractPlay2StartServerMojo
             if ( !started )
             {
                 long sleepTime = verifyWaitDelay;
-                if ( startTimeout > 0 ) {
+                if ( startTimeout > 0 )
+                {
                     sleepTime = Math.min( sleepTime, endTimeMillis - System.currentTimeMillis() );
                 }
-                if (sleepTime > 0 )
+                if ( sleepTime > 0 )
                 {
                     try
                     {
