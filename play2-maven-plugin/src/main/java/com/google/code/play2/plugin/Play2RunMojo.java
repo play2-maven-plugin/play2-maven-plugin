@@ -17,11 +17,8 @@
 
 package com.google.code.play2.plugin;
 
-import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-//import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
@@ -32,7 +29,6 @@ import org.apache.maven.project.MavenProject;
  * @since 1.0.0
  */
 @Mojo( name = "run", requiresDependencyResolution = ResolutionScope.RUNTIME )
-@Execute( phase = LifecyclePhase.PROCESS_CLASSES )
 public class Play2RunMojo
     extends AbstractPlay2RunMojo
 {

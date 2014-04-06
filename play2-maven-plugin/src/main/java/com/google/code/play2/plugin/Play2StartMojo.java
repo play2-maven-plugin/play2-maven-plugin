@@ -22,8 +22,6 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -38,7 +36,6 @@ import org.apache.tools.ant.taskdefs.Java;
  * @since 1.0.0
  */
 @Mojo( name = "start", requiresDependencyResolution = ResolutionScope.RUNTIME )
-@Execute( phase = LifecyclePhase.PROCESS_CLASSES )
 public class Play2StartMojo
     extends AbstractPlay2StartServerMojo
 {
