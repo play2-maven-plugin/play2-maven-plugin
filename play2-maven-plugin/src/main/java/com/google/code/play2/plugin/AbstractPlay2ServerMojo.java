@@ -153,14 +153,21 @@ public abstract class AbstractPlay2ServerMojo
         Path classPath = new Path( antProject );
 
         Artifact projectArtifact = getProject().getArtifact();
-        if ( projectArtifact.getFile() == null )
+        File projectArtifactFile = projectArtifact.getFile();
+        if ( projectArtifactFile == null )
         {
-            throw new MojoExecutionException( "Project artifact file not available" );
+            File classesDirectory = new File( getProject().getBuild().getOutputDirectory() );
+            if ( !classesDirectory.isDirectory() )
+            {
+                throw new MojoExecutionException( "Project artifact file not available" ); //TODO improve message
+            }
+            projectArtifactFile = classesDirectory;
+            //TODO - add warning, that classes may be not up to date
         }
         getLog().debug( String.format( "CP: %s:%s:%s (%s)", projectArtifact.getGroupId(),
                                        projectArtifact.getArtifactId(), projectArtifact.getType(),
                                        projectArtifact.getScope() ) );
-        classPath.createPathElement().setLocation( projectArtifact.getFile() );
+        classPath.createPathElement().setLocation( projectArtifactFile );
 
         Set<?> classPathArtifacts = getProject().getArtifacts();
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
