@@ -49,7 +49,7 @@ public class Play2ClosureCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.javascriptEntryPointsIncludes", defaultValue = "**/*.js" )
+    @Parameter( property = "play2.javascriptEntryPointsIncludes", defaultValue = "**/*.js" )
     private String javascriptEntryPointsIncludes;
 
     /**
@@ -57,7 +57,7 @@ public class Play2ClosureCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.javascriptEntryPointsExcludes", defaultValue = "**/_*" )
+    @Parameter( property = "play2.javascriptEntryPointsExcludes", defaultValue = "**/_*" )
     private String javascriptEntryPointsExcludes;
 
     /**
@@ -65,7 +65,7 @@ public class Play2ClosureCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.closureCompilerOptions", defaultValue = "" )
+    @Parameter( property = "play2.closureCompilerOptions", defaultValue = "" )
     private String closureCompilerOptions;
 
     /**

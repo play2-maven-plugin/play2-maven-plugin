@@ -44,7 +44,7 @@ public class Play2StartMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.startSkip", defaultValue = "false" )
+    @Parameter( property = "play2.startSkip", defaultValue = "false" )
     private boolean startSkip;
 
     /**
@@ -53,7 +53,7 @@ public class Play2StartMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.startSpawn", defaultValue = "true" )
+    @Parameter( property = "play2.startSpawn", defaultValue = "true" )
     private boolean startSpawn;
 
     /**
@@ -64,7 +64,7 @@ public class Play2StartMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.startSynchro", defaultValue = "false" )
+    @Parameter( property = "play2.startSynchro", defaultValue = "false" )
     private boolean startSynchro;
 
     /**
@@ -74,7 +74,7 @@ public class Play2StartMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.startTimeout", defaultValue = "0" )
+    @Parameter( property = "play2.startTimeout", defaultValue = "0" )
     int startTimeout;
 
     /**
@@ -87,7 +87,7 @@ public class Play2StartMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.startCheckUrl", defaultValue = "/" )
+    @Parameter( property = "play2.startCheckUrl", defaultValue = "/" )
     String startCheckUrl;
 
     /**

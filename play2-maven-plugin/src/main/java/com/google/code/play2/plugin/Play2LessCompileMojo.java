@@ -54,7 +54,7 @@ public class Play2LessCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.lessEntryPointsIncludes", defaultValue = "**/*.less" )
+    @Parameter( property = "play2.lessEntryPointsIncludes", defaultValue = "**/*.less" )
     private String lessEntryPointsIncludes;
 
     /**
@@ -62,7 +62,7 @@ public class Play2LessCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.lessEntryPointsExcludes", defaultValue = "**/_*" )
+    @Parameter( property = "play2.lessEntryPointsExcludes", defaultValue = "**/_*" )
     private String lessEntryPointsExcludes;
 
     /**
@@ -70,7 +70,7 @@ public class Play2LessCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.lessOptions", defaultValue = "" )
+    @Parameter( property = "play2.lessOptions", defaultValue = "" )
     private String lessOptions;
 
     /**

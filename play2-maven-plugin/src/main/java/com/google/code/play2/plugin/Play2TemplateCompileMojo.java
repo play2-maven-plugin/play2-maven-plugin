@@ -52,7 +52,7 @@ public class Play2TemplateCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.mainLang", required = true, defaultValue = "scala" )
+    @Parameter( property = "play2.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
 
     /**

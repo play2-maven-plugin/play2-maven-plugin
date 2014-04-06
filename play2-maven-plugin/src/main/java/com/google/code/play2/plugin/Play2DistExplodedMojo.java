@@ -47,7 +47,7 @@ public class Play2DistExplodedMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distExplodedSkip", defaultValue = "false" )
+    @Parameter( property = "play2.distExplodedSkip", defaultValue = "false" )
     private boolean distExplodedSkip;
 
     @Override

@@ -58,7 +58,7 @@ public abstract class AbstractPlay2DistMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distDependencyIncludes", defaultValue = "" )
+    @Parameter( property = "play2.distDependencyIncludes", defaultValue = "" )
     private String distDependencyIncludes;
 
     /**
@@ -66,7 +66,7 @@ public abstract class AbstractPlay2DistMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distDependencyExcludes", defaultValue = "" )
+    @Parameter( property = "play2.distDependencyExcludes", defaultValue = "" )
     private String distDependencyExcludes;
 
     protected ZipArchiver prepareArchiver()

@@ -50,7 +50,7 @@ public class Play2CoffeeCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.coffeeEntryPointsIncludes", defaultValue = "**/*.coffee" )
+    @Parameter( property = "play2.coffeeEntryPointsIncludes", defaultValue = "**/*.coffee" )
     private String coffeeEntryPointsIncludes;
 
     /**
@@ -58,7 +58,7 @@ public class Play2CoffeeCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.coffeeEntryPointsExcludes", defaultValue = "" )
+    @Parameter( property = "play2.coffeeEntryPointsExcludes", defaultValue = "" )
     private String coffeeEntryPointsExcludes;
 
     /**
@@ -66,7 +66,7 @@ public class Play2CoffeeCompileMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.coffeescriptOptions", defaultValue = "" )
+    @Parameter( property = "play2.coffeescriptOptions", defaultValue = "" )
     private String coffeescriptOptions;
 
     /**

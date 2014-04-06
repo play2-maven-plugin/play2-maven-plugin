@@ -41,7 +41,7 @@ public class Play2StopMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.stopSkip", defaultValue = "false" )
+    @Parameter( property = "play2.stopSkip", defaultValue = "false" )
     private boolean stopSkip;
 
     @Override

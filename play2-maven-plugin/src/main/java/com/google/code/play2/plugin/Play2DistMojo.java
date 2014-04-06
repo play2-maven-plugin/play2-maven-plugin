@@ -49,7 +49,7 @@ public class Play2DistMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distSkip", defaultValue = "false" )
+    @Parameter( property = "play2.distSkip", defaultValue = "false" )
     private boolean distSkip;
 
     /**
@@ -57,7 +57,7 @@ public class Play2DistMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distOutputDirectory", defaultValue = "${project.build.directory}", required = true )
+    @Parameter( property = "play2.distOutputDirectory", defaultValue = "${project.build.directory}", required = true )
     private String distOutputDirectory;
 
     /**
@@ -65,7 +65,7 @@ public class Play2DistMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distArchiveName", defaultValue = "${project.build.finalName}", required = true )
+    @Parameter( property = "play2.distArchiveName", defaultValue = "${project.build.finalName}", required = true )
     private String distArchiveName;
 
     /**
@@ -73,7 +73,7 @@ public class Play2DistMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distClassifier", defaultValue = "dist" )
+    @Parameter( property = "play2.distClassifier", defaultValue = "dist" )
     private String distClassifier;
 
     /**
@@ -81,7 +81,7 @@ public class Play2DistMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.distAttach", defaultValue = "false" )
+    @Parameter( property = "play2.distAttach", defaultValue = "false" )
     private boolean distAttach;
 
     /**

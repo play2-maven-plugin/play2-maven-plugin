@@ -39,7 +39,7 @@ public abstract class AbstractPlay2RunMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.runSkip", defaultValue = "false" )
+    @Parameter( property = "play2.runSkip", defaultValue = "false" )
     private boolean runSkip;
 
     /**
@@ -47,7 +47,7 @@ public abstract class AbstractPlay2RunMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.runFork", defaultValue = "true" )
+    @Parameter( property = "play2.runFork", defaultValue = "true" )
     private boolean runFork;
 
     // protected abstract String getPlayId();

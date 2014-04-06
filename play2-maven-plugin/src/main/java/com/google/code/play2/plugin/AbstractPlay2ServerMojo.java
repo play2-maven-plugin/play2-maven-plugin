@@ -47,7 +47,7 @@ public abstract class AbstractPlay2ServerMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.httpPort", defaultValue = "" )
+    @Parameter( property = "play2.httpPort", defaultValue = "" )
     private String httpPort;
 
     /**
@@ -55,7 +55,7 @@ public abstract class AbstractPlay2ServerMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.httpsPort", defaultValue = "" )
+    @Parameter( property = "play2.httpsPort", defaultValue = "" )
     private String httpsPort;
 
     /**
@@ -63,7 +63,7 @@ public abstract class AbstractPlay2ServerMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play.serverJvmArgs", defaultValue = "" )
+    @Parameter( property = "play2.serverJvmArgs", defaultValue = "" )
     private String serverJvmArgs;
 
     protected Java prepareAntJavaTask( boolean fork )
