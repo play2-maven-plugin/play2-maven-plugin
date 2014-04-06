@@ -20,7 +20,6 @@ package com.google.code.play2.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +60,7 @@ public class Play2EbeanEnhanceMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        //TODO Check System.getProperty("config.resource") [see Play 2.2.2 PlayCommands.scala line 154]
         File applicationConfFile = new File( project.getBasedir(), "conf/application.conf" );
         Config config = ConfigFactory.load( ConfigFactory.parseFileAnySyntax( applicationConfFile ) );
 
@@ -97,31 +97,19 @@ public class Play2EbeanEnhanceMojo
             classpathFiles.add( new File( path ) );
         }
 
-        // PlayCommands:352
-        ClassLoader originalContextClassLoader = Thread.currentThread().getContextClassLoader();
-        try
+        List<URL> classPathUrls = new ArrayList<URL>( classpathFiles.size() + 1 );
+        for ( File classpathFile : classpathFiles )
         {
-            List<URL> classPathUrls = new ArrayList<URL>();
-            for ( File classpathFile : classpathFiles )
-            {
-                classPathUrls.add( classpathFile.toURI().toURL() );
-            }
-            classPathUrls.add( outputDirectory.toURI().toURL() );
-            URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
-
-            Thread.currentThread().setContextClassLoader( new URLClassLoader( cp, ClassLoader.getSystemClassLoader() ) );
-
-            Play2Provider play2Provider = getProvider();
-            Play2EbeanEnhancer enhancer = play2Provider.getEbeanEnhancer();
-            enhancer.setOutputDirectory( outputDirectory );
-            enhancer.setClassPathUrls( classPathUrls );
-
-            enhancer.enhance( models );
+            classPathUrls.add( classpathFile.toURI().toURL() );
         }
-        finally
-        {
-            Thread.currentThread().setContextClassLoader( originalContextClassLoader );
-        }
+        classPathUrls.add( outputDirectory.toURI().toURL() );
+
+        Play2Provider play2Provider = getProvider();
+        Play2EbeanEnhancer enhancer = play2Provider.getEbeanEnhancer();
+        enhancer.setOutputDirectory( outputDirectory );
+        enhancer.setClassPathUrls( classPathUrls );
+
+        enhancer.enhance( models );
     }
 
 }
