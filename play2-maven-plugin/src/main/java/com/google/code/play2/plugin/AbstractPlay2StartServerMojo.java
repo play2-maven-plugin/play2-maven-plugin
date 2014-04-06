@@ -35,7 +35,7 @@ import org.apache.tools.ant.taskdefs.Java;
 public abstract class AbstractPlay2StartServerMojo
     extends AbstractPlay2ServerMojo
 {
-    protected Java getStartServerTask( File logFile, boolean spawn )
+    protected Java getStartServerTask( boolean spawn )
         throws MojoExecutionException, MojoFailureException, IOException
     {
         File baseDir = project.getBasedir();
@@ -45,16 +45,6 @@ public abstract class AbstractPlay2StartServerMojo
         {
             throw new MojoExecutionException( String.format( "Play! Server already started (\"%s\" file found)",
                                                              pidFile.getName() ) );
-        }
-
-        if ( logFile != null )
-        {
-            File logDirectory = logFile.getParentFile();
-            if ( !logDirectory.exists() && !logDirectory.mkdirs() )
-            {
-                throw new MojoExecutionException( String.format( "Cannot create %s directory",
-                                                                 logDirectory.getAbsolutePath() ) );
-            }
         }
 
         Java javaTask = prepareAntJavaTask( true );
@@ -71,7 +61,7 @@ public abstract class AbstractPlay2StartServerMojo
         // moving here wasn't good PidFileDeleter.getInstance().add( pidFile );
         // addSystemProperty( javaTask, "pidFile", pidFile.getAbsolutePath() );
 
-        if ( logFile != null )
+        /*if ( logFile != null )
         {
             if ( spawn )
             {
@@ -81,7 +71,7 @@ public abstract class AbstractPlay2StartServerMojo
             {
                 javaTask.setOutput( logFile );
             }
-        }
+        }*/
 
         return javaTask;
     }

@@ -123,13 +123,9 @@ public class Play2StartMojo
             return;
         }
 
-        File logFile = null;
-        File logDirectory = new File( baseDir, "logs" );
-        logFile = new File( logDirectory, "system.out" );
+        getLog().info( "Starting Play! server" );
 
-        getLog().info( String.format( "Starting Play! server, output is redirected to %s", logFile.getPath() ) );
-
-        Java javaTask = getStartServerTask( logFile, startSpawn );
+        Java javaTask = getStartServerTask( startSpawn );
 
         JavaRunnable runner = new JavaRunnable( javaTask );
         Thread t = new Thread( runner, "Play! server runner" );
