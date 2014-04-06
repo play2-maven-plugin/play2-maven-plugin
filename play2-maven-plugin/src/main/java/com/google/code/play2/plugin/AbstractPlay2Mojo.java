@@ -287,16 +287,28 @@ public abstract class AbstractPlay2Mojo
                 providerId = "play22";
             }
             ClassLoader providerClassLoader = getCachedClassLoader( providerId );
-            if ( providerClassLoader != null && providerClassLoader.getParent() != Thread.currentThread().getContextClassLoader() )
-            {
-                getLog().debug( "Invalidated cached classloader for " + providerId + ". Old parent classloader "
-                                    + providerClassLoader.getParent().hashCode() + ", new parent classloader "
-                                    + Thread.currentThread().getContextClassLoader().hashCode() );
-                providerClassLoader = null;
-            }
             if ( providerClassLoader == null )
             {
-                getLog().debug( "Not used cached classloader for " + providerId );
+                getLog().debug( String.format( "Cached classloader for provider \"%s\" not available.", providerId ) );
+            }
+            else
+            {
+                if ( providerClassLoader.getParent() == Thread.currentThread().getContextClassLoader() )
+                {
+                    getLog().debug( String.format( "Using cached classloader for provider \"%s\".", providerId ) );
+                }
+                else
+                {
+                    getLog().debug( String.format( "Invalidated cached classloader for provider \"%s\". Parent classloader changed from %d to %d.",
+                                                   providerId,
+                                                   Integer.valueOf( providerClassLoader.getParent().hashCode() ),
+                                                   Integer.valueOf( Thread.currentThread().getContextClassLoader().hashCode() ) ) );
+                    providerClassLoader = null;
+                }
+            }
+
+            if ( providerClassLoader == null )
+            {
                 Artifact providerArtifact =
                     getResolvedArtifact( "com.google.code.play2-maven-plugin", "play2-provider-" + providerId,
                                          pluginVersion );
@@ -320,11 +332,6 @@ public abstract class AbstractPlay2Mojo
                                         Thread.currentThread().getContextClassLoader() );
                 getLog().debug( "Setting cached classloader for " + providerId );
                 setCachedClassLoader( providerId, providerClassLoader );
-            }
-            // TMP
-            else
-            {
-                getLog().debug( "Used cached classloader for " + providerId );
             }
 
             String providerClassName =
