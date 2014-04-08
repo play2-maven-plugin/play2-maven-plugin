@@ -60,9 +60,17 @@ public class Play2EbeanEnhanceMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        //TODO Check System.getProperty("config.resource") [see Play 2.2.2 PlayCommands.scala line 154]
-        File applicationConfFile = new File( project.getBasedir(), "conf/application.conf" );
-        Config config = ConfigFactory.load( ConfigFactory.parseFileAnySyntax( applicationConfFile ) );
+        Config config = null;
+        String configResource = System.getProperty( "config.resource" );
+        if ( configResource != null )
+        {
+            config = ConfigFactory.parseResources( configResource );
+        }
+        else
+        {
+            File applicationConfFile = new File( project.getBasedir(), "conf/application.conf" );
+            config = ConfigFactory.parseFileAnySyntax( applicationConfFile );
+        }
 
         String models = null;
         try
