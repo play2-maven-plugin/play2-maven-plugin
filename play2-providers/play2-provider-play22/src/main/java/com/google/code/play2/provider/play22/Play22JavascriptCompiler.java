@@ -50,7 +50,7 @@ import com.google.code.play2.provider.api.AssetCompilationException;
 import com.google.code.play2.provider.api.JavascriptCompilationResult;
 import com.google.code.play2.provider.api.Play2JavascriptCompiler;
 
-//Based on Play! 2.1.0 framework/src/sbt-plugin/src/main/scala/jscompile/JavascriptCompiler.scala
+//Based on Play! 2.2.x framework/src/sbt-plugin/src/main/scala/jscompile/JavascriptCompiler.scala
 public class Play22JavascriptCompiler
     implements Play2JavascriptCompiler
 {

@@ -39,7 +39,7 @@ import com.google.code.play2.provider.api.AssetCompilationException;
 import com.google.code.play2.provider.api.LessCompilationResult;
 import com.google.code.play2.provider.api.Play2LessCompiler;
 
-// Based on Play! 2.2.0 framework/src/sbt-plugin/src/main/scala/less/LessCompiler.scala
+// Based on Play! 2.2.x framework/src/sbt-plugin/src/main/scala/less/LessCompiler.scala
 public class Play22LessCompiler
     implements Play2LessCompiler
 {
