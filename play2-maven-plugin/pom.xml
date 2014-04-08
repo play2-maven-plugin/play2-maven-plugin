@@ -116,7 +116,8 @@ under the License.
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
-            <version>3.0.17</version>
+            <version>2.0.6</version> <!-- compatible with M2Eclipse -->
+            <!--<version>3.0.17</version>-->
         </dependency>
 
         <dependency>
