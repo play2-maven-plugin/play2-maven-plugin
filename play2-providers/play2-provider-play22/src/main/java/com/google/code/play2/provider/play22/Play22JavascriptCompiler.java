@@ -67,15 +67,18 @@ public class Play22JavascriptCompiler
         throws AssetCompilationException, IOException
     {
         boolean requireJsMode = compilerOptions.contains( "rjs" );
+        boolean commonJsMode = compilerOptions.contains( "commonJs" ) && !requireJsMode;
 
         String origin = readFileContent( source );
 
-        CompilerOptions options = getOptions( source, requireJsMode );
+        CompilerOptions options = getOptions( source, commonJsMode );
 
         Compiler compiler = new Compiler();
         List<File> all = allSiblings( source );
+        // In commonJsMode, we use all JavaScript sources in the same directory for some reason.
+        // Otherwise, we only look at the current file.
         List<JSSourceFile> x = new ArrayList<JSSourceFile>();
-        if ( !requireJsMode )
+        if ( commonJsMode )
         {
             for ( File f : all )
             {
@@ -124,10 +127,23 @@ public class Play22JavascriptCompiler
         }
     }
 
-    private CompilerOptions getOptions( File source, boolean requireJsMode )
+    private CompilerOptions getOptions( File source, boolean commonJsMode )
     {
+        //TODO - add a possibility to specify "fullCompilerOptions"
         CompilerOptions defaultOptions = new CompilerOptions();
         defaultOptions.closurePass = true;
+
+        if ( commonJsMode )
+        {
+            defaultOptions.setProcessCommonJSModules( true );
+            // The compiler always expects forward slashes even on Windows.
+            defaultOptions.setCommonJSModulePathPrefix( ( source.getParent() + File.separator ).replaceAll( "\\\\",
+                                                                                                            "/" ) );
+            List<String> entryPoints = new ArrayList<String>( 1 );
+            entryPoints.add( toModuleName( source.getName() ) );
+            defaultOptions.setManageClosureDependencies( entryPoints );
+        }
+
         for ( String opt : compilerOptions )
         {
             if ( "advancedOptimizations".equals( opt ) )
@@ -149,19 +165,6 @@ public class Play22JavascriptCompiler
             else if ( "checkSymbols".equals( opt ) )
             {
                 defaultOptions.setCheckSymbols( true );
-            }
-            else if ( "commonJs".equals( opt ) )
-            {
-                if ( !requireJsMode )
-                {
-                    defaultOptions.setProcessCommonJSModules( true );
-                    // The compiler always expects forward slashes even on Windows.
-                    defaultOptions.setCommonJSModulePathPrefix( ( source.getParent() + File.separator ).replaceAll( "\\\\",
-                                                                                                                    "/" ) );
-                    List<String> entryPoints = new ArrayList<String>( 1 );
-                    entryPoints.add( toModuleName( source.getName() ) );
-                    defaultOptions.setManageClosureDependencies( entryPoints );
-                }
             }
             else if ( "ecmascript5".equals( opt ) )
             {
