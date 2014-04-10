@@ -22,7 +22,7 @@ under the License.
     <parent>
         <groupId>com.google.code.play2-maven-plugin</groupId>
         <artifactId>play2</artifactId>
-        <version>1.0.0-alpha6</version>
+        <version>1.0.0-alpha7-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
