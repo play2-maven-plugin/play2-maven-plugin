@@ -18,12 +18,11 @@
 package com.google.code.play2.provider.play23;
 
 import java.io.File;
-//?import java.io.IOException;
 
 import scala.Option;
 
-import play.templates.ScalaTemplateCompiler;
-import play.templates.TemplateCompilationError;
+import play.twirl.compiler.TemplateCompilationError;
+import play.twirl.compiler.TwirlCompiler;
 
 import com.google.code.play2.provider.api.Play2TemplateCompiler;
 import com.google.code.play2.provider.api.TemplateCompilationException;
@@ -38,13 +37,12 @@ public class Play23TemplateCompiler
         "js" };
 
     private static final String[] formatterTypes = {
-        "play.api.templates.HtmlFormat",
-        "play.api.templates.TxtFormat",
-        "play.api.templates.XmlFormat",
-        "play.api.templates.JavaScriptFormat" };
+        "play.twirl.api.HtmlFormat",
+        "play.twirl.api.TxtFormat",
+        "play.twirl.api.XmlFormat",
+        "play.twirl.api.JavaScriptFormat" };
 
     private static final String[] javaAdditionalImports = new String[] {
-        "play.api.templates._",
         "play.api.templates.PlayMagic._",
         "models._",
         "controllers._",
@@ -61,7 +59,6 @@ public class Play23TemplateCompiler
         "views.%format%._" };
 
     private static final String[] scalaAdditionalImports = new String[] {
-        "play.api.templates._",
         "play.api.templates.PlayMagic._",
         "models._",
         "controllers._",
@@ -110,8 +107,8 @@ public class Play23TemplateCompiler
             try
             {
                 Option<File> resultOption =
-                    ScalaTemplateCompiler.compile( templateFile, sourceDirectory, outputDirectory, formatterType,
-                                                   importsAsString );
+                    TwirlCompiler.compile( templateFile, sourceDirectory, outputDirectory, formatterType,
+                                                   importsAsString, false/*inclusiveDot*/, false/*useOldParser*/ );
                 result = resultOption.isDefined() ? resultOption.get() : null;
             }
             catch ( TemplateCompilationError e )
