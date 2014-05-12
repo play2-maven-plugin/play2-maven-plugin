@@ -19,20 +19,20 @@ package com.google.code.play2.provider.play21;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
-import com.google.code.play2.provider.api.Play2EbeanEnhancer;
-
+import com.avaje.ebean.enhance.agent.InputStreamTransform;
 import com.avaje.ebean.enhance.agent.Transformer;
-import com.avaje.ebean.enhance.ant.OfflineFileTransform;
+import com.avaje.ebean.enhance.ant.StringReplace;
+
+import com.google.code.play2.provider.api.Play2EbeanEnhancer;
 
 public class Play21EbeanEnhancer
     implements Play2EbeanEnhancer
 {
     private File outputDirectory;
 
-    private List<URL> classPathUrls = Collections.emptyList();
+    private InputStreamTransform inputStreamTransform;
 
     @Override
     public void setOutputDirectory( File outputDirectory )
@@ -43,30 +43,35 @@ public class Play21EbeanEnhancer
     @Override
     public void setClassPathUrls( List<URL> classPathUrls )
     {
-        this.classPathUrls = classPathUrls;
+        URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        Transformer transformer = new Transformer( cp, "debug=-1" );
+        inputStreamTransform = new InputStreamTransform( transformer, classLoader );
     }
 
-    // TODO - add setter for models?
     @Override
-    public void enhance( String models ) // what about exceptions?
+    public boolean enhanceModel( File classFile )
+        throws Exception
     {
-        URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
-
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-
-        Transformer t = new Transformer( cp, "debug=-1" );
-
-        OfflineFileTransform ft =
-            new OfflineFileTransform( t, cl, outputDirectory.getAbsolutePath(), outputDirectory.getAbsolutePath() );
-
-        try
+        boolean processed = false;
+        
+        String className = getClassName( classFile );
+        byte[] result = inputStreamTransform.transform( className, classFile );
+        if ( result != null )
         {
-            ft.process( models );
+            InputStreamTransform.writeBytes( result, classFile );
+            processed = true;
         }
-        catch ( Throwable/* ? */e )
-        {
+        return processed;
+    }
 
-        }
+    private String getClassName( File file )
+    {
+        String path = file.getPath();
+        path = path.substring( outputDirectory.getAbsolutePath().length() + 1 );
+        path = path.substring( 0, path.length() - ".class".length() );
+        // for windows... replace the
+        return StringReplace.replace( path, "\\", "/" );
     }
 
 }

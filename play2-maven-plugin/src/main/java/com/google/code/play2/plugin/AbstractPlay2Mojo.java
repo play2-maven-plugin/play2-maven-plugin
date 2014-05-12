@@ -50,6 +50,7 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -60,6 +61,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.google.code.play2.provider.api.Play2Provider;
+import com.google.code.play2.provider.api.Play2ProviderHelper;
 
 /**
  * Abstract base class for Play&#33; Mojos.
@@ -80,7 +82,7 @@ public abstract class AbstractPlay2Mojo
     /**
      * <i>Maven Internal</i>: Project to interact with.
      */
-    @Component
+    @Parameter( defaultValue="${project}", readonly = true )
     protected MavenProject project;
 
     /**
@@ -114,19 +116,16 @@ public abstract class AbstractPlay2Mojo
     protected List<ArtifactRepository> remoteRepos;
 
     /**
+     * Plugin descriptor used to retrieve this plugin's properties.
+     */
+    @Parameter( defaultValue="${plugin}", readonly = true, required = true )
+    protected/*private*/ PluginDescriptor plugin;
+
+    /**
      * Map of provider implementations. For now only zero or one allowed.
      */
     @Component( role = Play2Provider.class )
     private Map<String, Play2Provider> play2Providers;
-
-    @Parameter( property = "plugin.groupId", readonly = true, required = true )
-    private String pluginGroupId;
-
-    @Parameter( property = "plugin.artifactId", readonly = true, required = true )
-    private String pluginArtifactId;
-
-    @Parameter( property = "plugin.version", readonly = true, required = true )
-    private String pluginVersion;
 
     @Override
     public void execute()
@@ -255,16 +254,12 @@ public abstract class AbstractPlay2Mojo
         return provider;
     }
 
-    protected Play2Provider getDeclaredProvider()
+    private Play2Provider getDeclaredProvider()
         throws MojoExecutionException
     {
         if ( play2Providers.size() > 1 )
         {
-            StringBuilder sb = new StringBuilder( 1500 );
-            sb.append( "Too many Play! providers defined.\n\n" );
-            appendProviderConfigurationHelpMessage( sb );
-            sb.append( "ONLY ONE!\n\n" );
-            throw new MojoExecutionException( sb.toString() );
+            throw new MojoExecutionException( "Too many Play! providers defined. A maximum of one allowed." );
         }
 
         Map.Entry<String, Play2Provider> providerEntry = play2Providers.entrySet().iterator().next();
@@ -276,16 +271,12 @@ public abstract class AbstractPlay2Mojo
         return provider;
     }
 
-    protected Play2Provider getWellKnownProvider()
+    private Play2Provider getWellKnownProvider()
         throws MojoExecutionException
     {
         try
         {
-            String providerId = getSuggestedPlayProviderId();
-            if ( providerId == null )
-            {
-                providerId = "play22";
-            }
+            String providerId = Play2ProviderHelper.getDefaultProviderId( playVersion );
             ClassLoader providerClassLoader = getCachedClassLoader( providerId );
             if ( providerClassLoader == null )
             {
@@ -310,8 +301,8 @@ public abstract class AbstractPlay2Mojo
             if ( providerClassLoader == null )
             {
                 Artifact providerArtifact =
-                    getResolvedArtifact( "com.google.code.play2-maven-plugin", "play2-provider-" + providerId,
-                                         pluginVersion );
+                    getResolvedArtifact( plugin.getGroupId(), "play2-provider-" + providerId,
+                                         plugin.getVersion() );
 
                 Set<Artifact> providerDependencies = getAllDependencies( providerArtifact );
                 List<File> classPathFiles = new ArrayList<File>( providerDependencies.size() + 2 );
@@ -377,79 +368,9 @@ public abstract class AbstractPlay2Mojo
         }
     }
 
-    // Proper provider configuration info helper methods
-
-    private void appendProviderConfigurationHelpMessage( StringBuilder sb )
-    {
-        String suggestedPlayProviderId = null;
-
-        sb.append( "Add plugin dependency:\n\n" );
-        if ( playVersion != null && !playVersion.isEmpty() )
-        {
-            suggestedPlayProviderId = getSuggestedPlayProviderId();
-        }
-
-        if ( suggestedPlayProviderId != null )
-        {
-            appendProviderConfigurationHelpMessageForPlay2( sb, "play2-provider-" + suggestedPlayProviderId );
-            sb.append( "\nor dependency containing your custom Play! " ).append( playVersion );
-            sb.append( " provider implementation.\n" );
-        }
-        else
-        {
-            appendProviderConfigurationHelpMessageForPlay2( sb, "play2-provider-play22" );
-            sb.append( "\nfor Play! 2.2.x compatible provider, or:\n\n" );
-            appendProviderConfigurationHelpMessageForPlay2( sb, "play2-provider-play21" );
-            sb.append( "\nfor Play! 2.1.x compatible provider, or dependency containing your custom Play!" );
-            if ( playVersion != null )
-            {
-                sb.append( " " ).append( playVersion );
-            }
-            sb.append( " provider implementation.\n" );
-        }
-        sb.append( "\n" );
-    }
-
-    private String getSuggestedPlayProviderId()
-    {
-        String result = null;
-        if ( playVersion != null && !playVersion.isEmpty() )
-        {
-            if ( playVersion.startsWith( "2.2." ) )
-            {
-                result = "play22";
-            }
-            else if ( playVersion.startsWith( "2.1." ) )
-            {
-                result = "play21";
-            }
-        }
-        return result;
-    }
-
-    private void appendProviderConfigurationHelpMessageForPlay2( StringBuilder sb, String providerArtifactId )
-    {
-        sb.append( "|    <plugin>\n" );
-        sb.append( "|        <groupId>" ).append( pluginGroupId ).append( "</groupId>\n" );
-        sb.append( "|        <artifactId>" ).append( pluginArtifactId ).append( "</artifactId>\n" );
-        sb.append( "|        <version>" ).append( pluginVersion ).append( "</version>\n" );
-        if ( "play2".equals( project.getPackaging() ) )
-        {
-            sb.append( "|        <extensions>true</extensions>\n" );
-        }
-        sb.append( "|        <dependencies>\n" );
-        sb.append( "|            <dependency>\n" );
-        sb.append( "|                <groupId>" ).append( pluginGroupId ).append( "</groupId>\n" );
-        sb.append( "|                <artifactId>" ).append( providerArtifactId ).append( "</artifactId>\n" );
-        sb.append( "|                <version>" ).append( pluginVersion ).append( "</version>\n" );
-        sb.append( "|            </dependency>\n" );
-        sb.append( "|        </dependencies>\n" );
-        sb.append( "|    </plugin>\n" );
-    }
-
     // Private utility methods
 
-    private Artifact getResolvedArtifact( String groupId, String artifactId, String version )
+    protected/*private*/ Artifact getResolvedArtifact( String groupId, String artifactId, String version )
         throws ArtifactNotFoundException, ArtifactResolutionException
     {
         Artifact artifact = factory.createArtifact( groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar" );
@@ -457,7 +378,7 @@ public abstract class AbstractPlay2Mojo
         return artifact;
     }
 
-    private Set<Artifact> getAllDependencies( Artifact artifact )
+    protected/*private*/ Set<Artifact> getAllDependencies( Artifact artifact )
         throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException,
         ProjectBuildingException
     {

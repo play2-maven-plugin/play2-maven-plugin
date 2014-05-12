@@ -19,12 +19,6 @@ package com.google.code.play2.provider.play22;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
-
-import scala.collection.JavaConversions;
-
-import sbt.compiler.IC;
-import sbt.inc.Analysis;
 
 import play.core.enhancers.PropertiesEnhancer;
 
@@ -33,15 +27,7 @@ import com.google.code.play2.provider.api.Play2JavaEnhancer;
 public class Play22JavaEnhancer
     implements Play2JavaEnhancer
 {
-    private Analysis analysis = null;
-
     private String classpath;
-
-    @Override
-    public void setAnalysisCacheFile( File analysisCacheFile )
-    {
-        this.analysis = IC.readAnalysis( analysisCacheFile );
-    }
 
     @Override
     public void setClasspathFiles( List<File> classpathFiles )
@@ -55,18 +41,6 @@ public class Play22JavaEnhancer
         // sb.append(getOutputDirectory().getAbsolutePath());
         this.classpath = sb.substring( 1/* File.pathSeparatorChar.length() */ );
         // this.classpath = sb.toString();
-    }
-
-    @Override
-    public long getCompilationTime( File sourceFile )
-    {
-        return analysis.apis().internalAPI( sourceFile ).compilation().startTime();
-    }
-
-    @Override
-    public Set<File> getProducts( File sourceFile )
-    {
-        return JavaConversions.setAsJavaSet( analysis.relations().products( sourceFile ) );
     }
 
     @Override

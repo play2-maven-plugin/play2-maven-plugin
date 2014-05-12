@@ -32,13 +32,16 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import com.google.code.play2.provider.api.Play2EbeanEnhancer;
-import com.google.code.play2.provider.api.Play2Provider;
-
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
+
+import com.google.code.play2.provider.api.Play2EbeanEnhancer;
+import com.google.code.play2.provider.api.Play2Provider;
+
+import com.google.code.sbt.compiler.api.Analysis;
+import com.google.code.sbt.compiler.api.AnalysisProcessor;
 
 /**
  * Ebean enhance
@@ -48,7 +51,7 @@ import com.typesafe.config.ConfigValue;
  */
 @Mojo( name = "ebean-enhance", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE )
 public class Play2EbeanEnhanceMojo
-    extends AbstractPlay2Mojo
+    extends AbstractPlay2EnhanceMojo
 {
     /**
      * Project classpath.
@@ -98,26 +101,180 @@ public class Play2EbeanEnhanceMojo
 
         File outputDirectory = new File( project.getBuild().getOutputDirectory() );
 
-        classpathElements.remove( outputDirectory.getAbsolutePath() );
-        List<File> classpathFiles = new ArrayList<File>( classpathElements.size() );
-        for ( String path : classpathElements )
+        File timestampFile = new File( getAnalysisCacheFile().getParentFile(), "play_ebean_instrumentation" );
+        long lastEnhanced = 0L;
+        if ( timestampFile.exists() )
         {
-            classpathFiles.add( new File( path ) );
+            String line = readFileFirstLine( timestampFile );
+            lastEnhanced = Long.parseLong( line );
         }
 
-        List<URL> classPathUrls = new ArrayList<URL>( classpathFiles.size() + 1 );
-        for ( File classpathFile : classpathFiles )
+        int processedFiles = 0;
+        int enhancedFiles = 0;
+
+        List<File> modelClassesToEnhance = collectClassFilesToEnhance( lastEnhanced, outputDirectory, models);
+        if ( !modelClassesToEnhance.isEmpty() )
         {
-            classPathUrls.add( classpathFile.toURI().toURL() );
+            classpathElements.remove( outputDirectory.getAbsolutePath() );
+            List<File> classpathFiles = new ArrayList<File>( classpathElements.size() );
+            for ( String path : classpathElements )
+            {
+                classpathFiles.add( new File( path ) );
+            }
+
+            List<URL> classPathUrls = new ArrayList<URL>( classpathFiles.size() + 1 );
+            for ( File classpathFile : classpathFiles )
+            {
+                classPathUrls.add( classpathFile.toURI().toURL() );
+            }
+            classPathUrls.add( outputDirectory.toURI().toURL() );
+
+            Play2Provider play2Provider = getProvider();
+            Play2EbeanEnhancer enhancer = play2Provider.getEbeanEnhancer();
+            enhancer.setOutputDirectory( outputDirectory );
+            enhancer.setClassPathUrls( classPathUrls );
+
+            File analysisCacheFile = getAnalysisCacheFile();
+            if ( !analysisCacheFile.exists() )
+            {
+                throw new MojoExecutionException( String.format( "Analysis cache file \"%s\" not found", analysisCacheFile.getAbsolutePath() ) );
+            }
+            if ( !analysisCacheFile.isFile() )
+            {
+                throw new MojoExecutionException( String.format( "Analysis cache \"%s\" is not a file", analysisCacheFile.getAbsolutePath() ) );
+            }
+            Analysis analysis = null;
+            AnalysisProcessor sbtAnalysisProcessor = getSbtAnalysisProcessor();
+            if ( sbtAnalysisProcessor.areClassFileTimestampsSupported() )
+            {
+                analysis = sbtAnalysisProcessor.readFromFile( analysisCacheFile );
+            }
+
+            for ( File classFile: modelClassesToEnhance)
+            {
+                processedFiles++;
+                try
+                {
+                    if ( enhancer.enhanceModel( classFile ) )
+                    {
+                        enhancedFiles++;
+                        getLog().debug( String.format( "\"%s\" enhanced", classFile.getPath() ) );
+                        if ( analysis != null )
+                        {
+                            analysis.updateClassFileTimestamp( classFile );
+                        }
+                    }
+                    else
+                    {
+                        getLog().debug( String.format( "\"%s\" skipped", classFile.getPath() ) );
+                    }
+                }
+                catch (Exception e)
+                {
+                    //??
+                }
+            }
+
+            if ( enhancedFiles > 0 )
+            {
+                if ( analysis != null )
+                {
+                    analysis.writeToFile( analysisCacheFile );
+                }
+                writeToFile( timestampFile, Long.toString( System.currentTimeMillis() ) );
+            }
         }
-        classPathUrls.add( outputDirectory.toURI().toURL() );
 
-        Play2Provider play2Provider = getProvider();
-        Play2EbeanEnhancer enhancer = play2Provider.getEbeanEnhancer();
-        enhancer.setOutputDirectory( outputDirectory );
-        enhancer.setClassPathUrls( classPathUrls );
+        if ( processedFiles > 0 )
+        {
+            getLog().info( String.format( "%d classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+                                          Integer.valueOf( enhancedFiles ) ) );
+        }
+        else
+        {
+            getLog().info( "No classes to enhance" );
+        }
+    }
 
-        enhancer.enhance( models );
+    /**
+     * Process all the comma delimited list of packages.
+     * <p>
+     * Package names are effectively converted into a directory on the file
+     * system, and the class files are found and processed.
+     * </p>
+     */
+    public List<File> collectClassFilesToEnhance( long lastEnhanced, File outputDirectory, String packageNames)
+    {
+        if ( packageNames == null )
+        {
+            return collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, "", true );
+            // return;
+        }
+
+        List<File> result = new ArrayList<File>();
+        
+        String[] pkgs = packageNames.split(",");
+        for ( int i = 0; i < pkgs.length; i++ )
+        {
+
+            String pkg = pkgs[i].trim().replace( '.', '/' );
+
+            boolean recurse = false;
+            if ( pkg.endsWith( "**" ) )
+            {
+                recurse = true;
+                pkg = pkg.substring( 0, pkg.length() - 2 );
+            }
+            else if ( pkg.endsWith( "*" ) )
+            {
+                recurse = true;
+                pkg = pkg.substring( 0, pkg.length() - 1 );
+            }
+
+            pkg = trimSlash( pkg );
+
+            result.addAll( collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, pkg, recurse ) );
+        }
+        return result;
+    }
+
+    private List<File> collectClassFilesToEnhanceFromPackage( long lastEnhanced, File outputDirectory, String dir, boolean recurse) {
+        List<File> result = new ArrayList<File>();
+
+        File d = new File(outputDirectory.getAbsolutePath(), dir);
+
+        for ( File file: d.listFiles() )
+        {
+            if ( file.isDirectory() )
+            {
+                if ( recurse )
+                {
+                    String subdir = dir + "/" + file.getName();
+                    collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse );
+                }
+            }
+            else
+            {
+                if ( file.getName().endsWith( ".class" ) && ( file.lastModified() > lastEnhanced ) )
+                {
+                    result.add( file );
+                    // transformFile(file);
+                }
+            }
+        }
+        return result;
+    }
+
+    private String trimSlash( String dir )
+    {
+        if ( dir.endsWith( "/" ) )
+        {
+            return dir.substring( 0, dir.length() - 1 );
+        }
+        else
+        {
+            return dir;
+        }
     }
 
 }

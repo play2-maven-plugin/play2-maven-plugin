@@ -49,12 +49,6 @@ under the License.
 
     <dependencies>
         <dependency>
-            <groupId>com.typesafe.sbt</groupId>
-            <artifactId>incremental-compiler</artifactId>
-            <version>0.12.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler</artifactId>
             <version>rr2079.1</version>

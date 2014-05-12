@@ -19,17 +19,10 @@ package com.google.code.play2.provider.api;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 public interface Play2JavaEnhancer
 {
-    void setAnalysisCacheFile( File analysisCacheFile );
-
     void setClasspathFiles( List<File> classpathFiles );
-
-    long getCompilationTime( File sourceFile );
-
-    Set<File> getProducts( File sourceFile );
 
     boolean enhanceJavaClass( File classFile )
         throws Exception;

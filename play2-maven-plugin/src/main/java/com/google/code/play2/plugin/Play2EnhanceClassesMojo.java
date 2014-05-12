@@ -31,13 +31,15 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 
 import org.codehaus.plexus.util.DirectoryScanner;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.google.code.play2.provider.api.Play2JavaEnhancer;
 import com.google.code.play2.provider.api.Play2Provider;
+
+import com.google.code.sbt.compiler.api.Analysis;
+import com.google.code.sbt.compiler.api.AnalysisProcessor;
 
 /**
  * Java classes enhance
@@ -47,7 +49,7 @@ import com.google.code.play2.provider.api.Play2Provider;
  */
 @Mojo( name = "enhance", defaultPhase = LifecyclePhase.PROCESS_CLASSES, requiresDependencyResolution = ResolutionScope.COMPILE )
 public class Play2EnhanceClassesMojo
-    extends AbstractPlay2Mojo
+    extends AbstractPlay2EnhanceMojo
 {
     private static final String appDirectoryName = "app";
 
@@ -81,30 +83,6 @@ public class Play2EnhanceClassesMojo
         enhanceClasses( classpath );
     }
 
-    private File getAnalysisCacheFile()
-    {
-        return defaultAnalysisCacheFile( project );
-    }
-
-    // Copied from AbstractSBTCompileMojo (http://code.google.com/p/sbt-compiler-maven-plugin/ project)
-    private File defaultAnalysisDirectory( MavenProject p )
-    {
-        return new File( p.getBuild().getDirectory(), "cache" );
-    }
-
-    /**
-     * Returns incremental main compilation analysis cache file location for a project.
-     * 
-     * @param p Maven project
-     * @return analysis cache file location
-     */
-    // Copied from AbstractSBTCompileMojo (http://code.google.com/p/sbt-compiler-maven-plugin/ project)
-    private File defaultAnalysisCacheFile( MavenProject p )
-    {
-        return new File( defaultAnalysisDirectory( p ), "compile" );
-    }
-
-
     private void enhanceClasses( List<File> classpathFiles )
         throws MojoExecutionException, IOException
     {
@@ -118,9 +96,11 @@ public class Play2EnhanceClassesMojo
             throw new MojoExecutionException( String.format( "Analysis cache \"%s\" is not a file", analysisCacheFile.getAbsolutePath() ) );
         }
 
+        AnalysisProcessor sbtAnalysisProcessor = getSbtAnalysisProcessor();
+        Analysis analysis = sbtAnalysisProcessor.readFromFile( analysisCacheFile );
+
         Play2Provider play2Provider = getProvider();
         Play2JavaEnhancer enhancer = play2Provider.getEnhancer();
-        enhancer.setAnalysisCacheFile( analysisCacheFile );
         try
         {
             /*StringBuilder sb = new StringBuilder();
@@ -142,10 +122,17 @@ public class Play2EnhanceClassesMojo
                 lastEnhanced = Long.parseLong( line );
             }
 
-            enhanceJavaClasses( lastEnhanced, enhancer );
-            enhanceTemplateClasses( lastEnhanced, enhancer );
+            boolean anyJavaClassesEnhanced = enhanceJavaClasses( lastEnhanced, analysis, enhancer );
+            boolean anyTemplateClassesEnhanced = enhanceTemplateClasses( lastEnhanced, analysis, enhancer );
 
-            writeToFile( timestampFile, Long.toString( System.currentTimeMillis() ) );
+            if ( anyJavaClassesEnhanced || anyTemplateClassesEnhanced )
+            {
+                if ( analysis != null )
+                {
+                    analysis.writeToFile( analysisCacheFile );
+                }
+                writeToFile( timestampFile, Long.toString( System.currentTimeMillis() ) );
+            }
         }
         catch ( IOException e )
         {
@@ -156,16 +143,16 @@ public class Play2EnhanceClassesMojo
             throw new MojoExecutionException( "Enhancement exception", e );
         }
 
-        synchronizeManagedClasses(enhancer);
+        synchronizeManagedClasses( analysis );
     }
 
-    private void enhanceJavaClasses( long lastEnhanced, Play2JavaEnhancer enhancer ) throws Exception
+    private boolean enhanceJavaClasses( long lastEnhanced/*, AnalysisProcessor sbtAnalysisProcessor*/, Analysis analysis, Play2JavaEnhancer enhancer ) throws Exception
     {
         File scannerBaseDir = new File( project.getBasedir(), appDirectoryName );
         if ( !scannerBaseDir.isDirectory() )
         {
             getLog().info( "No classes to enhance" );
-            return;
+            return false;
         }
 
         DirectoryScanner scanner = new DirectoryScanner();
@@ -183,16 +170,20 @@ public class Play2EnhanceClassesMojo
             for ( String source : javaSources )
             {
                 File sourceFile = new File( scannerBaseDir, source );
-                if ( enhancer.getCompilationTime( sourceFile ) > lastEnhanced )
+                if ( analysis.getCompilationTime( sourceFile ) > lastEnhanced )
                 {
-                    Set<File> javaClasses = enhancer.getProducts( sourceFile );
+                    Set<File> javaClasses = analysis.getProducts( sourceFile );
                     for ( File classFile : javaClasses )
                     {
                         processedFiles++;
                         if ( enhancer.enhanceJavaClass( classFile ) )
                         {
                             enhancedFiles++;
-                            getLog().debug( String.format( "\"%s\" processed", classFile.getPath() ) );
+                            getLog().debug( String.format( "\"%s\" enhanced", classFile.getPath() ) );
+                            //if ( sbtAnalysisProcessor.areClassFileTimestampsSupported() )
+                            //{
+                                analysis.updateClassFileTimestamp( classFile );
+                            //}
                         }
                         else
                         {
@@ -212,15 +203,17 @@ public class Play2EnhanceClassesMojo
         {
             getLog().info( "No classes to enhance" );
         }
+
+        return enhancedFiles > 0;
     }
 
-    private void enhanceTemplateClasses( long lastEnhanced, Play2JavaEnhancer enhancer ) throws Exception
+    private boolean enhanceTemplateClasses( long lastEnhanced, Analysis analysis, Play2JavaEnhancer enhancer ) throws Exception
     {
         File scannerBaseDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName ); // TODO-parametrize
         if ( !scannerBaseDir.isDirectory() )
         {
             getLog().info( "No templates to enhance" );
-            return;
+            return false;
         }
 
         DirectoryScanner scanner = new DirectoryScanner();
@@ -237,16 +230,17 @@ public class Play2EnhanceClassesMojo
             for ( String source : scalaTemplateSources )
             {
                 File sourceFile = new File( scannerBaseDir, source );
-                if ( enhancer.getCompilationTime( sourceFile ) > lastEnhanced )
+                if ( analysis.getCompilationTime( sourceFile ) > lastEnhanced )
                 {
-                    Set<File> templateClasses = enhancer.getProducts( sourceFile );
+                    Set<File> templateClasses = analysis.getProducts( sourceFile );
                     for ( File classFile : templateClasses )
                     {
                         processedFiles++;
                         if ( enhancer.enhanceTemplateClass( classFile ) )
                         {
                             enhancedFiles++;
-                            getLog().debug( String.format( "\"%s\" processed", classFile.getPath() ) );
+                            getLog().debug( String.format( "\"%s\" enhanced", classFile.getPath() ) );
+                            analysis.updateClassFileTimestamp( classFile );
                         }
                         else
                         {
@@ -266,9 +260,10 @@ public class Play2EnhanceClassesMojo
         {
             getLog().info( "No templates to enhance" );
         }
+        return enhancedFiles > 0;
     }
 
-    private void synchronizeManagedClasses(Play2JavaEnhancer enhancer) throws IOException
+    private void synchronizeManagedClasses( Analysis analysis ) throws IOException
     {
         File managedSrcDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName );
         if ( !managedSrcDir.isDirectory() )
@@ -307,7 +302,7 @@ public class Play2EnhanceClassesMojo
         for ( String source : managedSources )
         {
             File sourceFile = new File( managedSrcDir, source );
-            Set<File> sourceProducts = enhancer.getProducts( sourceFile );
+            Set<File> sourceProducts = analysis.getProducts( sourceFile );
             // sbt.IO$.MODULE$.copy(ma byc Seq sourceProducts, sbt.IO$.MODULE$.copy$default$2(),
             // sbt.IO$.MODULE$.copyDirectory$default$3());
             // System.out.println("outdir: " + getOutputDirectory().getPath());
@@ -338,4 +333,5 @@ public class Play2EnhanceClassesMojo
             }
         }
     }
+
 }

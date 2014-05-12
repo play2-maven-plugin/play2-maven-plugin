@@ -49,22 +49,6 @@ under the License.
 
     <dependencies>
         <dependency>
-            <groupId>com.typesafe.sbt</groupId>
-            <artifactId>incremental-compiler</artifactId>
-            <version>0.13.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-compiler</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.scala-lang</groupId>
-                    <artifactId>scala-library</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.javascript</groupId>
             <artifactId>closure-compiler</artifactId>
             <version>v20130603</version>
