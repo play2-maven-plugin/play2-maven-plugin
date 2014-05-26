@@ -33,7 +33,7 @@ under the License.
     <description>Play! 2.x Provider for Play! 2.3.x</description>
 
     <properties>
-        <play2.version>2.3.0-RC1</play2.version>
+        <play2.version>2.3.0-RC2</play2.version>
     </properties>
 
     <repositories>
@@ -71,7 +71,7 @@ under the License.
         <dependency>
             <groupId>org.avaje.ebeanorm</groupId>
             <artifactId>avaje-ebeanorm-agent</artifactId>
-            <version>3.2.1</version>
+            <version>3.2.2</version>
         </dependency>
 
         <dependency>
@@ -89,7 +89,7 @@ under the License.
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>twirl-compiler_2.10</artifactId>
-            <version>1.0.0-RC1</version>
+            <version>1.0.0-RC3</version>
         </dependency>
 
         <!-- contains PropertiesEnhancer -->
