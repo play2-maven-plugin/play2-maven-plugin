@@ -17,8 +17,12 @@
 
 package com.google.code.play2.provider.api;
 
-public class Play2ProviderHelper
+public class Play2Providers
 {
+    private Play2Providers()
+    {
+    }
+
     public static String getDefaultProviderId( String playVersion )
     {
         String result = null;

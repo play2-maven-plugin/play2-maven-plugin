@@ -61,7 +61,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.codehaus.plexus.util.FileUtils;
 
 import com.google.code.play2.provider.api.Play2Provider;
-import com.google.code.play2.provider.api.Play2ProviderHelper;
+import com.google.code.play2.provider.api.Play2Providers;
 
 /**
  * Abstract base class for Play&#33; Mojos.
@@ -276,7 +276,7 @@ public abstract class AbstractPlay2Mojo
     {
         try
         {
-            String providerId = Play2ProviderHelper.getDefaultProviderId( playVersion );
+            String providerId = Play2Providers.getDefaultProviderId( playVersion );
             ClassLoader providerClassLoader = getCachedClassLoader( providerId );
             if ( providerClassLoader == null )
             {
