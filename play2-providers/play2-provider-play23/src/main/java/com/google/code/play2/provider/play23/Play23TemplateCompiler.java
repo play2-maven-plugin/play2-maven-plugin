@@ -20,6 +20,7 @@ package com.google.code.play2.provider.play23;
 import java.io.File;
 
 import scala.Option;
+import scala.io.Codec;
 
 import play.twirl.compiler.TemplateCompilationError;
 import play.twirl.compiler.TwirlCompiler;
@@ -108,7 +109,7 @@ public class Play23TemplateCompiler
             {
                 Option<File> resultOption =
                     TwirlCompiler.compile( templateFile, sourceDirectory, outputDirectory, formatterType,
-                                                   importsAsString, false/*inclusiveDot*/, false/*useOldParser*/ );
+                                           importsAsString, Codec.apply( "UTF-8" )/* codec */, false/* inclusiveDot */, false/* useOldParser */);
                 result = resultOption.isDefined() ? resultOption.get() : null;
             }
             catch ( TemplateCompilationError e )
