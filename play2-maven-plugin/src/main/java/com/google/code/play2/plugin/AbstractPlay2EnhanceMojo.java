@@ -41,8 +41,7 @@ import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import com.google.code.sbt.compiler.api.AnalysisProcessor;
 import com.google.code.sbt.compiler.api.Compiler;
-//import com.google.code.sbt.compiler.api.Compiler;
-import com.google.code.sbt.compiler.api.CompilerHelper;
+import com.google.code.sbt.compiler.api.Compilers;
 
 public abstract class AbstractPlay2EnhanceMojo
     extends AbstractPlay2Mojo
@@ -137,7 +136,7 @@ public abstract class AbstractPlay2EnhanceMojo
     {
         try
         {
-            String compilerId = CompilerHelper.getDefaultCompilerId( sbtVersion, playVersion );
+            String compilerId = Compilers.getDefaultCompilerId( sbtVersion, playVersion );
             ClassLoader compilerClassLoader = getSbtCompilerCachedClassLoader( compilerId );
             if ( compilerClassLoader == null )
             {
