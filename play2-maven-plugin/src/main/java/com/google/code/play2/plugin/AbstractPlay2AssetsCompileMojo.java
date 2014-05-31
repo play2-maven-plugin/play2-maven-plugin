@@ -24,6 +24,8 @@ import java.util.List;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import org.codehaus.plexus.util.DirectoryScanner;
 
 import com.google.code.play2.provider.api.AssetCompilationException;
@@ -31,7 +33,13 @@ import com.google.code.play2.provider.api.AssetCompilationException;
 public abstract class AbstractPlay2AssetsCompileMojo
     extends AbstractPlay2Mojo
 {
-    private static final String assetsSourceDirectoryName = "app/assets";
+    /**
+     * The "assets" directory.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.assetsDirectory", readonly = true, defaultValue = "${project.basedir}/app/assets" )
+    private File assetsDirectory;
 
     private static final String targetDirectoryName = "resource_managed/main";
     
@@ -39,16 +47,14 @@ public abstract class AbstractPlay2AssetsCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        File basedir = project.getBasedir();
-        File assetsSourceDirectory = new File( basedir, assetsSourceDirectoryName );
-
-        if ( !assetsSourceDirectory.isDirectory() )
+        if ( !assetsDirectory.isDirectory() )
         {
-            return; // nothing to do, log something?
+            getLog().info( "No assets to compile" );
+            return;
         }
 
         DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( assetsSourceDirectory );
+        scanner.setBasedir( assetsDirectory );
         if ( getAssetsIncludes() != null )
         {
             scanner.setIncludes( getAssetsIncludes().split( "," ) );
@@ -68,7 +74,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
 
             try
             {
-                compileAssets( assetsSourceDirectory, fileNames, outputDirectory );
+                compileAssets( assetsDirectory, fileNames, outputDirectory );
                 addTargetDirectoryToResources();
             }
             catch ( AssetCompilationException e )
