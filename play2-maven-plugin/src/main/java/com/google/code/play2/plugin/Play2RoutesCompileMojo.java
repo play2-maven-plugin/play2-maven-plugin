@@ -55,12 +55,18 @@ public class Play2RoutesCompileMojo
     private String mainLang;
 
     /**
+     * The "conf" directory.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.confDirectory", readonly = true, defaultValue = "${project.basedir}/conf" )
+    private File confDirectory;
+
+    /**
      * For M2E integration.
      */
     @Component
     private BuildContext buildContext;
-
-    private static final String confDirectoryName = "conf";
 
     private static final String targetDirectoryName = "src_managed/main";
 
@@ -77,8 +83,6 @@ public class Play2RoutesCompileMojo
                                                              mainLang ) );
         }
 
-        File basedir = project.getBasedir();
-        File confDirectory = new File( basedir, confDirectoryName );
         if ( !confDirectory.isDirectory() )
         {
             getLog().info( "No routes to compile" );
