@@ -164,6 +164,7 @@ under the License.
                             <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
                             <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/apache/ant/ant/${ant.version}/</link>
                             <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
+                            <link>http://sbt-compiler-maven-plugin.googlecode.com/svn/mavensite/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
                         </links>
                         <tagletArtifacts>
                             <tagletArtifact>
@@ -249,6 +250,7 @@ under the License.
                                 <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
                                 <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/apache/ant/ant/${ant.version}/</link>
                                 <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
+                                <link>http://sbt-compiler-maven-plugin.googlecode.com/svn/mavensite/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
                             </links>
                         </configuration>
                     </plugin>
@@ -284,6 +286,7 @@ under the License.
                                 <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
                                 <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/apache/ant/ant/${ant.version}/</link>
                                 <link>http://maven-play-plugin.googlecode.com/svn/apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
+                                <link>http://sbt-compiler-maven-plugin.googlecode.com/svn/mavensite/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
                             </links>
                         </configuration>
                     </plugin>
