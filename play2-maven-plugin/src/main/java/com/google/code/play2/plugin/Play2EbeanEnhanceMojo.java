@@ -242,23 +242,33 @@ public class Play2EbeanEnhanceMojo
         List<File> result = new ArrayList<File>();
 
         File d = new File(outputDirectory.getAbsolutePath(), dir);
-
-        for ( File file: d.listFiles() )
+        if ( !d.exists() )
         {
-            if ( file.isDirectory() )
+            getLog().warn( String.format( "\"%s\" directory does not exist", d.getPath() ) );
+        }
+        else if ( !d.isDirectory() )
+        {
+            getLog().warn( String.format( "\"%s\" is not a directory", d.getPath() ) );
+        }
+        else
+        {
+            for ( File file: d.listFiles() )
             {
-                if ( recurse )
+                if ( file.isDirectory() )
                 {
-                    String subdir = dir + "/" + file.getName();
-                    collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse );
+                    if ( recurse )
+                    {
+                        String subdir = dir + "/" + file.getName();
+                        collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse );
+                    }
                 }
-            }
-            else
-            {
-                if ( file.getName().endsWith( ".class" ) && ( file.lastModified() > lastEnhanced ) )
+                else
                 {
-                    result.add( file );
-                    // transformFile(file);
+                    if ( file.getName().endsWith( ".class" ) && ( file.lastModified() > lastEnhanced ) )
+                    {
+                        result.add( file );
+                        // transformFile(file);
+                    }
                 }
             }
         }
