@@ -36,6 +36,7 @@ under the License.
         <module>play2-provider-play21</module>
         <module>play2-provider-play22</module>
         <module>play2-provider-play23</module>
+        <module>play2-provider-play24</module>
     </modules>
 
     <dependencies>

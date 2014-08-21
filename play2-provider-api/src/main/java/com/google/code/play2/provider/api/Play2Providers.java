@@ -28,7 +28,11 @@ public class Play2Providers
         String result = null;
         if ( playVersion != null && !playVersion.isEmpty() )
         {
-            if ( playVersion.startsWith( "2.3." ) || playVersion.startsWith( "2.3-" ) )
+            if ( playVersion.startsWith( "2.4." ) || playVersion.startsWith( "2.4-" ) )
+            {
+                result = "play24";
+            }
+            else if ( playVersion.startsWith( "2.3." ) || playVersion.startsWith( "2.3-" ) )
             {
                 result = "play23";
             }
@@ -43,7 +47,7 @@ public class Play2Providers
         }
         if ( result == null )
         {
-            result = "play23";
+            result = "play23"; // 'play24' is not stable yet, so not default
         }
         return result;
     }
