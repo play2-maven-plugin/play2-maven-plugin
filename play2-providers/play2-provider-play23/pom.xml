@@ -33,7 +33,8 @@ under the License.
     <description>Play! 2.x Provider for Play! 2.3.x</description>
 
     <properties>
-        <play2.version>2.3.0</play2.version>
+        <play2.version>2.3.3</play2.version>
+        <twirl.version>1.0.2</twirl.version>
     </properties>
 
     <repositories>
@@ -89,7 +90,7 @@ under the License.
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>twirl-compiler_2.10</artifactId>
-            <version>1.0.0</version>
+            <version>${twirl.version}</version>
         </dependency>
 
         <!-- contains PropertiesEnhancer -->
