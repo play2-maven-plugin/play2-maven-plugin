@@ -66,7 +66,7 @@ under the License.
         <dependency>
             <groupId>com.typesafe</groupId>
             <artifactId>config</artifactId>
-            <version>1.2.0</version> <!-- binary compatible with 1.0.x -->
+            <version>1.2.1</version> <!-- binary compatible with 1.0.x -->
         </dependency>
 
         <!-- Maven -->
