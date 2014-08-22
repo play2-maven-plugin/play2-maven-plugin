@@ -330,7 +330,7 @@ public abstract class AbstractPlay2Mojo
                                providerId.substring( 0, 1 ).toUpperCase( Locale.ROOT ) + providerId.substring( 1 ) );
             Play2Provider provider = (Play2Provider) providerClassLoader.loadClass( providerClassName ).newInstance();
 
-            getLog().debug( String.format( "Using provider \"%s\".", providerId ) );
+            getLog().debug( String.format( "Using autodetected provider \"%s\".", providerId ) );
 
             return provider;
         }
