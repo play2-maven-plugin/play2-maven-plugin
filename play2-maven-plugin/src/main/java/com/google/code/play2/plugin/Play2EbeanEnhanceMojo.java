@@ -112,7 +112,7 @@ public class Play2EbeanEnhanceMojo
         int processedFiles = 0;
         int enhancedFiles = 0;
 
-        List<File> modelClassesToEnhance = collectClassFilesToEnhance( lastEnhanced, outputDirectory, models);
+        List<File> modelClassesToEnhance = collectClassFilesToEnhance( lastEnhanced, outputDirectory, models );
         if ( !modelClassesToEnhance.isEmpty() )
         {
             classpathElements.remove( outputDirectory.getAbsolutePath() );
@@ -150,7 +150,7 @@ public class Play2EbeanEnhanceMojo
                 analysis = sbtAnalysisProcessor.readFromFile( analysisCacheFile );
             }
 
-            for ( File classFile: modelClassesToEnhance)
+            for ( File classFile: modelClassesToEnhance )
             {
                 processedFiles++;
                 try
@@ -169,7 +169,7 @@ public class Play2EbeanEnhanceMojo
                         getLog().debug( String.format( "\"%s\" skipped", classFile.getPath() ) );
                     }
                 }
-                catch (Exception e)
+                catch ( Exception e )
                 {
                     //??
                 }
@@ -203,7 +203,7 @@ public class Play2EbeanEnhanceMojo
      * system, and the class files are found and processed.
      * </p>
      */
-    public List<File> collectClassFilesToEnhance( long lastEnhanced, File outputDirectory, String packageNames)
+    public List<File> collectClassFilesToEnhance( long lastEnhanced, File outputDirectory, String packageNames )
     {
         if ( packageNames == null )
         {
@@ -213,7 +213,7 @@ public class Play2EbeanEnhanceMojo
 
         List<File> result = new ArrayList<File>();
         
-        String[] pkgs = packageNames.split(",");
+        String[] pkgs = packageNames.split( "," );
         for ( int i = 0; i < pkgs.length; i++ )
         {
 
@@ -238,10 +238,11 @@ public class Play2EbeanEnhanceMojo
         return result;
     }
 
-    private List<File> collectClassFilesToEnhanceFromPackage( long lastEnhanced, File outputDirectory, String dir, boolean recurse) {
+    private List<File> collectClassFilesToEnhanceFromPackage( long lastEnhanced, File outputDirectory, String dir, boolean recurse )
+    {
         List<File> result = new ArrayList<File>();
 
-        File d = new File(outputDirectory.getAbsolutePath(), dir);
+        File d = new File( outputDirectory.getAbsolutePath(), dir );
         if ( !d.exists() )
         {
             getLog().warn( String.format( "\"%s\" directory does not exist", d.getPath() ) );

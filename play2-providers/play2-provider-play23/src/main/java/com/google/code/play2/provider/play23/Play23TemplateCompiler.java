@@ -99,7 +99,7 @@ public class Play23TemplateCompiler
         File result = null;
 
         String fileName = templateFile.getName();
-        String ext = fileName.substring( fileName.lastIndexOf( "." ) + 1 );
+        String ext = fileName.substring( fileName.lastIndexOf( '.' ) + 1 );
         String importsAsString = getImportsAsString( ext );
         int index = getTemplateExtIndex( ext );
         if ( index >= 0 )
@@ -109,7 +109,7 @@ public class Play23TemplateCompiler
             {
                 Option<File> resultOption =
                     TwirlCompiler.compile( templateFile, sourceDirectory, outputDirectory, formatterType,
-                                           importsAsString, Codec.apply( "UTF-8" )/* codec */, false/* inclusiveDot */, false/* useOldParser */);
+                                           importsAsString, Codec.apply( "UTF-8" )/* codec */, false/* inclusiveDot */, false/* useOldParser */ );
                 result = resultOption.isDefined() ? resultOption.get() : null;
             }
             catch ( TemplateCompilationError e )
@@ -120,7 +120,7 @@ public class Play23TemplateCompiler
         return result;
     }
 
-    private int getTemplateExtIndex(String ext)
+    private int getTemplateExtIndex( String ext )
     {
         int result = -1;
         for ( int i = 0; i < templateExts.length; i++ )

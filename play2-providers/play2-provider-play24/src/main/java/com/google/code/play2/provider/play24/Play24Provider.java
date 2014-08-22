@@ -31,7 +31,7 @@ import org.codehaus.plexus.component.annotations.Component;
 /**
  * Plugin provider for Play&#33; 2.4.x
  */
-@Component( role = Play2Provider.class, hint = "play24", description = "Play! 2.4.x")
+@Component( role = Play2Provider.class, hint = "play24", description = "Play! 2.4.x" )
 public class Play24Provider
     implements Play2Provider
 {

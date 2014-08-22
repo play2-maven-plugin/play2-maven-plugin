@@ -32,7 +32,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
-//import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -40,7 +39,7 @@ import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import com.google.code.sbt.compiler.api.AnalysisProcessor;
-import com.google.code.sbt.compiler.api.Compiler;
+import com.google.code.sbt.compiler.api.Compiler; // required by JavaDoc
 import com.google.code.sbt.compiler.api.Compilers;
 
 public abstract class AbstractPlay2EnhanceMojo
@@ -271,7 +270,6 @@ public abstract class AbstractPlay2EnhanceMojo
     /**
      * Returns SBT incremental main compilation analysis cache file location for a project.
      * 
-     * @param p Maven project
      * @return analysis cache file location
      */
     protected File getAnalysisCacheFile()

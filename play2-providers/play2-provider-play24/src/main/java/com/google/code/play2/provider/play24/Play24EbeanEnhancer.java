@@ -19,7 +19,6 @@ package com.google.code.play2.provider.play24;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Collections;
 import java.util.List;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;

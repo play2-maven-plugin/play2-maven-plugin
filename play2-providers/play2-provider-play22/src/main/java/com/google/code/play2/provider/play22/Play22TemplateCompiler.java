@@ -101,7 +101,7 @@ public class Play22TemplateCompiler
         File result = null;
 
         String fileName = templateFile.getName();
-        String ext = fileName.substring( fileName.lastIndexOf( "." ) + 1 );
+        String ext = fileName.substring( fileName.lastIndexOf( '.' ) + 1 );
         String importsAsString = getImportsAsString( ext );
         int index = getTemplateExtIndex( ext );
         if ( index >= 0 )
@@ -122,7 +122,7 @@ public class Play22TemplateCompiler
         return result;
     }
 
-    private int getTemplateExtIndex(String ext)
+    private int getTemplateExtIndex( String ext )
     {
         int result = -1;
         for ( int i = 0; i < templateExts.length; i++ )
