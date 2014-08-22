@@ -41,7 +41,7 @@ under the License.
         <repository>
             <id>typesafe</id>
             <name>Typesafe - releases</name>
-            <url>http://repo.typesafe.com/typesafe/releases/</url>
+            <url>https://repo.typesafe.com/typesafe/releases/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
