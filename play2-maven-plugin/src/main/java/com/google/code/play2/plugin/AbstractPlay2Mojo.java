@@ -82,7 +82,7 @@ public abstract class AbstractPlay2Mojo
     /**
      * <i>Maven Internal</i>: Project to interact with.
      */
-    @Parameter( defaultValue="${project}", readonly = true )
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
@@ -118,7 +118,7 @@ public abstract class AbstractPlay2Mojo
     /**
      * Plugin descriptor used to retrieve this plugin's properties.
      */
-    @Parameter( defaultValue="${plugin}", readonly = true, required = true )
+    @Parameter( defaultValue = "${plugin}", readonly = true, required = true )
     protected/*private*/ PluginDescriptor plugin;
 
     /**
