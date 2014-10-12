@@ -73,6 +73,12 @@ public abstract class AbstractPlay2EnhanceMojo
     @Parameter( property = "sbt.version" )
     protected String sbtVersion;
 
+    /**
+     * List of artifacts this plugin depends on.
+     */
+    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
+    private List<Artifact> pluginArtifacts;
+
     private static final String sbtCompilerPluginGroupId = "com.google.code.sbt-compiler-maven-plugin";
 
     private static final String sbtCompilerPluginApiArtifactId = "sbt-compiler-api";
@@ -238,7 +244,6 @@ public abstract class AbstractPlay2EnhanceMojo
         throws MojoExecutionException
     {
         Artifact result = null;
-        List<Artifact> pluginArtifacts = plugin.getArtifacts();
         for ( Artifact artifact : pluginArtifacts )
         {
             if ( artifact.getGroupId().equals( groupId ) && artifact.getArtifactId().equals( artifactId )

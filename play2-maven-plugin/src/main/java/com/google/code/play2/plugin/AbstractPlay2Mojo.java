@@ -50,7 +50,6 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -116,10 +115,16 @@ public abstract class AbstractPlay2Mojo
     protected List<ArtifactRepository> remoteRepos;
 
     /**
-     * Plugin descriptor used to retrieve this plugin's properties.
+     * Plugin's groupId used for well known providers resolution
      */
-    @Parameter( defaultValue = "${plugin}", readonly = true, required = true )
-    protected/*private*/ PluginDescriptor plugin;
+    @Parameter( property = "plugin.groupId", readonly = true, required = true )
+    private String pluginGroupId;
+
+    /**
+     * Plugin's version used for well known providers resolution
+     */
+    @Parameter( property = "plugin.version", readonly = true, required = true )
+    private String pluginVersion;
 
     /**
      * Map of provider implementations. For now only zero or one allowed.
@@ -301,8 +306,7 @@ public abstract class AbstractPlay2Mojo
             if ( providerClassLoader == null )
             {
                 Artifact providerArtifact =
-                    getResolvedArtifact( plugin.getGroupId(), "play2-provider-" + providerId,
-                                         plugin.getVersion() );
+                    getResolvedArtifact( pluginGroupId, "play2-provider-" + providerId, pluginVersion );
 
                 Set<Artifact> providerDependencies = getAllDependencies( providerArtifact );
                 List<File> classPathFiles = new ArrayList<File>( providerDependencies.size() + 2 );
