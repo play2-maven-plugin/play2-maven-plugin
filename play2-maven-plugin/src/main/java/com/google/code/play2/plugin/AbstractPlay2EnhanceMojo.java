@@ -257,14 +257,10 @@ public abstract class AbstractPlay2EnhanceMojo
         return result;
     }
 
-    private File defaultAnalysisDirectory( MavenProject p )
-    {
-        return new File( p.getBuild().getDirectory(), "cache" );
-    }
-
     private File defaultAnalysisCacheFile( MavenProject p )
     {
-        return new File( defaultAnalysisDirectory( p ), "compile" );
+        File classesDirectory = new File( p.getBuild().getOutputDirectory() );
+        return new File( Compilers.getCacheDirectory( classesDirectory ), "compile" );
     }
 
     /**

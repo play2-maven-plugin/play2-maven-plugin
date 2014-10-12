@@ -41,7 +41,7 @@ under the License.
         <maven.version>2.2.1</maven.version>
         <maven-plugin-plugin.version>3.3</maven-plugin-plugin.version>
         <plexus-archiver.version>2.3</plexus-archiver.version>
-        <sbt-compiler.plugin.version>1.0.0-beta4</sbt-compiler.plugin.version>
+        <sbt-compiler.plugin.version>1.0.0-beta5-SNAPSHOT</sbt-compiler.plugin.version>
     </properties>
 
     <dependencies>
