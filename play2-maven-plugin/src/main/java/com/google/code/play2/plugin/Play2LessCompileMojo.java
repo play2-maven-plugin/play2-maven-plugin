@@ -47,7 +47,9 @@ import com.google.code.play2.provider.api.Play2Provider;
 public class Play2LessCompileMojo
     extends AbstractPlay2AssetsCompileMojo
 {
-    private static final String cacheFileName = ".less-deps";
+    private static final String cacheDirectoryName = "cache";
+
+    private static final String cacheFileName = "less";
 
     /**
      * Less compiler entry points includes, separated by commas.
@@ -98,14 +100,16 @@ public class Play2LessCompileMojo
         LessDependencyCache allDependencies = new LessDependencyCache();
 
         File targetDirectory = new File( project.getBuild().getDirectory() );
-        File depsFile = new File( targetDirectory, cacheFileName );
-        if ( depsFile.isFile() )
+        File cacheDirectory = new File( targetDirectory, cacheDirectoryName );
+        File lessCacheFile = new File( cacheDirectory, cacheFileName );
+        if ( lessCacheFile.isFile() )
         {
-            // TODO - change file format, disable caching for now
-            // allDependencies.readFromFile( depsFile );
+            allDependencies.readFromFile( lessCacheFile );
         }
 
         LessDependencyCache newAllDependencies = new LessDependencyCache();
+
+        int compiledFiles = 0;
 
         Play2Provider play2Provider = getProvider();
         Play2LessCompiler compiler = play2Provider.getLessCompiler();
@@ -125,21 +129,20 @@ public class Play2LessCompileMojo
             File minifiedCssFile = new File( outputDirectory, minifiedCssFileName );
 
             // previous dependencies
-            Set<String> fileDependencies = null;
-            // if ( allDependencies != null )
-            // {
-            fileDependencies = allDependencies.get( fileName );
-            // }
+            Set<String> fileDependencies = allDependencies.get( templateFile.getAbsolutePath() );
 
             // check if file needs recompilation
-            boolean modified = false;
-            if ( fileDependencies == null )
+            boolean modified = true;
+            if ( fileDependencies != null ) // not first compilation
             {
-                modified = true; // first compilation
-            }
-            else
-            {
-                if ( cssFile.isFile() )
+                if ( cssFile.isFile() && minifiedCssFile.isFile() )
+                {
+                    modified =
+                        ( cssFile.lastModified() < templateFile.lastModified() && minifiedCssFile.lastModified() < templateFile.lastModified() );
+                }
+
+                // maybe dependent files are modified
+                if ( !modified )
                 {
                     long cssFileLastModified = cssFile.lastModified();
                     for ( String fName : fileDependencies )
@@ -160,10 +163,6 @@ public class Play2LessCompileMojo
                             break;
                         }
                     }
-                }
-                else
-                {
-                    modified = true; // missing destination .css file
                 }
             }
 
@@ -197,20 +196,29 @@ public class Play2LessCompileMojo
                 for ( File file : allSourceFiles )
                 {
                     //getLog().debug( String.format( "Source file \"%s\"", file.getPath() ) );
-                    fileDependencies.add( file.getPath() );
+                    if ( !file.getPath().equals( templateFile.getAbsolutePath() ) )
+                    {
+                        fileDependencies.add( file.getPath() );
+                    }
                 }
-                // allDependencies.put(fileName, fileDependencies);
-                // System.out.println(allSourceFiles);
-                // System.out.println(":::end:::");
-                newAllDependencies.set( fileName, fileDependencies );
+                compiledFiles++;
             }
             else
             {
                 getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
             }
+            newAllDependencies.set( templateFile.getAbsolutePath(), fileDependencies );
         }
-        // TODO - change file format, disable caching for now
-        // newAllDependencies.writeToFile( depsFile );
+
+        //getLog().debug( newAllDependencies.toString() );
+        if ( !newAllDependencies.equals( allDependencies ) )
+        {
+            createDirectory( lessCacheFile.getParentFile(), false );
+            newAllDependencies.writeToFile( lessCacheFile );
+        }
+
+        getLog().info( String.format( "%d assets processed, %d compiled", Integer.valueOf( fileNames.length ),
+                                      Integer.valueOf( compiledFiles ) ) );
     }
 
 }
