@@ -186,10 +186,11 @@ public class Play21LessCompiler
         String css = (String) ScriptableObject.getProperty( result, "css" );
         NativeArray dependencies = (NativeArray) ScriptableObject.getProperty( result, "dependencies" );
 
-        List<File> deps = new ArrayList<File>();
-        for ( int i = 0; i < dependencies.getLength(); i++ )
+        int dependenciesCount = Long.valueOf( dependencies.getLength() ).intValue();
+        List<File> deps = new ArrayList<File>( dependenciesCount );
+        for ( int i = 0; i < dependenciesCount; i++ )
         {
-            Object dependency = ScriptableObject.getProperty( dependencies, String.valueOf( i ) );
+            Object dependency = ScriptableObject.getProperty( dependencies, i );
             if ( dependency instanceof File )
             {
                 deps.add( (File) dependency );

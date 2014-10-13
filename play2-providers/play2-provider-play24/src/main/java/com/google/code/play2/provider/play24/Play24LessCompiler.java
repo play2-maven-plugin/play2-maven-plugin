@@ -191,10 +191,11 @@ public class Play24LessCompiler
         String css = ScriptableObject.getProperty( result, "css" ).toString();
         NativeArray dependencies = (NativeArray) ScriptableObject.getProperty( result, "dependencies" );
 
-        List<File> deps = new ArrayList<File>();
+        int dependenciesCount = Long.valueOf( dependencies.getLength() ).intValue();
+        List<File> deps = new ArrayList<File>( dependenciesCount );
         for ( int i = 0; i < dependencies.getLength(); i++ )
         {
-            Object dependency = ScriptableObject.getProperty( dependencies, String.valueOf( i ) );
+            Object dependency = ScriptableObject.getProperty( dependencies, i );
             if ( dependency instanceof File )
             {
                 deps.add( ( (File) dependency ).getCanonicalFile() );
