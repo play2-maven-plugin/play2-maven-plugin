@@ -21,9 +21,10 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
+//import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.NoBannerLogger;
 import org.apache.tools.ant.Project;
@@ -54,16 +55,43 @@ public abstract class AbstractAntJavaBasedPlay2Mojo
     {
         private Java java;
 
-        private Exception exception;
+        private boolean executed;
 
+        private BuildException exception;
+
+        /**
+         * Creates Runnable for given Ant Java task.
+         * 
+         * @param java Java task to be run
+         */
         public JavaRunnable( Java java )
         {
             this.java = java;
         }
 
-        public Exception getException()
+        /**
+         * Returns information if execution has already finished.
+         * 
+         * @return true if execution finished
+         */
+        public boolean isExecuted()
         {
-            Exception result = null;
+            boolean result;
+            synchronized ( this )
+            {
+                result = executed;
+            }
+            return result;
+        }
+
+        /**
+         * Returns execution exception if it has been thrown.
+         * 
+         * @return exception if it has been thrown
+         */
+        public BuildException getException()
+        {
+            BuildException result = null;
             synchronized ( this )
             {
                 result = exception;
@@ -77,23 +105,33 @@ public abstract class AbstractAntJavaBasedPlay2Mojo
             try
             {
                 java.execute();
+                synchronized ( this )
+                {
+                    this.executed = true;
+                }
             }
-            catch ( Exception e )
+            catch ( BuildException e )
             {
                 synchronized ( this )
                 {
+                    this.executed = true;
                     this.exception = e;
                 }
             }
         }
     }
 
+    /**
+     * Creates and configures Ant project for Java task.
+     * 
+     * @return Ant project for Java task
+     */
     protected Project createProject()
     {
-        final Project project = new Project();
+        final Project antProject = new Project();
 
         final ProjectHelper helper = ProjectHelper.getProjectHelper();
-        project.addReference( ProjectHelper.PROJECTHELPER_REFERENCE, helper );
+        antProject.addReference( ProjectHelper.PROJECTHELPER_REFERENCE, helper );
         helper.getImportStack().addElement( "AntBuilder" ); // import checks that stack is not empty
 
         final BuildLogger logger = new NoBannerLogger();
@@ -102,13 +140,20 @@ public abstract class AbstractAntJavaBasedPlay2Mojo
         logger.setOutputPrintStream( System.out );
         logger.setErrorPrintStream( System.err );
 
-        project.addBuildListener( logger );
+        antProject.addBuildListener( logger );
 
-        project.init();
-        project.getBaseDir();
-        return project;
+        antProject.init();
+        antProject.getBaseDir();
+        return antProject;
     }
 
+    /**
+     * Adds string type system property to Ant Java task.
+     * 
+     * @param java Ant Java task
+     * @param propertyName system property name
+     * @param propertyValue system property value
+     */
     protected void addSystemProperty( Java java, String propertyName, String propertyValue )
     {
         Environment.Variable sysPropPlayHome = new Environment.Variable();
@@ -117,6 +162,13 @@ public abstract class AbstractAntJavaBasedPlay2Mojo
         java.addSysproperty( sysPropPlayHome );
     }
 
+    /**
+     * Adds file type system property to Ant Java task.
+     * 
+     * @param java Ant Java task
+     * @param propertyName system property name
+     * @param propertyValue system property value
+     */
     protected void addSystemProperty( Java java, String propertyName, File propertyValue )
     {
         Environment.Variable sysPropPlayHome = new Environment.Variable();
@@ -125,7 +177,7 @@ public abstract class AbstractAntJavaBasedPlay2Mojo
         java.addSysproperty( sysPropPlayHome );
     }
 
-    protected Artifact getPluginArtifact( String groupId, String artifactId, String type )
+    /*not used protected Artifact getPluginArtifact( String groupId, String artifactId, String type )
         throws MojoExecutionException
     {
         Artifact result = null;
@@ -145,6 +197,6 @@ public abstract class AbstractAntJavaBasedPlay2Mojo
                                                              groupId, artifactId ) );
         }
         return result;
-    }
+    }*/
 
 }

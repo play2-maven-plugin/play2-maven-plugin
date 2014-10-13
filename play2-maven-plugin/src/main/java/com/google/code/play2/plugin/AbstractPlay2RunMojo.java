@@ -18,11 +18,12 @@
 package com.google.code.play2.plugin;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 
 /**
@@ -50,19 +51,15 @@ public abstract class AbstractPlay2RunMojo
     @Parameter( property = "play2.runFork", defaultValue = "true" )
     private boolean runFork;
 
-    // protected abstract String getPlayId();
-
     @Override
     protected void internalExecute()
-        throws MojoExecutionException, MojoFailureException, IOException
+        throws MojoExecutionException, MojoFailureException
     {
         if ( runSkip )
         {
             getLog().info( "Skipping execution" );
             return;
         }
-
-        // String playId = getPlayId();
 
         File baseDir = project.getBasedir();
 
@@ -86,15 +83,13 @@ public abstract class AbstractPlay2RunMojo
                                                              pidFile.getName() ) );
         }
 
-        // ConfigurationParser configParser = getConfiguration( playId );
-
-        Java javaTask = prepareAntJavaTask( /* configParser, playId, */runFork );
+        Java javaTask = prepareAntJavaTask( runFork );
         javaTask.setFailonerror( true );
         PidFileDeleter.getInstance().add( pidFile );
 
         JavaRunnable runner = new JavaRunnable( javaTask );
-        // a może po prostu tak:
-        getLog().info( "Launching Play! Server" );
+        // maybe just like that:
+        getLog().info( "Launching Play! server" );
         runner.run();
         /*Thread t = new Thread( runner, "Play! Server runner" );
         getLog().info( "Launching Play! Server" );
@@ -107,10 +102,10 @@ public abstract class AbstractPlay2RunMojo
         {
             throw new MojoExecutionException( "?", e );
         }*/
-        Exception runException = runner.getException();
+        BuildException runException = runner.getException();
         if ( runException != null )
         {
-            throw new MojoExecutionException( "?", runException );
+            throw new MojoExecutionException( "Play! server run exception", runException );
         }
 
         if ( !runFork )

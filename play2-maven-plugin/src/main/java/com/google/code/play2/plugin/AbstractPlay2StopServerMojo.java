@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Base class for Play&#33; server stopping ("stop" and "stop-server") mojos.
@@ -32,7 +31,7 @@ public abstract class AbstractPlay2StopServerMojo
     extends AbstractPlay2Mojo
 {
     protected void stopServer()
-        throws MojoExecutionException, MojoFailureException, IOException
+        throws MojoExecutionException, IOException
     {
         File baseDir = project.getBasedir();
 

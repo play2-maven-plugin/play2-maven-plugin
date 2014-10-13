@@ -25,6 +25,7 @@ import java.net.URLConnection;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 
 /**
@@ -36,7 +37,7 @@ public abstract class AbstractPlay2StartServerMojo
     extends AbstractPlay2ServerMojo
 {
     protected Java getStartServerTask( boolean spawn )
-        throws MojoExecutionException, MojoFailureException, IOException
+        throws MojoExecutionException
     {
         File baseDir = project.getBasedir();
 
@@ -88,12 +89,12 @@ public abstract class AbstractPlay2StartServerMojo
          * serverPort = Integer.parseInt( serverPortStr ); } }
          */
 
-        return String.format( "http://localhost:%d%s", serverPort, relativeUrl );
+        return String.format( "http://localhost:%d%s", Integer.valueOf( serverPort ), relativeUrl );
     }
 
     // startTimeout in milliseconds
     protected void waitForServerStarted( String rootUrl, JavaRunnable runner, int startTimeout, boolean spawned )
-        throws MojoExecutionException, MojoFailureException, IOException
+        throws MojoExecutionException, IOException
     {
         long endTimeMillis = startTimeout > 0  ? System.currentTimeMillis() + startTimeout : 0L;
         boolean started = false;
@@ -121,14 +122,14 @@ public abstract class AbstractPlay2StartServerMojo
                         // just ignore
                     }
                 }
-                throw new MojoExecutionException( String.format( "Failed to start Play! Server in %d ms",
-                                                                 startTimeout ) );
+                throw new MojoExecutionException( String.format( "Failed to start Play! server in %d ms",
+                                                                 Integer.valueOf( startTimeout ) ) );
             }
 
-            Exception runnerException = runner.getException();
+            BuildException runnerException = runner.getException();
             if ( runnerException != null )
             {
-                throw new MojoExecutionException( "Failed to start Play! Server", runnerException );
+                throw new MojoExecutionException( "Play! server start exception", runnerException );
             }
 
             try

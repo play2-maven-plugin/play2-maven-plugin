@@ -18,7 +18,6 @@
 package com.google.code.play2.plugin;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -62,7 +61,7 @@ public abstract class AbstractPlay2ServerMojo
     private String serverJvmArgs;
 
     protected Java prepareAntJavaTask( boolean fork )
-        throws MojoExecutionException, IOException
+        throws MojoExecutionException
     {
         File baseDir = project.getBasedir();
 
@@ -143,7 +142,7 @@ public abstract class AbstractPlay2ServerMojo
     }
 
     protected Path getProjectClassPath( Project antProject )
-        throws MojoExecutionException, IOException
+        throws MojoExecutionException
     {
         Path classPath = new Path( antProject );
 

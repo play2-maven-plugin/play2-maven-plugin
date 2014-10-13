@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 
 /**
@@ -140,12 +141,12 @@ public class Play2StartMojo
             catch ( InterruptedException e )
             {
                 t.interrupt();
-                throw new MojoExecutionException( "?", e );
+                throw new MojoExecutionException( "Play! server start interrupted", e );
             }
-            Exception startServerException = runner.getException();
+            BuildException startServerException = runner.getException();
             if ( startServerException != null )
             {
-                throw new MojoExecutionException( "?", startServerException );
+                throw new MojoExecutionException( "Play! server start exception", startServerException );
             }
         }
         // else don't invoke t.join(), it will lead to a deadlock
