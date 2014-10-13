@@ -62,6 +62,7 @@ public class PidFileDeleter
         pidFiles.remove( pidFile );
     }
 
+    @Override
     public void run()
     {
         for ( File pidFile : pidFiles )
