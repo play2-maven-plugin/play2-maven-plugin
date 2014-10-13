@@ -143,7 +143,7 @@ public abstract class AbstractPlay2Mojo
                 long ts = System.currentTimeMillis();
                 internalExecute();
                 long te = System.currentTimeMillis();
-                getLog().debug( String.format( "Mojo execution time: %d ms", te - ts ) );
+                getLog().debug( String.format( "Mojo execution time: %d ms", Long.valueOf( te - ts ) ) );
             }
             catch ( IOException e )
             {
@@ -425,6 +425,7 @@ public abstract class AbstractPlay2Mojo
     private static class NonOptionalArtifactFilter
         implements ArtifactFilter
     {
+        @Override
         public boolean include( Artifact artifact )
         {
             return !artifact.isOptional();
