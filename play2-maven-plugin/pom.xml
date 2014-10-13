@@ -37,10 +37,10 @@ under the License.
     </prerequisites>
 
     <properties>
-        <ant.version>1.9.0</ant.version>
+        <ant.version>1.9.4</ant.version>
         <maven.version>2.2.1</maven.version>
         <maven-plugin-plugin.version>3.3</maven-plugin-plugin.version>
-        <plexus-archiver.version>2.3</plexus-archiver.version>
+        <plexus-archiver.version>2.7</plexus-archiver.version>
         <sbt-compiler.plugin.version>1.0.0-beta5-SNAPSHOT</sbt-compiler.plugin.version>
     </properties>
 
@@ -75,24 +75,28 @@ under the License.
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-model</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-project</artifactId>
             <version>${maven.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -106,25 +110,53 @@ under the License.
             <groupId>org.apache.maven.shared</groupId>
             <artifactId>maven-common-artifact-filters</artifactId>
             <version>1.4</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-artifact</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-model</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-project</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-plugin-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-container-default</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
             <version>${plexus-archiver.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-container-default</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-io</artifactId>
-            <version>2.0.6</version>
+            <version>2.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
             <version>2.0.6</version> <!-- compatible with M2Eclipse -->
-            <!--<version>3.0.17</version>-->
+            <!--<version>3.0.18</version>-->
         </dependency>
 
         <dependency>
@@ -208,33 +240,6 @@ under the License.
                         </excludes>
                     </configuration>
                 </plugin>
-
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-plugin-plugin</artifactId>
-                                        <versionRange>[1.0,)</versionRange>
-                                        <goals>
-                                            <goal>descriptor</goal>
-                                            <goal>helpmojo</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -294,6 +299,14 @@ under the License.
 
             <reporting>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <configuration>
+                            <excludes>com/google/code/play2/plugin/HelpMojo.java</excludes>
+                        </configuration>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
