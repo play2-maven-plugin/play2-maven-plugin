@@ -151,7 +151,7 @@ public class Play2EnhanceClassesMojo
         File scannerBaseDir = new File( project.getBasedir(), appDirectoryName );
         if ( !scannerBaseDir.isDirectory() )
         {
-            getLog().info( "No classes to enhance" );
+            getLog().info( "No Java classes to enhance" );
             return false;
         }
 
@@ -196,12 +196,12 @@ public class Play2EnhanceClassesMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "%d classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+            getLog().info( String.format( "%d Java classes processed, %d enhanced", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( enhancedFiles ) ) );
         }
         else
         {
-            getLog().info( "No classes to enhance" );
+            getLog().info( "No Java classes to enhance" );
         }
 
         return enhancedFiles > 0;
@@ -212,7 +212,7 @@ public class Play2EnhanceClassesMojo
         File scannerBaseDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName ); // TODO-parametrize
         if ( !scannerBaseDir.isDirectory() )
         {
-            getLog().info( "No templates to enhance" );
+            getLog().info( "No template classes to enhance" );
             return false;
         }
 
@@ -253,12 +253,12 @@ public class Play2EnhanceClassesMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "%d templates processed, %d enhanced", Integer.valueOf( processedFiles ),
+            getLog().info( String.format( "%d template classes processed, %d enhanced", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( enhancedFiles ) ) );
         }
         else
         {
-            getLog().info( "No templates to enhance" );
+            getLog().info( "No template classes to enhance" );
         }
         return enhancedFiles > 0;
     }

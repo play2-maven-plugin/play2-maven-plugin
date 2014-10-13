@@ -26,7 +26,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.provider.api.AssetCompilationException;
@@ -90,6 +89,8 @@ public class Play2ClosureCompileMojo
     protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException, MojoExecutionException
     {
+        int compiledFiles = 0;
+
         Play2Provider play2Provider = getProvider();
         Play2JavascriptCompiler compiler = play2Provider.getJavascriptCompiler();
         if ( closureCompilerOptions != null )
@@ -137,12 +138,16 @@ public class Play2ClosureCompileMojo
                         buildContext.refresh( minifiedJsFile );
                     }
                 }
+                compiledFiles++;
             }
             else
             {
                 getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
             }
         }
+
+        getLog().info( String.format( "%d assets processed, %d compiled", Integer.valueOf( fileNames.length ),
+                                      Integer.valueOf( compiledFiles ) ) );
     }
 
 }

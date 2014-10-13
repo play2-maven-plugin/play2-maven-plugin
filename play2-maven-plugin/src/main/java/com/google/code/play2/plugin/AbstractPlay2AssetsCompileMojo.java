@@ -42,7 +42,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
     private File assetsDirectory;
 
     private static final String targetDirectoryName = "resource_managed/main";
-    
+
     @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -81,6 +81,10 @@ public abstract class AbstractPlay2AssetsCompileMojo
             {
                 throw new MojoExecutionException( "Assets compilation failed", e );
             }
+        }
+        else
+        {
+            getLog().info( "No assets to compile" );
         }
     }
 

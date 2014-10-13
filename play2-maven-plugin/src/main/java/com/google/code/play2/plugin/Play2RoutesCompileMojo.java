@@ -101,53 +101,50 @@ public class Play2RoutesCompileMojo
             getLog().debug( "No routes to compile" );
             return;
         }
-        else
+
+        File targetDirectory = new File( project.getBuild().getDirectory() );
+        File generatedDirectory = new File( targetDirectory, targetDirectoryName );
+
+        Play2Provider play2Provider = getProvider();
+        Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
+        compiler.setMainLang( mainLang );
+        compiler.setOutputDirectory( generatedDirectory );
+
+        for ( String fileName : files )
         {
-            File targetDirectory = new File( project.getBuild().getDirectory() );
-            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-
-            Play2Provider play2Provider = getProvider();
-            Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
-            compiler.setMainLang( mainLang );
-            compiler.setOutputDirectory( generatedDirectory );
-
-            for ( String fileName : files )
+            File routesFile = new File( confDirectory, fileName );
+            String generatedFileName = getGeneratedFileName( fileName );
+            File generatedFile = new File( generatedDirectory, generatedFileName );
+            boolean modified = true;
+            if ( generatedFile.isFile() )
             {
-                File routesFile = new File( confDirectory, fileName );
-                String generatedFileName = getGeneratedFileName( fileName );
-                File generatedFile = new File( generatedDirectory, generatedFileName );
-                boolean modified = true;
-                if ( generatedFile.isFile() )
-                {
-                    modified = ( generatedFile.lastModified() < routesFile.lastModified() );
-                }
-
-                if ( modified )
-                {
-                    getLog().debug( String.format( "Processing \"%s\"", fileName ) );
-
-                    try
-                    {
-                        compiler.compile( routesFile );
-                        buildContextRefresh( generatedDirectory, generatedFileName );
-                    }
-                    catch ( RoutesCompilationException e )
-                    {
-                        throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
-                                                                         routesFile.getPath() ), e );
-                    }
-                }
-                else
-                {
-                    getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
-                }
+                modified = ( generatedFile.lastModified() < routesFile.lastModified() );
             }
 
-            if ( !project.getCompileSourceRoots().contains( generatedDirectory.getAbsolutePath() ) )
+            if ( modified )
             {
-                project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
-                getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
+                try
+                {
+                    compiler.compile( routesFile );
+                    buildContextRefresh( generatedDirectory, generatedFileName );
+                    getLog().debug( String.format( "\"%s\" processed", fileName ) );
+                }
+                catch ( RoutesCompilationException e )
+                {
+                    throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
+                                                                     routesFile.getPath() ), e );
+                }
             }
+            else
+            {
+                getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
+            }
+        }
+
+        if ( !project.getCompileSourceRoots().contains( generatedDirectory.getAbsolutePath() ) )
+        {
+            project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
+            getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
         }
     }
 

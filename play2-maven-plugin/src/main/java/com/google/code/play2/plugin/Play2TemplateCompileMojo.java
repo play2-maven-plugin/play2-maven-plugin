@@ -120,7 +120,7 @@ public class Play2TemplateCompileMojo
                             }
                             else
                             {
-                                getLog().debug( String.format( "\"%s\" skipped", fileName ) );
+                                getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
                             }
                         }
                         catch ( TemplateCompilationException e )
@@ -137,7 +137,7 @@ public class Play2TemplateCompileMojo
         {
             getLog().info( String.format( "%d templates processed, %d compiled", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( compiledFiles ) ) );
-            if ( !project.getCompileSourceRoots().contains( generatedDirectory.getAbsolutePath() ) )
+            if ( !compileSourceRoots.contains( generatedDirectory.getAbsolutePath() ) )
             {
                 project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
                 getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );

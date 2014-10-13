@@ -187,12 +187,12 @@ public class Play2EbeanEnhanceMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "%d classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+            getLog().info( String.format( "%d Ebean classes processed, %d enhanced", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( enhancedFiles ) ) );
         }
         else
         {
-            getLog().info( "No classes to enhance" );
+            getLog().info( "No Ebean classes to enhance" );
         }
     }
 
@@ -260,7 +260,7 @@ public class Play2EbeanEnhanceMojo
                     if ( recurse )
                     {
                         String subdir = dir + "/" + file.getName();
-                        collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse );
+                        result.addAll( collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse ) );
                     }
                 }
                 else
@@ -278,14 +278,12 @@ public class Play2EbeanEnhanceMojo
 
     private String trimSlash( String dir )
     {
+        String result = dir;
         if ( dir.endsWith( "/" ) )
         {
-            return dir.substring( 0, dir.length() - 1 );
+            result = dir.substring( 0, dir.length() - 1 );
         }
-        else
-        {
-            return dir;
-        }
+        return result;
     }
 
 }

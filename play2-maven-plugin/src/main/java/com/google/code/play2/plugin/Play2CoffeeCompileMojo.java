@@ -91,6 +91,8 @@ public class Play2CoffeeCompileMojo
     protected void compileAssets( File assetsSourceDirectory, String[] fileNames, File outputDirectory )
         throws AssetCompilationException, IOException, MojoExecutionException
     {
+        int compiledFiles = 0;
+
         Play2Provider play2Provider = getProvider();
         Play2CoffeescriptCompiler compiler = play2Provider.getCoffeescriptCompiler();
         if ( coffeescriptOptions != null )
@@ -109,9 +111,10 @@ public class Play2CoffeeCompileMojo
             File minifiedJsFile = new File( outputDirectory, minifiedJsFileName );
 
             boolean modified = true;
-            if ( jsFile.isFile() )
+            if ( jsFile.isFile() && minifiedJsFile.isFile() )
             {
-                modified = ( jsFile.lastModified() < coffeeFile.lastModified() );
+                modified =
+                    ( jsFile.lastModified() < coffeeFile.lastModified() && minifiedJsFile.lastModified() < coffeeFile.lastModified() );
             }
 
             if ( modified )
@@ -130,6 +133,7 @@ public class Play2CoffeeCompileMojo
                     // String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
                     createDirectory( minifiedJsFile.getParentFile(), false );
                     writeToFile( minifiedJsFile, minifiedJsContent );
+                    compiledFiles++;
                     buildContext.refresh( minifiedJsFile );
                 }
                 catch ( AssetCompilationException e )
@@ -145,6 +149,9 @@ public class Play2CoffeeCompileMojo
                 getLog().debug( String.format( "\"%s\" skipped - no changes", fileName ) );
             }
         }
+
+        getLog().info( String.format( "%d assets processed, %d compiled", Integer.valueOf( fileNames.length ),
+                                      Integer.valueOf( compiledFiles ) ) );
     }
 
 }
