@@ -260,7 +260,7 @@ public class Play2EbeanEnhanceMojo
                     if ( recurse )
                     {
                         String subdir = dir + "/" + file.getName();
-                        result.addAll( collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse ) );
+                        collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse );
                     }
                 }
                 else
