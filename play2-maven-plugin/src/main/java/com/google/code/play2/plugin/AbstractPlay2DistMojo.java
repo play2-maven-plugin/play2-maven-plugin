@@ -54,6 +54,19 @@ public abstract class AbstractPlay2DistMojo
     private File configFile;
 
     /**
+     * Distribution additional project artifacts include filter.
+     * 
+     * Comma-separated list of the classifiers of project's additional artifacts
+     * to include.
+     * For example "assets" value means that {@code target/${artifactId}-${version}-assets.jar}
+     * will be added to {@code lib} directory in distribution archive.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.distClassifierIncludes", defaultValue = "" )
+    private String distClassifierIncludes;
+
+    /**
      * Distribution dependency include filter.
      * 
      * @since 1.0.0
@@ -93,6 +106,23 @@ public abstract class AbstractPlay2DistMojo
 
         String destinationFileName = packageName + "/lib/" + projectArtifactFile.getName();
         zipArchiver.addFile( projectArtifactFile, destinationFileName );
+
+        if ( distClassifierIncludes != null && distClassifierIncludes.length() > 0 )
+        {
+            List<String> incl = Arrays.asList( distClassifierIncludes.split( "," ) );
+            for ( String classifier: incl )
+            {
+                String projectAttachedArtifactFileName =
+                    String.format( "%s-%s.jar", project.getBuild().getFinalName(), classifier.trim() );
+                File projectAttachedArtifactFile = new File( buildDirectory, projectAttachedArtifactFileName );
+                if ( !projectAttachedArtifactFile.isFile() )
+                {
+                    throw new MojoExecutionException( String.format( "%s not present", projectAttachedArtifactFile.getAbsolutePath() ) );
+                }
+                destinationFileName = packageName + "/lib/" + projectAttachedArtifactFile.getName();
+                zipArchiver.addFile( projectAttachedArtifactFile, destinationFileName );
+            }
+        }
 
         // preparation
         Set<?> projectArtifacts = project.getArtifacts();
