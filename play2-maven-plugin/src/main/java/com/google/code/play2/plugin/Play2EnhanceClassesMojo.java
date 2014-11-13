@@ -56,6 +56,21 @@ public class Play2EnhanceClassesMojo
     private static final String srcManagedDirectoryName = "src_managed/main";
 
     /**
+     * Should managed sources compilation products (compiled classes) be copied to "target/classes_managed".
+     * 
+     * Managed sources are Scala and Java sources, products of routes and templates compilation.
+     * These classes are required only when working on Play! Java projects with IDE not supporting Scala.
+     * They could be attached to project's classpath.
+     *  
+     * Because all major IDEs support Scala these days, managed classes generation
+     * is turned off by default.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.writeManagedClasses", defaultValue = "false" )
+    private boolean writeManagedClasses;
+
+    /**
      * Project classpath.
      */
     @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
@@ -143,7 +158,10 @@ public class Play2EnhanceClassesMojo
             throw new MojoExecutionException( "Enhancement exception", e );
         }
 
-        synchronizeManagedClasses( analysis );
+        if ( writeManagedClasses )
+        {
+            synchronizeManagedClasses( analysis );
+        }
     }
 
     private boolean enhanceJavaClasses( long lastEnhanced/*, AnalysisProcessor sbtAnalysisProcessor*/, Analysis analysis, Play2JavaEnhancer enhancer ) throws Exception
