@@ -24,7 +24,6 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Java;
@@ -42,7 +41,7 @@ public abstract class AbstractPlay2ServerMojo
      * @since 1.0.0
      */
     @Parameter( property = "play2.httpPort", defaultValue = "" )
-    private String httpPort;
+    protected String httpPort;
 
     /**
      * Alternative server port for secure connection (https protocol).
@@ -78,10 +77,9 @@ public abstract class AbstractPlay2ServerMojo
         {
             javaTask.setDir( baseDir );
 
-            String jvmArgs = getServerJvmArgs();
-            if ( jvmArgs != null )
+            if ( serverJvmArgs != null )
             {
-                jvmArgs = jvmArgs.trim();
+                String jvmArgs = serverJvmArgs.trim();
                 if ( jvmArgs.length() > 0 )
                 {
                     String[] args = jvmArgs.split( " " );
@@ -105,10 +103,9 @@ public abstract class AbstractPlay2ServerMojo
         else
         {
             // find and add all system properties in "serverJvmArgs"
-            String jvmArgs = getServerJvmArgs();
-            if ( jvmArgs != null )
+            if ( serverJvmArgs != null )
             {
-                jvmArgs = jvmArgs.trim();
+                String jvmArgs = serverJvmArgs.trim();
                 if ( jvmArgs.length() > 0 )
                 {
                     String[] args = jvmArgs.split( " " );
@@ -146,11 +143,11 @@ public abstract class AbstractPlay2ServerMojo
     {
         Path classPath = new Path( antProject );
 
-        Artifact projectArtifact = getProject().getArtifact();
+        Artifact projectArtifact = project.getArtifact();
         File projectArtifactFile = projectArtifact.getFile();
         if ( projectArtifactFile == null )
         {
-            File classesDirectory = new File( getProject().getBuild().getOutputDirectory() );
+            File classesDirectory = new File( project.getBuild().getOutputDirectory() );
             if ( !classesDirectory.isDirectory() )
             {
                 throw new MojoExecutionException( "Project artifact file not available" ); //TODO improve message
@@ -163,7 +160,7 @@ public abstract class AbstractPlay2ServerMojo
                                        projectArtifact.getScope() ) );
         classPath.createPathElement().setLocation( projectArtifactFile );
 
-        Set<?> classPathArtifacts = getProject().getArtifacts();
+        Set<?> classPathArtifacts = project.getArtifacts();
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
         {
             Artifact artifact = (Artifact) iter.next();
@@ -172,26 +169,6 @@ public abstract class AbstractPlay2ServerMojo
             classPath.createPathElement().setLocation( artifact.getFile() );
         }
         return classPath;
-    }
-
-    protected String getHttpPort()
-    {
-        return httpPort;
-    }
-
-    protected String getHttpsPort()
-    {
-        return httpsPort;
-    }
-
-    protected String getServerJvmArgs()
-    {
-        return serverJvmArgs;
-    }
-
-    protected MavenProject getProject()
-    {
-        return project;
     }
 
 }

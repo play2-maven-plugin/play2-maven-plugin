@@ -80,9 +80,9 @@ public abstract class AbstractPlay2StartServerMojo
     protected String getRootUrl( String relativeUrl )
     {
         int serverPort = 9000;
-        if ( getHttpPort() != null && getHttpPort().length() > 0 )
+        if ( httpPort != null && httpPort.length() > 0 )
         {
-            serverPort = Integer.parseInt( getHttpPort() );
+            serverPort = Integer.parseInt( httpPort );
         }
         /*
          * else { String serverPortStr = configParser.getProperty( "http.port" ); if ( serverPortStr != null ) {
