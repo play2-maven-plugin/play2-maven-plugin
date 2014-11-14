@@ -143,22 +143,21 @@ public abstract class AbstractPlay2ServerMojo
     {
         Path classPath = new Path( antProject );
 
-        Artifact projectArtifact = project.getArtifact();
-        File projectArtifactFile = projectArtifact.getFile();
-        if ( projectArtifactFile == null )
+        File classesDirectory = new File( project.getBuild().getOutputDirectory() );
+        if ( !classesDirectory.exists() )
         {
-            File classesDirectory = new File( project.getBuild().getOutputDirectory() );
-            if ( !classesDirectory.isDirectory() )
-            {
-                throw new MojoExecutionException( "Project artifact file not available" ); //TODO improve message
-            }
-            projectArtifactFile = classesDirectory;
-            //TODO - add warning, that classes may be not up to date
+            throw new MojoExecutionException(
+                                              String.format( "Project's classes directory \"%s\" does not exist. Run \"mvn process-classes\" first.",
+                                                             classesDirectory.getAbsolutePath() ) );
         }
-        getLog().debug( String.format( "CP: %s:%s:%s (%s)", projectArtifact.getGroupId(),
-                                       projectArtifact.getArtifactId(), projectArtifact.getType(),
-                                       projectArtifact.getScope() ) );
-        classPath.createPathElement().setLocation( projectArtifactFile );
+        if ( !classesDirectory.isDirectory() )
+        {
+            throw new MojoExecutionException( String.format( "Project's classes directory \"%s\" is not a directory",
+                                                             classesDirectory.getAbsolutePath() ) );
+        }
+
+        getLog().debug( String.format( "CP: %s", classesDirectory.getAbsolutePath() ) );
+        classPath.createPathElement().setLocation( classesDirectory );
 
         Set<?> classPathArtifacts = project.getArtifacts();
         for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
