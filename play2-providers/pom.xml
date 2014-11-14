@@ -50,7 +50,7 @@ under the License.
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-component-annotations</artifactId>
-            <version>1.5.5</version>
+            <version>1.6</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -90,7 +90,7 @@ under the License.
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
-                <version>1.5.5</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <goals>
