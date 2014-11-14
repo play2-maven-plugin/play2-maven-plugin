@@ -18,9 +18,7 @@
 package com.google.code.play2.plugin;
 
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 
 /**
  * Run Play&#33; server ("play run" equivalent).
@@ -32,18 +30,4 @@ import org.apache.maven.project.MavenProject;
 public class Play2RunMojo
     extends AbstractPlay2RunMojo
 {
-    /**
-     * Get the executed project from the forked lifecycle.
-     * 
-     * @since 1.0.0
-     */
-    @Parameter( property = "executedProject" )
-    private MavenProject executedProject;
-
-    @Override
-    public MavenProject getProject()
-    {
-        return executedProject;
-    }
-
 }

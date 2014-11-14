@@ -25,7 +25,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
@@ -91,14 +90,6 @@ public class Play2StartMojo
     @Parameter( property = "play2.startCheckUrl", defaultValue = "/" )
     String startCheckUrl;
 
-    /**
-     * Get the executed project from the forked lifecycle.
-     * 
-     * @since 1.0.0
-     */
-    @Parameter( property = "executedProject" )
-    private MavenProject executedProject;
-
     @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -161,12 +152,6 @@ public class Play2StartMojo
         }
 
         getLog().info( "Play! server started" );
-    }
-
-    @Override
-    public MavenProject getProject()
-    {
-        return executedProject;
     }
 
 }
