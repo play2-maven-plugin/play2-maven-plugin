@@ -32,8 +32,8 @@ import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.JSError;
-import com.google.javascript.jscomp.JSSourceFile;
 import com.google.javascript.jscomp.Result;
+import com.google.javascript.jscomp.SourceFile;
 
 //import org.mozilla.javascript.Context;
 //import org.mozilla.javascript.Function;
@@ -77,23 +77,23 @@ public class Play23JavascriptCompiler
         List<File> all = allSiblings( source );
         // In commonJsMode, we use all JavaScript sources in the same directory for some reason.
         // Otherwise, we only look at the current file.
-        List<JSSourceFile> x = new ArrayList<JSSourceFile>();
+        List<SourceFile> inputs = new ArrayList<SourceFile>();
         if ( commonJsMode )
         {
             for ( File f : all )
             {
-                x.add( JSSourceFile.fromFile( f ) );
+                inputs.add( SourceFile.fromFile( f ) );
             }
         }
         else
         {
-            x.add( JSSourceFile.fromFile( source ) );
+            inputs.add( SourceFile.fromFile( source ) );
         }
-        JSSourceFile[] input = x.toArray( new JSSourceFile[x.size()] );
 
         try
         {
-            Result result = compiler.compile( new JSSourceFile[0], input, options );
+            List<SourceFile> externs = Collections.emptyList();
+            Result result = compiler.compile( externs, inputs, options );
             if ( result.success )
             {
                 String minifiedJs = null;
@@ -185,10 +185,11 @@ public class Play23JavascriptCompiler
         {
             name = "unknown";
         }
-        JSSourceFile[] input = new JSSourceFile[] { JSSourceFile.fromCode( name, source ) };
-        // val input = Array[JSSourceFile](JSSourceFile.fromCode(name.getOrElse("unknown"), source))
+        List<SourceFile> inputs = new ArrayList<SourceFile>( 1 );
+        inputs.add( SourceFile.fromCode( name, source ) );
 
-        if ( compiler.compile( new JSSourceFile[] {}/* Array[JSSourceFile]() */, input, options ).success )
+        List<SourceFile> externs = Collections.emptyList();
+        if ( compiler.compile( externs, inputs, options ).success )
         {
             return compiler.toSource();
         }
