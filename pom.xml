@@ -203,41 +203,13 @@ under the License.
                     <version>2.5.1</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <providerImplementations>
-                            <svn>javasvn</svn>
-                        </providerImplementations>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-                            <artifactId>maven-scm-provider-svnjava</artifactId>
-                            <version>1.15</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>2.7</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-scm-plugin</artifactId>
-                    <version>1.6</version>
-                    <configuration>
-                        <providerImplementations>
-                            <svn>javasvn</svn>
-                        </providerImplementations>
-                    </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-                            <artifactId>maven-scm-provider-svnjava</artifactId>
-                            <version>1.15</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <plugin>
@@ -315,12 +287,6 @@ under the License.
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
                     <version>2.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.google.code.maven-scm-provider-svnjava</groupId>
-                    <artifactId>maven-scm-provider-svnjava</artifactId>
-                    <version>1.15</version>
                 </plugin>
 
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
