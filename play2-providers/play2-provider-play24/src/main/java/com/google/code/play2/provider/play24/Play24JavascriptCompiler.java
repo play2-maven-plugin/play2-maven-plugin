@@ -32,8 +32,8 @@ import com.google.javascript.jscomp.CompilationLevel;
 import com.google.javascript.jscomp.Compiler;
 import com.google.javascript.jscomp.CompilerOptions;
 import com.google.javascript.jscomp.JSError;
-import com.google.javascript.jscomp.JSSourceFile;
 import com.google.javascript.jscomp.Result;
+import com.google.javascript.jscomp.SourceFile;
 
 //import org.mozilla.javascript.Context;
 //import org.mozilla.javascript.Function;
@@ -76,23 +76,23 @@ public class Play24JavascriptCompiler
         List<File> all = allSiblings( source );
         // In commonJsMode, we use all JavaScript sources in the same directory for some reason.
         // Otherwise, we only look at the current file.
-        List<JSSourceFile> x = new ArrayList<JSSourceFile>();
+        List<SourceFile> inputs = new ArrayList<SourceFile>();
         if ( commonJsMode )
         {
             for ( File f : all )
             {
-                x.add( JSSourceFile.fromFile( f ) );
+                inputs.add( SourceFile.fromFile( f ) );
             }
         }
         else
         {
-            x.add( JSSourceFile.fromFile( source ) );
+            inputs.add( SourceFile.fromFile( source ) );
         }
-        JSSourceFile[] input = x.toArray( new JSSourceFile[x.size()] );
 
         try
         {
-            Result result = compiler.compile( new JSSourceFile[0], input, options );
+            List<SourceFile> externs = Collections.emptyList();
+            Result result = compiler.compile( externs, inputs, options );
             if ( result.success )
             {
                 String minifiedJs = null;
@@ -149,14 +149,14 @@ public class Play24JavascriptCompiler
             {
                 CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel( defaultOptions );
             }
-            else if ( "checkCaja".equals( opt ) )
+            /*???else if ( "checkCaja".equals( opt ) )
             {
                 defaultOptions.setCheckCaja( true );
             }
             else if ( "checkControlStructures".equals( opt ) )
             {
                 defaultOptions.setCheckControlStructures( true );
-            }
+            }???*/
             else if ( "checkTypes".equals( opt ) )
             {
                 defaultOptions.setCheckTypes( true );
@@ -184,10 +184,11 @@ public class Play24JavascriptCompiler
         {
             name = "unknown";
         }
-        JSSourceFile[] input = new JSSourceFile[] { JSSourceFile.fromCode( name, source ) };
-        // val input = Array[JSSourceFile](JSSourceFile.fromCode(name.getOrElse("unknown"), source))
+        List<SourceFile> inputs = new ArrayList<SourceFile>( 1 );
+        inputs.add( SourceFile.fromCode( name, source ) );
 
-        if ( compiler.compile( new JSSourceFile[] {}/* Array[JSSourceFile]() */, input, options ).success )
+        List<SourceFile> externs = Collections.emptyList();
+        if ( compiler.compile( externs, inputs, options ).success )
         {
             return compiler.toSource();
         }
@@ -197,7 +198,7 @@ public class Play24JavascriptCompiler
             throw new AssetCompilationException( null, error.description, error.lineNumber, null );
         }
         /*
-         * compiler.compile(Array[JSSourceFile](), input, options).success match { case true => compiler.toSource() case
+         * compiler.compile(Array[SourceFile](), input, options).success match { case true => compiler.toSource() case
          * false => { val error = compiler.getErrors().head throw AssetCompilationException(None, error.description,
          * Some(error.lineNumber), None) } }
          */

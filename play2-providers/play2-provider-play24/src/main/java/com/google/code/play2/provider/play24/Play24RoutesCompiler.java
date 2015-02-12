@@ -24,8 +24,10 @@ import scala.collection.JavaConversions;
 import scala.collection.Seq;
 import scala.util.Either;
 
-import play.router.RoutesCompiler$;
-import play.router.RoutesCompiler.RoutesCompilationError;
+import play.routes.compiler.RoutesCompilationError;
+import play.routes.compiler.RoutesCompiler$;
+import play.routes.compiler.RoutesGenerator;
+import play.routes.compiler.StaticRoutesGenerator$;
 
 import com.google.code.play2.provider.api.Play2RoutesCompiler;
 import com.google.code.play2.provider.api.RoutesCompilationException;
@@ -67,8 +69,9 @@ public class Play24RoutesCompiler
             additionalImports = scalaAdditionalImports;
         }
 
+        RoutesGenerator routesGenerator = StaticRoutesGenerator$.MODULE$; // TODO - should be parametrizable in the future
         Either<Seq<RoutesCompilationError>, Seq<File>> result =
-            RoutesCompiler$.MODULE$.compile( routesFile, outputDirectory,
+            RoutesCompiler$.MODULE$.compile( routesFile, routesGenerator, outputDirectory,
                                              JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ), true,
                                              true, false );
         if ( result.isLeft() )
