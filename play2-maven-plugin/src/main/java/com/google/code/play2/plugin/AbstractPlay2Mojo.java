@@ -325,7 +325,8 @@ public abstract class AbstractPlay2Mojo
                 providerClassLoader =
                     new URLClassLoader( classPathUrls.toArray( new URL[classPathUrls.size()] ),
                                         Thread.currentThread().getContextClassLoader() );
-                getLog().debug( "Setting cached classloader for " + providerId );
+                getLog().debug( String.format( "Setting cached classloader for provider \"%s\" with parent classloader %d",
+                                               providerId, Integer.valueOf( providerClassLoader.getParent().hashCode() ) ) );
                 setCachedClassLoader( providerId, providerClassLoader );
             }
 
