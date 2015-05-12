@@ -33,20 +33,9 @@ under the License.
     <description>Play! 2.x Provider for Play! 2.3.x</description>
 
     <properties>
-        <play2.version>2.3.8</play2.version>
+        <play2.version>2.3.9</play2.version>
         <twirl.version>1.0.2</twirl.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>typesafe</id>
-            <name>Typesafe - releases</name>
-            <url>https://repo.typesafe.com/typesafe/releases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
