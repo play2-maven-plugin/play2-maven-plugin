@@ -18,9 +18,13 @@
 package com.google.code.play2.provider.play24;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 import scala.Option;
 import scala.io.Codec;
+
+import play.TemplateImports;
 
 import play.twirl.compiler.TemplateCompilationError;
 import play.twirl.compiler.TwirlCompiler;
@@ -42,31 +46,6 @@ public class Play24TemplateCompiler
         "play.twirl.api.TxtFormat",
         "play.twirl.api.XmlFormat",
         "play.twirl.api.JavaScriptFormat" };
-
-    private static final String[] javaAdditionalImports = new String[] {
-        "play.api.templates.PlayMagic._",
-        "models._",
-        "controllers._",
-        "java.lang._",
-        "java.util._",
-        "scala.collection.JavaConversions._",
-        "scala.collection.JavaConverters._",
-        "play.api.i18n._",
-        "play.core.j.PlayMagicForJava._",
-        "play.mvc._",
-        "play.data._",
-        "play.api.data.Field",
-        "play.mvc.Http.Context.Implicit._",
-        "views.%format%._" };
-
-    private static final String[] scalaAdditionalImports = new String[] {
-        "play.api.templates.PlayMagic._",
-        "models._",
-        "controllers._",
-        "play.api.i18n._",
-        "play.api.mvc._",
-        "play.api.data._",
-        "views.%format%._" };
 
     private String mainLang;
 
@@ -136,14 +115,14 @@ public class Play24TemplateCompiler
 
     private String getImportsAsString( String format )
     {
-        String[] additionalImports = {};
+        List<String> additionalImports = Collections.emptyList();
         if ( "java".equalsIgnoreCase( mainLang ) )
         {
-            additionalImports = javaAdditionalImports;
+            additionalImports = TemplateImports.defaultJavaTemplateImports;
         }
         else if ( "scala".equalsIgnoreCase( mainLang ) )
         {
-            additionalImports = scalaAdditionalImports;
+            additionalImports = TemplateImports.defaultScalaTemplateImports;
         }
         StringBuilder sb = new StringBuilder();
         for ( String additionalImport : additionalImports )

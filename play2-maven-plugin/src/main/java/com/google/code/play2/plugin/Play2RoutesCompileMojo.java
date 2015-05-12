@@ -157,6 +157,10 @@ public class Play2RoutesCompileMojo
             String packageDir = namespace.replace( '.', File.separatorChar );
             result = packageDir + File.separatorChar + result;
         }
+        if ( playVersion.startsWith( "2.4" ) ) // quick fix
+        {
+            result = "router/" + result; // Play! 2.4 generates router classes in 'router' package
+        }
 
         return result;
     }

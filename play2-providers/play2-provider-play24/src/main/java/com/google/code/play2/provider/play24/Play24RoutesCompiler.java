@@ -25,6 +25,7 @@ import scala.collection.Seq;
 import scala.util.Either;
 
 import play.routes.compiler.RoutesCompilationError;
+import play.routes.compiler.RoutesCompiler;
 import play.routes.compiler.RoutesCompiler$;
 import play.routes.compiler.RoutesGenerator;
 import play.routes.compiler.StaticRoutesGenerator$;
@@ -70,10 +71,12 @@ public class Play24RoutesCompiler
         }
 
         RoutesGenerator routesGenerator = StaticRoutesGenerator$.MODULE$; // TODO - should be parametrizable in the future
+        RoutesCompiler.RoutesCompilerTask routesCompilerTask =
+            new RoutesCompiler.RoutesCompilerTask( routesFile,
+                                                   JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ),
+                                                   true, true, false ); // TODO - should be parametrizable in the future
         Either<Seq<RoutesCompilationError>, Seq<File>> result =
-            RoutesCompiler$.MODULE$.compile( routesFile, routesGenerator, outputDirectory,
-                                             JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ), true,
-                                             true, false );
+            RoutesCompiler$.MODULE$.compile( routesCompilerTask, routesGenerator, outputDirectory );
         if ( result.isLeft() )
         {
             RoutesCompilationError e = result.left().get().apply( 0 );

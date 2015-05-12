@@ -33,21 +33,10 @@ under the License.
     <description>Play! 2.x Provider for Play! 2.4.x</description>
 
     <properties>
-        <play2.version>2.4.0-M2</play2.version>
-        <twirl.version>1.0.3</twirl.version>
-        <play2-enhancer.version>1.0.1</play2-enhancer.version>
+        <play2.version>2.4.0-RC2</play2.version>
+        <twirl.version>1.0.4</twirl.version>
+        <play2-enhancer.version>1.1.0-RC2</play2-enhancer.version>
     </properties>
-
-    <repositories> <!-- required by com.typesafe.play:play-enhancer -->
-        <repository>
-            <id>typesafe</id>
-            <name>Typesafe - releases</name>
-            <url>https://repo.typesafe.com/typesafe/releases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -73,7 +62,13 @@ under the License.
         <dependency>
             <groupId>org.avaje.ebeanorm</groupId>
             <artifactId>avaje-ebeanorm-agent</artifactId>
-            <version>3.2.2</version>
+            <version>4.5.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>build-link</artifactId>
+            <version>${play2.version}</version>
         </dependency>
 
         <dependency>
