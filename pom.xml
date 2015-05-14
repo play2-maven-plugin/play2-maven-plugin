@@ -90,13 +90,13 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>2.5.4</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.13</version>
+                    <version>2.15</version>
                 </plugin>
 
                 <plugin>
@@ -108,7 +108,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.2</version>
+                    <version>3.3</version>
                     <configuration>
                         <source>1.6</source>
                         <target>1.6</target>
@@ -130,7 +130,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.3.1</version>
+                    <version>1.4</version>
                 </plugin>
 
                 <plugin>
@@ -148,13 +148,13 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-invoker-plugin</artifactId>
-                    <version>1.9</version>
+                    <version>1.10</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.6</version>
                 </plugin>
 
                 <plugin>
@@ -166,7 +166,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.1</version>
+                    <version>2.10.3</version>
                     <configuration>
                         <source>1.6</source>
                         <links>
@@ -185,7 +185,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.3</version>
+                    <version>3.4</version>
                     <configuration>
                         <targetJdk>1.6</targetJdk>
                     </configuration>
@@ -200,7 +200,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.1</version>
+                    <version>2.5.2</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                     </configuration>
@@ -215,7 +215,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-scm-plugin</artifactId>
-                    <version>1.9.2</version>
+                    <version>1.9.4</version>
                 </plugin>
 
                 <plugin>
@@ -245,7 +245,7 @@ under the License.
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-maven-plugin</artifactId>
-                    <version>1.13</version>
+                    <version>1.14</version>
                     <configuration>
                         <signature>
                             <groupId>org.codehaus.mojo.signature</groupId>
@@ -264,13 +264,13 @@ under the License.
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.7</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.0.1</version>
                     <configuration>
                         <effort>High</effort>
                         <threshold>Low</threshold>
@@ -292,7 +292,7 @@ under the License.
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.1</version>
+                    <version>2.2</version>
                 </plugin>
 
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
@@ -356,6 +356,7 @@ under the License.
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -410,7 +411,7 @@ under the License.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
+                        <version>2.10.3</version>
                         <configuration>
                             <source>1.6</source>
                             <links>
@@ -490,7 +491,7 @@ under the License.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>2.13</version>
+                        <version>2.15</version>
                         <configuration>
                             <configLocation>config/maven_checks.xml</configLocation>
                             <headerLocation>src/conf/checkstyle-header.txt</headerLocation>
@@ -509,7 +510,7 @@ under the License.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
+                        <version>2.10.3</version>
                         <configuration>
                             <source>1.6</source>
                             <links>
@@ -542,7 +543,7 @@ under the License.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-pmd-plugin</artifactId>
-                        <version>3.3</version>
+                        <version>3.4</version>
                         <configuration>
                             <targetJdk>1.6</targetJdk>
                             <includeTests>true</includeTests>
@@ -576,19 +577,26 @@ under the License.
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>cobertura-maven-plugin</artifactId>
-                        <version>2.6</version>
+                        <version>2.7</version>
                         <configuration>
                             <formats>
                                 <format>html</format>
                                 <format>xml</format>
                             </formats>
                         </configuration>
+                        <reportSets>
+                            <reportSet>
+                                <reports>
+                                    <report>cobertura</report>
+                                </reports>
+                            </reportSet>
+                        </reportSets>
                     </plugin>
 
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.0.1</version>
                         <configuration>
                             <effort>High</effort>
                             <findbugsXmlOutput>true</findbugsXmlOutput>
@@ -614,7 +622,7 @@ under the License.
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>versions-maven-plugin</artifactId>
-                        <version>2.1</version>
+                        <version>2.2</version>
                     </plugin>
                 </plugins>
             </reporting>
@@ -629,7 +637,7 @@ under the License.
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.10.1</version>
+                            <version>2.10.3</version>
                             <configuration>
                                 <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
                                 <docletArtifact>
@@ -654,7 +662,7 @@ under the License.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
+                        <version>2.10.3</version>
                         <configuration>
                             <doclet>org.umlgraph.doclet.UmlGraphDoc</doclet>
                             <docletArtifact>
@@ -716,7 +724,7 @@ under the License.
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.1</version>
+                        <version>2.10.3</version>
                     </plugin>
 
                     <plugin>
