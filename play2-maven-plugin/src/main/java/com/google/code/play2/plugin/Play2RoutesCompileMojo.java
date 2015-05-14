@@ -63,6 +63,17 @@ public class Play2RoutesCompileMojo
     private File confDirectory;
 
     /**
+     * Routes generator type ("static" or "injected").
+     * <br>
+     * <br>
+     * Supported by Play! 2.4.x and later.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.routesGenerator", required = true, defaultValue = "static" )
+    private String routesGenerator;
+
+    /**
      * For M2E integration.
      */
     @Component
@@ -109,6 +120,7 @@ public class Play2RoutesCompileMojo
         Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
         compiler.setMainLang( mainLang );
         compiler.setOutputDirectory( generatedDirectory );
+        compiler.setGenerator( routesGenerator );
         String defaultNamespace = compiler.getDefaultNamespace();
 
         for ( String fileName : files )

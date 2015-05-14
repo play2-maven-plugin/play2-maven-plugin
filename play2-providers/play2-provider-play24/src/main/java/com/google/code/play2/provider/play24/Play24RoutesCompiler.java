@@ -24,6 +24,7 @@ import scala.collection.JavaConversions;
 import scala.collection.Seq;
 import scala.util.Either;
 
+import play.routes.compiler.InjectedRoutesGenerator$;
 import play.routes.compiler.RoutesCompilationError;
 import play.routes.compiler.RoutesCompiler;
 import play.routes.compiler.RoutesCompiler$;
@@ -44,6 +45,8 @@ public class Play24RoutesCompiler
 
     private File outputDirectory;
 
+    private String generator = "static";
+
     @Override
     public void setMainLang( String mainLang )
     {
@@ -54,6 +57,12 @@ public class Play24RoutesCompiler
     public void setOutputDirectory( File outputDirectory )
     {
         this.outputDirectory = outputDirectory;
+    }
+
+    @Override
+    public void setGenerator( String generator )
+    {
+        this.generator = generator; //TODO - add validation
     }
 
     @Override
@@ -76,7 +85,11 @@ public class Play24RoutesCompiler
             additionalImports = scalaAdditionalImports;
         }
 
-        RoutesGenerator routesGenerator = StaticRoutesGenerator$.MODULE$; // TODO - should be parametrizable in the future
+        RoutesGenerator routesGenerator = StaticRoutesGenerator$.MODULE$;
+        if ( "injected".equals( generator ) )
+        {
+            routesGenerator = InjectedRoutesGenerator$.MODULE$;
+        }
         RoutesCompiler.RoutesCompilerTask routesCompilerTask =
             new RoutesCompiler.RoutesCompilerTask( routesFile,
                                                    JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ),

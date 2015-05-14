@@ -25,6 +25,8 @@ public interface Play2RoutesCompiler
 
     void setOutputDirectory( File outputDirectory );
 
+    void setGenerator( String generator );
+
     String getDefaultNamespace();
 
     void compile( File routesFile )

@@ -52,6 +52,12 @@ public class Play21RoutesCompiler
     }
 
     @Override
+    public void setGenerator( String generator )
+    {
+        // Not supported
+    }
+
+    @Override
     public String getDefaultNamespace()
     {
         return null;
