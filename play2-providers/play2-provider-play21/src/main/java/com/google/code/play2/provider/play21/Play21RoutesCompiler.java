@@ -52,6 +52,12 @@ public class Play21RoutesCompiler
     }
 
     @Override
+    public String getDefaultNamespace()
+    {
+        return null;
+    }
+
+    @Override
     public void compile( File routesFile )
         throws RoutesCompilationException
     {

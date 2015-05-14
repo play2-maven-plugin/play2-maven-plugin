@@ -109,11 +109,12 @@ public class Play2RoutesCompileMojo
         Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
         compiler.setMainLang( mainLang );
         compiler.setOutputDirectory( generatedDirectory );
+        String defaultNamespace = compiler.getDefaultNamespace();
 
         for ( String fileName : files )
         {
             File routesFile = new File( confDirectory, fileName );
-            String generatedFileName = getGeneratedFileName( fileName );
+            String generatedFileName = getGeneratedFileName( fileName, defaultNamespace );
             File generatedFile = new File( generatedDirectory, generatedFileName );
             boolean modified = true;
             if ( generatedFile.isFile() )
@@ -148,18 +149,19 @@ public class Play2RoutesCompileMojo
         }
     }
 
-    private String getGeneratedFileName( String routesFileName )
+    private String getGeneratedFileName( String routesFileName, String defaultNamespace )
     {
-        String result = "routes_routing.scala";
+        String namespace = defaultNamespace;
         if ( routesFileName.endsWith( ".routes" ) )
         {
-            String namespace = routesFileName.substring( 0, routesFileName.length() - ".routes".length() );
+            namespace = routesFileName.substring( 0, routesFileName.length() - ".routes".length() );
+        }
+
+        String result = "routes_routing.scala";
+        if ( namespace != null )
+        {
             String packageDir = namespace.replace( '.', File.separatorChar );
             result = packageDir + File.separatorChar + result;
-        }
-        if ( playVersion.startsWith( "2.4" ) ) // quick fix
-        {
-            result = "router/" + result; // Play! 2.4 generates router classes in 'router' package
         }
 
         return result;
