@@ -28,6 +28,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 
+import com.google.code.play2.provider.api.Play2Provider;
+import com.google.code.play2.provider.api.Play2Runner;
+
 /**
  * Base class for Play&#33; server asynchronously starting ("start" and "start-server") mojos.
  * 
@@ -48,7 +51,10 @@ public abstract class AbstractPlay2StartServerMojo
                                                              pidFile.getName() ) );
         }
 
-        Java javaTask = prepareAntJavaTask( true );
+        Play2Provider play2Provider = getProvider();
+        Play2Runner play2Runner = play2Provider.getRunner();
+
+        Java javaTask = prepareAntJavaTask( play2Runner.getServerMainClass(), true );
         if ( spawn )
         {
             javaTask.setSpawn( true );

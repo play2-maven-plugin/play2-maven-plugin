@@ -26,6 +26,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 
+import com.google.code.play2.provider.api.Play2Provider;
+import com.google.code.play2.provider.api.Play2Runner;
+
 /**
  * Base class for Play&#33; server synchronously starting ("run" and "test") mojos.
  * 
@@ -83,7 +86,10 @@ public abstract class AbstractPlay2RunMojo
                                                              pidFile.getName() ) );
         }
 
-        Java javaTask = prepareAntJavaTask( runFork );
+        Play2Provider play2Provider = getProvider();
+        Play2Runner play2Runner = play2Provider.getRunner();
+
+        Java javaTask = prepareAntJavaTask( play2Runner.getServerMainClass(), runFork );
         javaTask.setFailonerror( true );
         PidFileDeleter.getInstance().add( pidFile );
 

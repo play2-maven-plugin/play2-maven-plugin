@@ -24,6 +24,7 @@ import com.google.code.play2.provider.api.Play2JavascriptCompiler;
 import com.google.code.play2.provider.api.Play2LessCompiler;
 import com.google.code.play2.provider.api.Play2Provider;
 import com.google.code.play2.provider.api.Play2RoutesCompiler;
+import com.google.code.play2.provider.api.Play2Runner;
 import com.google.code.play2.provider.api.Play2TemplateCompiler;
 
 import org.codehaus.plexus.component.annotations.Component;
@@ -75,6 +76,12 @@ public class Play22Provider
     public Play2EbeanEnhancer getEbeanEnhancer()
     {
         return new Play22EbeanEnhancer();
+    }
+
+    @Override
+    public Play2Runner getRunner()
+    {
+        return new Play22Runner();
     }
 
 }

@@ -17,22 +17,8 @@
 
 package com.google.code.play2.provider.api;
 
-public interface Play2Provider
+public interface Play2Runner
 {
-    Play2LessCompiler getLessCompiler();
-
-    Play2CoffeescriptCompiler getCoffeescriptCompiler();
-
-    Play2JavascriptCompiler getJavascriptCompiler();
-
-    Play2RoutesCompiler getRoutesCompiler();
-
-    Play2TemplateCompiler getTemplatesCompiler();
-
-    Play2JavaEnhancer getEnhancer();
-
-    Play2EbeanEnhancer getEbeanEnhancer();
-
-    Play2Runner getRunner();
+    String getServerMainClass();
 
 }

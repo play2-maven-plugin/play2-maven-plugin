@@ -59,7 +59,7 @@ public abstract class AbstractPlay2ServerMojo
     @Parameter( property = "play2.serverJvmArgs", defaultValue = "" )
     private String serverJvmArgs;
 
-    protected Java prepareAntJavaTask( boolean fork )
+    protected Java prepareAntJavaTask( String mainClassName, boolean fork )
         throws MojoExecutionException
     {
         File baseDir = project.getBasedir();
@@ -70,7 +70,7 @@ public abstract class AbstractPlay2ServerMojo
         Java javaTask = new Java();
         javaTask.setTaskName( "play" );
         javaTask.setProject( antProject );
-        javaTask.setClassname( "play.core.server.NettyServer" );
+        javaTask.setClassname( mainClassName );
         javaTask.setClasspath( classPath );
         javaTask.setFork( fork );
         if ( fork )

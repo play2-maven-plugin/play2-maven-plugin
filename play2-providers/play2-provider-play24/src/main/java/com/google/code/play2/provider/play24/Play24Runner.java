@@ -15,24 +15,17 @@
  * under the License.
  */
 
-package com.google.code.play2.provider.api;
+package com.google.code.play2.provider.play24;
 
-public interface Play2Provider
+import com.google.code.play2.provider.api.Play2Runner;
+
+public class Play24Runner
+    implements Play2Runner
 {
-    Play2LessCompiler getLessCompiler();
-
-    Play2CoffeescriptCompiler getCoffeescriptCompiler();
-
-    Play2JavascriptCompiler getJavascriptCompiler();
-
-    Play2RoutesCompiler getRoutesCompiler();
-
-    Play2TemplateCompiler getTemplatesCompiler();
-
-    Play2JavaEnhancer getEnhancer();
-
-    Play2EbeanEnhancer getEbeanEnhancer();
-
-    Play2Runner getRunner();
+    @Override
+    public String getServerMainClass()
+    {
+        return "play.core.server.ProdServerStart";
+    }
 
 }
