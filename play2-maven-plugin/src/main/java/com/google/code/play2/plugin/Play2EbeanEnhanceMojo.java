@@ -71,7 +71,8 @@ public class Play2EbeanEnhanceMojo
         }
         else
         {
-            File applicationConfFile = new File( project.getBasedir(), "conf/application.conf" );
+            String configFileName = System.getProperty( "config.file", "conf/application.conf" );
+            File applicationConfFile = new File( project.getBasedir(), configFileName );
             config = ConfigFactory.parseFileAnySyntax( applicationConfFile );
         }
 
