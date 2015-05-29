@@ -122,11 +122,12 @@ public class Play2RoutesCompileMojo
         compiler.setOutputDirectory( generatedDirectory );
         compiler.setGenerator( routesGenerator );
         String defaultNamespace = compiler.getDefaultNamespace();
+        String mainRoutesFileName = compiler.getMainRoutesFileName();
 
         for ( String fileName : files )
         {
             File routesFile = new File( confDirectory, fileName );
-            String generatedFileName = getGeneratedFileName( fileName, defaultNamespace );
+            String generatedFileName = getGeneratedFileName( fileName, defaultNamespace, mainRoutesFileName );
             File generatedFile = new File( generatedDirectory, generatedFileName );
             boolean modified = true;
             if ( generatedFile.isFile() )
@@ -161,7 +162,7 @@ public class Play2RoutesCompileMojo
         }
     }
 
-    private String getGeneratedFileName( String routesFileName, String defaultNamespace )
+    private String getGeneratedFileName( String routesFileName, String defaultNamespace, String mainRoutesFileName )
     {
         String namespace = defaultNamespace;
         if ( routesFileName.endsWith( ".routes" ) )
@@ -169,7 +170,7 @@ public class Play2RoutesCompileMojo
             namespace = routesFileName.substring( 0, routesFileName.length() - ".routes".length() );
         }
 
-        String result = "routes_routing.scala";
+        String result = mainRoutesFileName;
         if ( namespace != null )
         {
             String packageDir = namespace.replace( '.', File.separatorChar );

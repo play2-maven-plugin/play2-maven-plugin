@@ -72,6 +72,12 @@ public class Play24RoutesCompiler
     }
 
     @Override
+    public String getMainRoutesFileName()
+    {
+        return "Routes.scala";
+    }
+
+    @Override
     public void compile( File routesFile )
         throws RoutesCompilationException
     {

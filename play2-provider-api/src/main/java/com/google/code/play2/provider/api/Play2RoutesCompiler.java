@@ -29,6 +29,8 @@ public interface Play2RoutesCompiler
 
     String getDefaultNamespace();
 
+    String getMainRoutesFileName();
+
     void compile( File routesFile )
         throws RoutesCompilationException;
 
