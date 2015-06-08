@@ -331,20 +331,6 @@ under the License.
                                         <ignore />
                                     </action>
                                 </pluginExecution>
-
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.codehaus.plexus</groupId>
-                                        <artifactId>plexus-maven-plugin</artifactId>
-                                        <versionRange>[1.0,)</versionRange>
-                                        <goals>
-                                            <goal>descriptor</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
