@@ -352,8 +352,8 @@ under the License.
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>2.2.1</version>
-                                    <message>Maven 2.1.1 or later required.</message>
+                                    <version>3.2.2</version>
+                                    <message>Maven 3.2.2 or later required.</message>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
