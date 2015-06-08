@@ -573,7 +573,7 @@ under the License.
                         <reportSets>
                             <reportSet>
                                 <reports>
-                                    <report>cobertura</report>
+                                    <report>cobertura</report> <!-- skip: cobertura-integration-test report -->
                                 </reports>
                             </reportSet>
                         </reportSets>
