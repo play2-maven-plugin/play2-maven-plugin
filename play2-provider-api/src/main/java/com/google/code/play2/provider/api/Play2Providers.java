@@ -47,7 +47,7 @@ public class Play2Providers
         }
         if ( result == null )
         {
-            result = "play23"; // 'play24' is not stable yet, so not default
+            result = "play24";
         }
         return result;
     }
