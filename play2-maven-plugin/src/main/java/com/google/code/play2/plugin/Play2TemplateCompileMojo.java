@@ -61,7 +61,7 @@ public class Play2TemplateCompileMojo
     @Component
     private BuildContext buildContext;
 
-    private static final String targetDirectoryName = "src_managed/main";
+    private static final String defaultTargetDirectoryName = "src_managed";
 
     private static final String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
 
@@ -76,15 +76,21 @@ public class Play2TemplateCompileMojo
                                                              mainLang ) );
         }
 
-        File targetDirectory = new File( project.getBuild().getDirectory() );
-        File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-
         List<String> compileSourceRoots = project.getCompileSourceRoots();
         int processedFiles = 0;
         int compiledFiles = 0;
 
         Play2Provider play2Provider = getProvider();
         Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
+
+
+        File targetDirectory = new File( project.getBuild().getDirectory() );
+        String outputDirectoryName = compiler.getCustomOutputDirectoryName();
+        if ( outputDirectoryName == null )
+        {
+            outputDirectoryName = defaultTargetDirectoryName;
+        }
+        File generatedDirectory = new File( targetDirectory, outputDirectoryName + "/main" );
         compiler.setOutputDirectory( generatedDirectory );
         compiler.setMainLang( mainLang );
 
@@ -92,7 +98,7 @@ public class Play2TemplateCompileMojo
         {
             File sourceRootDirectory = new File( sourceRoot );
             if ( sourceRootDirectory.isDirectory()
-                && !sourceRootDirectory.getAbsolutePath().equals( generatedDirectory.getAbsolutePath() ) )
+                && !sourceRootDirectory.getAbsolutePath().startsWith( targetDirectory.getAbsolutePath() ) )
             {
                 DirectoryScanner scanner = new DirectoryScanner();
                 scanner.setBasedir( sourceRootDirectory );

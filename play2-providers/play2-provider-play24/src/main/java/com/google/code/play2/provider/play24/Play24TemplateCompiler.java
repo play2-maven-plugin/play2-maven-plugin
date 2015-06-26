@@ -54,6 +54,12 @@ public class Play24TemplateCompiler
     private File outputDirectory;
 
     @Override
+    public String getCustomOutputDirectoryName()
+    {
+        return "twirl";
+    }
+
+    @Override
     public void setMainLang( String mainLang )
     {
         this.mainLang = mainLang;

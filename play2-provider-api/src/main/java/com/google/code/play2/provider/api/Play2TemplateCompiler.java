@@ -19,17 +19,20 @@ package com.google.code.play2.provider.api;
 
 import java.io.File;
 
-//?import java.io.IOException;
-
 public interface Play2TemplateCompiler
 {
+	// configuration
+
+    String getCustomOutputDirectoryName();
+
+    // operation
+
     void setMainLang( String mainLang );
 
     void setSourceDirectory( File sourceDirectory );
 
     void setOutputDirectory( File outputDirectory );
 
-    File compile( File templateFile )
-        throws TemplateCompilationException; //IOException?
+	File compile( File templateFile ) throws TemplateCompilationException;
 
 }

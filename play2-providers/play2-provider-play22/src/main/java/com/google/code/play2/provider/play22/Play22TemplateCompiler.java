@@ -18,7 +18,6 @@
 package com.google.code.play2.provider.play22;
 
 import java.io.File;
-//?import java.io.IOException;
 
 import scala.Option;
 
@@ -75,6 +74,12 @@ public class Play22TemplateCompiler
     private File sourceDirectory;
 
     private File outputDirectory;
+
+    @Override
+    public String getCustomOutputDirectoryName()
+    {
+        return null;
+    }
 
     @Override
     public void setMainLang( String mainLang )

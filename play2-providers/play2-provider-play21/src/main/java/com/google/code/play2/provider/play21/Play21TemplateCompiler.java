@@ -18,7 +18,6 @@
 package com.google.code.play2.provider.play21;
 
 import java.io.File;
-//?import java.io.IOException;
 
 import scala.Option;
 
@@ -78,6 +77,12 @@ public class Play21TemplateCompiler
     private File sourceDirectory;
 
     private File outputDirectory;
+
+    @Override
+    public String getCustomOutputDirectoryName()
+    {
+        return null;
+    }
 
     @Override
     public void setMainLang( String mainLang )
