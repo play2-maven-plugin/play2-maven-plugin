@@ -51,9 +51,9 @@ under the License.
               <compile>
                 com.google.code.sbt-compiler-maven-plugin:sbt-compiler-maven-plugin:compile
               </compile>
-              <process-classes>
+              <!-- add in the project, if needed <process-classes>
                 com.google.code.play2-maven-plugin:play2-maven-plugin:enhance
-              </process-classes>
+              </process-classes> -->
               <process-test-resources>
                 org.apache.maven.plugins:maven-resources-plugin:testResources
               </process-test-resources>
