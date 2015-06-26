@@ -38,26 +38,21 @@ public class Play22JavaEnhancer
             sb.append( File.pathSeparatorChar );
             sb.append( classpathFile.getAbsolutePath() );
         }
-        // sb.append(getOutputDirectory().getAbsolutePath());
-        this.classpath = sb.substring( 1/* File.pathSeparatorChar.length() */ );
-        // this.classpath = sb.toString();
+        this.classpath = sb.substring( 1 );
     }
 
     @Override
-    public boolean enhanceJavaClass( File classFile )
+    public boolean generateAccessors( File classFile )
         throws Exception
     {
-        boolean enhanced = PropertiesEnhancer.generateAccessors( classpath, classFile );
-        enhanced = enhanced || PropertiesEnhancer.rewriteAccess( classpath, classFile );
-        return enhanced;
+        return PropertiesEnhancer.generateAccessors( classpath, classFile );
     }
 
     @Override
-    public boolean enhanceTemplateClass( File classFile )
+    public boolean rewriteAccess( File classFile )
         throws Exception
     {
-        boolean enhanced = PropertiesEnhancer.rewriteAccess( classpath, classFile );
-        return enhanced;
+        return PropertiesEnhancer.rewriteAccess( classpath, classFile );
     }
 
 }

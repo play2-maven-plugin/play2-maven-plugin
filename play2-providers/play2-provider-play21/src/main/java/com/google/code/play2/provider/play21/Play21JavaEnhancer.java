@@ -38,24 +38,21 @@ public class Play21JavaEnhancer
             sb.append( File.pathSeparatorChar );
             sb.append( classpathFile.getAbsolutePath() );
         }
-        // sb.append(getOutputDirectory().getAbsolutePath());
-        this.classpath = sb.substring( 1/* File.pathSeparatorChar.length() */ );
-        // this.classpath = sb.toString();
+        this.classpath = sb.substring( 1 );
     }
 
     @Override
-    public boolean enhanceJavaClass( File classFile )
+    public boolean generateAccessors( File classFile )
         throws Exception
     {
         long prevTimeStamp = classFile.lastModified();
         PropertiesEnhancer.generateAccessors( classpath, classFile );
-        PropertiesEnhancer.rewriteAccess( classpath, classFile );
         long timeStamp = classFile.lastModified();
         return timeStamp != prevTimeStamp;
     }
 
     @Override
-    public boolean enhanceTemplateClass( File classFile )
+    public boolean rewriteAccess( File classFile )
         throws Exception
     {
         long prevTimeStamp = classFile.lastModified();

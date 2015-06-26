@@ -20,7 +20,6 @@ package com.google.code.play2.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,7 +32,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import org.codehaus.plexus.util.DirectoryScanner;
-import org.codehaus.plexus.util.FileUtils;
 
 import com.google.code.play2.provider.api.Play2JavaEnhancer;
 import com.google.code.play2.provider.api.Play2Provider;
@@ -51,24 +49,7 @@ import com.google.code.sbt.compiler.api.AnalysisProcessor;
 public class Play2EnhanceClassesMojo
     extends AbstractPlay2EnhanceMojo
 {
-    private static final String appDirectoryName = "app";
-
-    private static final String srcManagedDirectoryName = "src_managed/main";
-
-    /**
-     * Should managed sources compilation products (compiled classes) be copied to "target/classes_managed".
-     * 
-     * Managed sources are Scala and Java sources, products of routes and templates compilation.
-     * These classes are required only when working on Play! Java projects with IDE not supporting Scala.
-     * They could be attached to project's classpath.
-     *  
-     * Because all major IDEs support Scala these days, managed classes generation
-     * is turned off by default.
-     * 
-     * @since 1.0.0
-     */
-    @Parameter( property = "play2.writeManagedClasses", defaultValue = "false" )
-    private boolean writeManagedClasses;
+    private static final String defaultTemplatesTargetDirectoryName = "src_managed";
 
     /**
      * Project classpath.
@@ -76,30 +57,9 @@ public class Play2EnhanceClassesMojo
     @Parameter( defaultValue = "${project.compileClasspathElements}", readonly = true, required = true )
     private List<String> classpathElements;
 
-    /**
-     * The directory for compiled classes.
-     */
-    @Parameter( defaultValue = "${project.build.outputDirectory}", required = true, readonly = true )
-    private File outputDirectory;
-
     @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
-    {
-        List<String> classpathElementsCopy = classpathElements;
-        // ?classpathElementsCopy.remove( outputDirectory.getAbsolutePath() );
-
-        List<File> classpath = new ArrayList<File>( classpathElementsCopy.size() );
-        for ( String path : classpathElementsCopy )
-        {
-            classpath.add( new File( path ) );
-        }
-
-        enhanceClasses( classpath );
-    }
-
-    private void enhanceClasses( List<File> classpathFiles )
-        throws MojoExecutionException, IOException
     {
         File analysisCacheFile = getAnalysisCacheFile();
         if ( !analysisCacheFile.exists() )
@@ -111,6 +71,12 @@ public class Play2EnhanceClassesMojo
             throw new MojoExecutionException( String.format( "Analysis cache \"%s\" is not a file", analysisCacheFile.getAbsolutePath() ) );
         }
 
+        List<File> classpathFiles = new ArrayList<File>( classpathElements.size() );
+        for ( String path : classpathElements )
+        {
+            classpathFiles.add( new File( path ) );
+        }
+
         AnalysisProcessor sbtAnalysisProcessor = getSbtAnalysisProcessor();
         Analysis analysis = sbtAnalysisProcessor.readFromFile( analysisCacheFile );
 
@@ -118,15 +84,6 @@ public class Play2EnhanceClassesMojo
         Play2JavaEnhancer enhancer = play2Provider.getEnhancer();
         try
         {
-            /*StringBuilder sb = new StringBuilder();
-            for (File classpathFile: classpathFiles)
-            {
-                sb.append(classpathFile.getAbsolutePath()).append(java.io.File.pathSeparator);
-            }
-            sb.append(getOutputDirectory().getAbsolutePath());
-            String classpath = sb.toString();*/
-
-            // enhancer.setClasspath( classpath );//TODO Change type
             enhancer.setClasspathFiles( classpathFiles );
 
             File timestampFile = new File( getAnalysisCacheFile().getParentFile(), "play_instrumentation" );
@@ -137,10 +94,97 @@ public class Play2EnhanceClassesMojo
                 lastEnhanced = Long.parseLong( line );
             }
 
-            boolean anyJavaClassesEnhanced = enhanceJavaClasses( lastEnhanced, analysis, enhancer );
-            boolean anyTemplateClassesEnhanced = enhanceTemplateClasses( lastEnhanced, analysis, enhancer );
+            List<String> compileSourceRoots = project.getCompileSourceRoots();
 
-            if ( anyJavaClassesEnhanced || anyTemplateClassesEnhanced )
+            Set<File> sourcesToGenerageAccessors = null;
+            for ( String sourceRoot : compileSourceRoots )
+            {
+                if ( !sourceRoot.startsWith( project.getBuild().getDirectory() ) ) // unmanaged
+                {
+                    File scannerBaseDir = new File( sourceRoot );
+                    if ( scannerBaseDir.isDirectory() )
+                    {
+                        DirectoryScanner scanner = new DirectoryScanner();
+                        scanner.setBasedir( scannerBaseDir );
+                        scanner.setIncludes( new String[] { "**/*.java" } );
+                        scanner.addDefaultExcludes();
+                        scanner.scan();
+                        String[] javaSources = scanner.getIncludedFiles();
+                        if ( sourcesToGenerageAccessors == null)
+                        {
+                            sourcesToGenerageAccessors = toFiles( scannerBaseDir, javaSources );
+                        }
+                        else
+                        {
+                            sourcesToGenerageAccessors.addAll( toFiles( scannerBaseDir, javaSources ) );
+                        }
+                    }
+                }
+            }
+            if ( sourcesToGenerageAccessors == null || sourcesToGenerageAccessors.isEmpty() )
+            {
+                getLog().info( "No Java classes to enhance" );
+                return;
+            }
+
+            Set<File> sourcesToRewriteAccess = null;
+            if ( playVersion.compareTo( "2.4" ) < 0 )
+            {
+                // Play 2.1.x, 2.2.x, 2.3.x
+                sourcesToRewriteAccess = new HashSet<File>( sourcesToGenerageAccessors );
+                
+                File targetDirectory = new File( project.getBuild().getDirectory() );
+                String templatesOutputDirectoryName = play2Provider.getTemplatesCompiler().getCustomOutputDirectoryName();
+                if ( templatesOutputDirectoryName == null )
+                {
+                    templatesOutputDirectoryName = defaultTemplatesTargetDirectoryName;
+                }
+                File scannerBaseDir = new File( targetDirectory, templatesOutputDirectoryName + "/main" );
+                if ( scannerBaseDir.isDirectory() )
+                {
+                    DirectoryScanner scanner = new DirectoryScanner();
+                    scanner.setBasedir( scannerBaseDir );
+                    scanner.setIncludes( new String[] { "**/*.template.scala" } );
+                    scanner.addDefaultExcludes();
+                    scanner.scan();
+                    String[] scalaTemplateSources = scanner.getIncludedFiles();
+                    sourcesToRewriteAccess.addAll( toFiles( scannerBaseDir, scalaTemplateSources ) );
+                }
+            }
+            else
+            {
+                // Play 2.4.x
+                for ( String sourceRoot : compileSourceRoots )
+                {
+                    File scannerBaseDir = new File( sourceRoot );
+                    if ( scannerBaseDir.isDirectory() )
+                    {
+                        DirectoryScanner scanner = new DirectoryScanner();
+                        scanner.setBasedir( scannerBaseDir );
+                        scanner.setIncludes( new String[] { "**/*.java", "**/*.scala" } );
+                        scanner.addDefaultExcludes();
+                        scanner.scan();
+                        String[] files = scanner.getIncludedFiles();
+                        if ( sourcesToRewriteAccess == null )
+                        {
+                            sourcesToRewriteAccess = toFiles( scannerBaseDir, files );
+                        }
+                        else
+                        {
+                            sourcesToRewriteAccess.addAll( toFiles( scannerBaseDir, files ) );
+                        }
+                    }
+                }
+            }
+
+            boolean accessorsGeneratedInJavaClasses = generateAccessors( sourcesToGenerageAccessors, lastEnhanced, analysis, enhancer );
+            boolean accessRewritten = false;
+            if ( sourcesToRewriteAccess != null )
+            {
+                accessRewritten = rewriteAccess( sourcesToRewriteAccess, lastEnhanced, analysis, enhancer );
+            }
+
+            if ( accessorsGeneratedInJavaClasses || accessRewritten )
             {
                 if ( analysis != null )
                 {
@@ -153,48 +197,38 @@ public class Play2EnhanceClassesMojo
         {
             throw e;
         }
-        catch ( Exception e )// TODO-???
+        catch ( Exception e )
         {
             throw new MojoExecutionException( "Enhancement exception", e );
         }
-
-        if ( writeManagedClasses )
-        {
-            synchronizeManagedClasses( analysis );
-        }
     }
 
-    private boolean enhanceJavaClasses( long lastEnhanced/*, AnalysisProcessor sbtAnalysisProcessor*/, Analysis analysis, Play2JavaEnhancer enhancer ) throws Exception
+    private Set<File> toFiles( File baseDir, String[] fileNames )
     {
-        File scannerBaseDir = new File( project.getBasedir(), appDirectoryName );
-        if ( !scannerBaseDir.isDirectory() )
+        Set<File> result = new HashSet<File>( fileNames.length );
+        for ( String fileName : fileNames )
         {
-            getLog().info( "No Java classes to enhance" );
-            return false;
+            result.add( new File( baseDir, fileName ) );
         }
+        return result;
+    }
 
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( scannerBaseDir );
-        scanner.setIncludes( new String[] { "**/*.java" } );
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        String[] javaSources = scanner.getIncludedFiles();
-
+    private boolean generateAccessors( Set<File> javaSources, long lastEnhanced, Analysis analysis, Play2JavaEnhancer enhancer ) throws Exception
+    {
         int processedFiles = 0;
         int enhancedFiles = 0;
 
-        if ( javaSources.length > 0 )
+        if ( javaSources.size() > 0 )
         {
-            for ( String source : javaSources )
+            for ( File sourceFile : javaSources )
             {
-                File sourceFile = new File( scannerBaseDir, source );
                 if ( analysis.getCompilationTime( sourceFile ) > lastEnhanced )
                 {
                     Set<File> javaClasses = analysis.getProducts( sourceFile );
                     for ( File classFile : javaClasses )
                     {
                         processedFiles++;
-                        if ( enhancer.enhanceJavaClass( classFile ) )
+                        if ( enhancer.generateAccessors( classFile ) || enhancer.rewriteAccess( classFile ) )
                         {
                             enhancedFiles++;
                             getLog().debug( String.format( "\"%s\" enhanced", classFile.getPath() ) );
@@ -214,47 +248,33 @@ public class Play2EnhanceClassesMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "%d Java classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+            getLog().info( String.format( "Generate accessors - %d Java classes processed, %d enhanced", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( enhancedFiles ) ) );
         }
         else
         {
-            getLog().info( "No Java classes to enhance" );
+            getLog().info( "Generate accessors - no Java classes to process" );
         }
 
         return enhancedFiles > 0;
     }
 
-    private boolean enhanceTemplateClasses( long lastEnhanced, Analysis analysis, Play2JavaEnhancer enhancer ) throws Exception
+    private boolean rewriteAccess( Set<File> sourceFilesToEnhance, long lastEnhanced, Analysis analysis, Play2JavaEnhancer enhancer ) throws Exception
     {
-        File scannerBaseDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName ); // TODO-parametrize
-        if ( !scannerBaseDir.isDirectory() )
-        {
-            getLog().info( "No template classes to enhance" );
-            return false;
-        }
-
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( scannerBaseDir );
-        scanner.setIncludes( new String[] { "**/*.template.scala" } );
-        scanner.scan();
-        String[] scalaTemplateSources = scanner.getIncludedFiles();
-
         int processedFiles = 0;
         int enhancedFiles = 0;
 
-        if ( scalaTemplateSources.length > 0 )
+        if ( sourceFilesToEnhance.size() > 0 )
         {
-            for ( String source : scalaTemplateSources )
+            for ( File sourceFile : sourceFilesToEnhance )
             {
-                File sourceFile = new File( scannerBaseDir, source );
                 if ( analysis.getCompilationTime( sourceFile ) > lastEnhanced )
                 {
                     Set<File> templateClasses = analysis.getProducts( sourceFile );
                     for ( File classFile : templateClasses )
                     {
                         processedFiles++;
-                        if ( enhancer.enhanceTemplateClass( classFile ) )
+                        if ( enhancer.rewriteAccess( classFile ) )
                         {
                             enhancedFiles++;
                             getLog().debug( String.format( "\"%s\" enhanced", classFile.getPath() ) );
@@ -271,85 +291,14 @@ public class Play2EnhanceClassesMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "%d template classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+            getLog().info( String.format( "Rewrite access - %d classes processed, %d enhanced", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( enhancedFiles ) ) );
         }
         else
         {
-            getLog().info( "No template classes to enhance" );
+            getLog().info( "Rewrite access - no classes to process" );
         }
         return enhancedFiles > 0;
-    }
-
-    private void synchronizeManagedClasses( Analysis analysis ) throws IOException
-    {
-        File managedSrcDir = new File( project.getBuild().getDirectory(), srcManagedDirectoryName );
-        if ( !managedSrcDir.isDirectory() )
-        {
-            return;
-        }
-
-        // Play 2.1.5 - PlayCommands.scala from line 371
-        // Play 2.2.0 - PlayCommands.scala from line 160
-        File managedClassesDir = new File( outputDirectory.getParentFile(), outputDirectory.getName() + "_managed" );
-        Set<String> managedClassesSet = new HashSet<String>();
-        if ( managedClassesDir.isDirectory() )
-        {
-            DirectoryScanner scanner = new DirectoryScanner();
-            scanner.setBasedir( managedClassesDir );
-            scanner.scan();
-            String[] managedClasses = scanner.getIncludedFiles();
-            managedClassesSet.addAll( Arrays.asList( managedClasses ) );
-        }
-
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( managedSrcDir );
-        scanner.setIncludes( new String[] { "**/*.scala", "**/*.java" } );
-        scanner.scan();
-        String[] managedSources = scanner.getIncludedFiles();
-        if ( managedSources.length > 0 )
-        {
-            if ( !managedClassesDir.exists() )
-            {
-                if ( !managedClassesDir.mkdirs() )
-                {
-                    // ??
-                }
-            }
-        }
-        for ( String source : managedSources )
-        {
-            File sourceFile = new File( managedSrcDir, source );
-            Set<File> sourceProducts = analysis.getProducts( sourceFile );
-            // sbt.IO$.MODULE$.copy(ma byc Seq sourceProducts, sbt.IO$.MODULE$.copy$default$2(),
-            // sbt.IO$.MODULE$.copyDirectory$default$3());
-            // System.out.println("outdir: " + getOutputDirectory().getPath());
-            for ( File file : sourceProducts )
-            {
-                // System.out.println("path: " + file.getPath());
-                // String relativePath = PathTool.getRelativePath( getOutputDirectory().getPath(),
-                // file.getPath() );
-                String relativePath = file.getPath().substring( outputDirectory.getPath().length() );
-                if ( relativePath.startsWith( File.separator ) )
-                {
-                    relativePath = relativePath.substring( 1 );
-                }
-                // System.out.println("product: " + relativePath);
-                File destinationFile = new File( managedClassesDir, relativePath );
-                FileUtils.copyFile( file, destinationFile );
-                managedClassesSet.remove( relativePath );
-            }
-        }
-
-        for ( String managedClassPath : managedClassesSet )
-        {
-            // System.out.println('*' + managedClsssPath);
-            File fileToDelete = new File( managedClassesDir, managedClassPath );
-            if ( !fileToDelete.delete() )
-            {
-                // ??
-            }
-        }
     }
 
 }

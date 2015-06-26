@@ -24,10 +24,10 @@ public interface Play2JavaEnhancer
 {
     void setClasspathFiles( List<File> classpathFiles );
 
-    boolean enhanceJavaClass( File classFile )
+    boolean generateAccessors( File classFile )
         throws Exception;
 
-    boolean enhanceTemplateClass( File classFile )
+    boolean rewriteAccess( File classFile )
         throws Exception;
 
 }
