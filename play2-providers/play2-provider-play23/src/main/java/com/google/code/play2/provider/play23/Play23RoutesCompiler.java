@@ -31,9 +31,9 @@ import com.google.code.play2.provider.api.RoutesCompilationException;
 public class Play23RoutesCompiler
     implements Play2RoutesCompiler
 {
-    private static final String[] javaAdditionalImports = new String[] { "play.libs.F" };
+    private static final String[] javaAdditionalImports = new String[] { "controllers.Assets.Asset", "play.libs.F" };
 
-    private static final String[] scalaAdditionalImports = new String[] {};
+    private static final String[] scalaAdditionalImports = new String[] { "controllers.Assets.Asset" };
 
     private String mainLang;
 
