@@ -21,15 +21,21 @@ import java.io.File;
 
 public interface Play2RoutesCompiler
 {
+	// configuration
+
+    String getCustomOutputDirectoryName();
+
+    String getDefaultNamespace();
+
+    String getMainRoutesFileName();
+
+    // operation
+
     void setMainLang( String mainLang );
 
     void setOutputDirectory( File outputDirectory );
 
     void setGenerator( String generator );
-
-    String getDefaultNamespace();
-
-    String getMainRoutesFileName();
 
     void compile( File routesFile )
         throws RoutesCompilationException;

@@ -48,6 +48,24 @@ public class Play24RoutesCompiler
     private String generator = "static";
 
     @Override
+    public String getCustomOutputDirectoryName()
+    {
+        return "routes";
+    }
+
+    @Override
+    public String getDefaultNamespace()
+    {
+        return "router";
+    }
+
+    @Override
+    public String getMainRoutesFileName()
+    {
+        return "Routes.scala";
+    }
+
+    @Override
     public void setMainLang( String mainLang )
     {
         this.mainLang = mainLang;
@@ -63,18 +81,6 @@ public class Play24RoutesCompiler
     public void setGenerator( String generator )
     {
         this.generator = generator; //TODO - add validation
-    }
-
-    @Override
-    public String getDefaultNamespace()
-    {
-        return "router";
-    }
-
-    @Override
-    public String getMainRoutesFileName()
-    {
-        return "Routes.scala";
     }
 
     @Override

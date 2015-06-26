@@ -79,7 +79,7 @@ public class Play2RoutesCompileMojo
     @Component
     private BuildContext buildContext;
 
-    private static final String targetDirectoryName = "src_managed/main";
+    private static final String defaultTargetDirectoryName = "src_managed";
 
     private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
 
@@ -113,11 +113,17 @@ public class Play2RoutesCompileMojo
             return;
         }
 
-        File targetDirectory = new File( project.getBuild().getDirectory() );
-        File generatedDirectory = new File( targetDirectory, targetDirectoryName );
-
         Play2Provider play2Provider = getProvider();
         Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
+
+        File targetDirectory = new File( project.getBuild().getDirectory() );
+        String outputDirectoryName = compiler.getCustomOutputDirectoryName();
+        if ( outputDirectoryName == null )
+        {
+            outputDirectoryName = defaultTargetDirectoryName;
+        }
+        File generatedDirectory = new File( targetDirectory, outputDirectoryName + "/main" );
+
         compiler.setMainLang( mainLang );
         compiler.setOutputDirectory( generatedDirectory );
         compiler.setGenerator( routesGenerator );

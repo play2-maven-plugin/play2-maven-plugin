@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import scala.collection.JavaConversions;
+
 import play.router.RoutesCompiler.RoutesCompilationError;
 import play.router.RoutesCompiler$;
 
@@ -39,6 +40,24 @@ public class Play21RoutesCompiler
     private File outputDirectory;
 
     @Override
+    public String getCustomOutputDirectoryName()
+    {
+        return null;
+    }
+
+    @Override
+    public String getDefaultNamespace()
+    {
+        return null;
+    }
+
+    @Override
+    public String getMainRoutesFileName()
+    {
+        return "routes_routing.scala";
+    }
+
+    @Override
     public void setMainLang( String mainLang )
     {
         this.mainLang = mainLang;
@@ -54,18 +73,6 @@ public class Play21RoutesCompiler
     public void setGenerator( String generator )
     {
         // Not supported
-    }
-
-    @Override
-    public String getDefaultNamespace()
-    {
-        return null;
-    }
-
-    @Override
-    public String getMainRoutesFileName()
-    {
-        return "routes_routing.scala";
     }
 
     @Override

@@ -40,6 +40,24 @@ public class Play22RoutesCompiler
     private File outputDirectory;
 
     @Override
+    public String getCustomOutputDirectoryName()
+    {
+        return null;
+    }
+
+    @Override
+    public String getDefaultNamespace()
+    {
+        return null;
+    }
+
+    @Override
+    public String getMainRoutesFileName()
+    {
+        return "routes_routing.scala";
+    }
+
+    @Override
     public void setMainLang( String mainLang )
     {
         this.mainLang = mainLang;
@@ -55,18 +73,6 @@ public class Play22RoutesCompiler
     public void setGenerator( String generator )
     {
         // Not supported
-    }
-
-    @Override
-    public String getDefaultNamespace()
-    {
-        return null;
-    }
-
-    @Override
-    public String getMainRoutesFileName()
-    {
-        return "routes_routing.scala";
     }
 
     @Override
