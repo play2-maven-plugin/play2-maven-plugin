@@ -25,24 +25,6 @@ under the License.
             <item name="Goals" href="plugin-info.html"/>
             <item name="JavaDocs" href="apidocs/index.html"/>
         </menu>
-
-        <!--TEST <menu name="Usage">
-            <item name="General instructions" href="usage.html"/>
-            <item name="Play 2.1.x" href="usage-play21.html"/>
-            <item name="Play 2.2.x" href="usage-play22.html"/>
-            <item name="Play 2.3.x" href="usage-play23.html"/>
-            <item name="Play 2.4.x" href="usage-play24.html"/>
-        </menu>
-
-        <menu name="IDE integration">
-            <item name="Eclipse/ScalaIDE" href="ide-integration-eclipse.html"/>
-            <item name="IntelliJ IDEA" href="ide-integration-idea.html"/>
-        </menu>
-
-        <menu name="Other topics">
-            <item name="Multi-module builds" href="multi-module-builds.html"/>
-            <item name="WAR packaging" href="war-packaging.html"/>
-        </menu> TEST-->
     </body>
 
 </project>
