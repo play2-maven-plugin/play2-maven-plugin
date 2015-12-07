@@ -1,0 +1,89 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Selecting ${project.name}
+
+There are three ways of selecting this provider.
+
+$h3 Using project property.
+
+Add `play2.version` project property with value starting with `2.3.`.
+
+This is simplest and recommended way because this property can be used
+to declare versions of Play! Framework dependencies.
+
+```
+<project>
+    ...
+    <properties>
+        ...
+        <play2.version>${play23LatestVersion}</play2.version>
+    </properties>
+    ...
+</project>
+```
+
+$h3 Using plugin configuration parameter.
+
+Add `playVersion` parameter with value starting with `2.3.` to plugin configuration section.
+
+```
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    ...
+                    <playVersion>${play23LatestVersion}</playVersion>
+                </configuration>
+            </plugin>
+            ...
+        </plugins>
+    </build>
+    ...
+</project>
+```
+
+$h3 Provider as plugin dependency.
+
+Add provider artifact as plugin dependency.
+
+**Warning**:
+Only one provider can be added as plugin's dependency at a time. It will be selected regardless
+of the value of `playVersion` plugin configuration parameter or `play2.version` project property.
+
+```
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            ...
+        </plugins>
+    </build>
+    ...
+</project>
+```

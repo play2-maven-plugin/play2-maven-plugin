@@ -76,6 +76,8 @@ under the License.
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <sbt-compiler.plugin.version>1.0.0-beta5</sbt-compiler.plugin.version>
     </properties>
 
     <modules>
@@ -228,6 +230,24 @@ under the License.
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.4</version>
+                    <configuration>
+                        <attributes>
+                            <sbtCompilerPluginVersion>${sbt-compiler.plugin.version}</sbtCompilerPluginVersion> <!-- Velocity does not allow dots in template names -->
+                            <scala210LatestVersion>2.10.6</scala210LatestVersion>
+                            <scala211LatestVersion>2.11.7</scala211LatestVersion>
+                            <play21LatestVersion>2.1.5</play21LatestVersion>
+                            <play22LatestVersion>2.2.6</play22LatestVersion>
+                            <play23LatestVersion>2.3.9</play23LatestVersion>
+                            <play24LatestVersion>2.4.1</play24LatestVersion>
+                        </attributes>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.apache.maven.doxia</groupId>
+                            <artifactId>doxia-module-markdown</artifactId>
+                            <version>1.6</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <plugin>

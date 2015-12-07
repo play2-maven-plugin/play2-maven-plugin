@@ -1,0 +1,20 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 About ${project.name}
+
+Built-in providers compatible with different Play! Framework versions.
+
+### Project Modules
+
+This project declares the following modules:
+
+| Name                                                     | Description                              |
+|----------------------------------------------------------|------------------------------------------|
+| [Play2 Provider 2.1](./play2-provider-play21/index.html) | Play2 Provider for Play! Framework 2.1.x |
+| [Play2 Provider 2.2](./play2-provider-play22/index.html) | Play2 Provider for Play! Framework 2.2.x |
+| [Play2 Provider 2.3](./play2-provider-play23/index.html) | Play2 Provider for Play! Framework 2.3.x |
+| [Play2 Provider 2.4](./play2-provider-play24/index.html) | Play2 Provider for Play! Framework 2.4.x |
+

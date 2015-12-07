@@ -1,0 +1,22 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#if($project.version.endsWith("SNAPSHOT"))
+#set($testProjectsGitBranch = 'master')
+#else
+#set($testProjectsGitBranch = "test-projects-${project.version}")
+#end
+
+$h2 Multi-module builds
+
+There is nothing to write about. Multi-module Maven builds just work.
+
+If you know, how to build multi-module project with Maven, you know how to build multi-module Play! application.
+
+There are example projects for:
+
+- [Play! 2.1.x](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play21/multimodule)
+- [Play! 2.2.x](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play22/multimodule)
+- [Play! 2.3.x](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play23/multimodule)
+- [Play! 2.4.x](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play24/multimodule)
