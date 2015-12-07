@@ -34,17 +34,18 @@ under the License.
     <name>Play! 2.x</name>
     <description>Play! 2.x</description>
     <inceptionYear>2013</inceptionYear>
-    <url>https://play2-maven-plugin.googlecode.com/svn/mavensite/${project.version}/</url>
+    <url>https://play2-maven-plugin.github.io/</url>
 
     <scm>
-        <connection>scm:svn:http://play2-maven-plugin.googlecode.com/svn/trunk/plugin/</connection>
-        <developerConnection>scm:svn:https://play2-maven-plugin.googlecode.com/svn/trunk/plugin/</developerConnection>
-        <url>http://play2-maven-plugin.googlecode.com/svn/trunk/plugin/</url>
+        <connection>scm:git:git://github.com/play2-maven-plugin/play2-maven-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:play2-maven-plugin/play2-maven-plugin.git</developerConnection>
+        <url>https://github.com/play2-maven-plugin/play2-maven-plugin/tree/${project.scm.tag}</url>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
-        <system>Google Project Hosting</system>
-        <url>http://code.google.com/p/play2-maven-plugin/issues/</url>
+        <system>GitHub Issues</system>
+        <url>https://github.com/play2-maven-plugin/play2-maven-plugin/issues/</url>
     </issueManagement>
 
     <developers>
