@@ -220,9 +220,6 @@ under the License.
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>${maven-plugin-plugin.version}</version>
-                <configuration>
-                    <useJava5>true</useJava5>
-                </configuration>
             </plugin>
         </plugins>
     </reporting>
