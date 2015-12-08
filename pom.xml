@@ -239,6 +239,7 @@ under the License.
                             <play22LatestVersion>2.2.6</play22LatestVersion>
                             <play23LatestVersion>2.3.9</play23LatestVersion>
                             <play24LatestVersion>2.4.1</play24LatestVersion>
+                            <play25LatestVersion>2.5.0-M1</play25LatestVersion>
                         </attributes>
                     </configuration>
                     <dependencies>
