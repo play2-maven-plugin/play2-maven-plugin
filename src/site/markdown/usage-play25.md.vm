@@ -1,0 +1,290 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#if($project.version.endsWith("SNAPSHOT"))
+#set($testProjectsGitBranch = 'master')
+#else
+#set($testProjectsGitBranch = "test-projects-${project.version}")
+#end
+
+$h2 Usage - Play! Framework 2.5.x
+
+Simplest project file:
+
+```
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test</groupId>
+    <artifactId>test</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>play2</packaging>
+
+    <name>Play! Framework 2.5.x Maven Test Project</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <play2.version>${play25LatestVersion}</play2.version>
+        <scala.version>${scala211LatestVersion}</scala.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>\${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play_2.11</artifactId>
+            <version>\${play2.version}</version>
+        </dependency>
+
+        <!-- required for: "run", "start" and "dist" -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-netty-server_2.11</artifactId>
+            <version>\${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>\${project.basedir}/app</sourceDirectory>
+        <testSourceDirectory>\${project.basedir}/test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>\${project.basedir}/conf</directory>
+            </resource>
+            <resource>
+                <directory>\${project.basedir}/public</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
+                <artifactId>sbt-compiler-maven-plugin</artifactId>
+                <version>${sbtCompilerPluginVersion}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+Example with optional dependencies and configuration options:
+
+```
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test</groupId>
+    <artifactId>test</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>play2</packaging>
+
+    <name>Play! Framework 2.5.x Maven Test Project</name>
+
+    <!-- only if there are Specs2 tests in the project;
+         'com.typesafe.play:play-specs2_2.11' depends on
+         'org.scalaz.stream:scalaz-stream_2.11:0.7a:jar'
+         and this artifact is not available in Maven central repository yet,
+         see https://github.com/scalaz/scalaz-stream/issues/258 -->
+    <repositories>
+        <repository>
+            <id>scalaz-bintray</id>
+            <name>Scalaz Bintray - releases</name>
+            <url>https://dl.bintray.com/scalaz/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <anorm.version>3.0.0-M1</anorm.version>
+        <play2.version>${play25LatestVersion}</play2.version>
+        <play2-ebean.version>3.0.0-M1</play2-ebean.version>
+        <play2-enhancer.version>1.1.0</play2-enhancer.version>
+        <scala.version>${scala211LatestVersion}</scala.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>\${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play_2.11</artifactId>
+            <version>\${play2.version}</version>
+        </dependency>
+
+        <!-- only if using Anorm -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>anorm_2.11</artifactId>
+            <version>${anorm.version}</version>
+        </dependency>
+
+        <!-- only if using JDBC -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-jdbc_2.11</artifactId>
+            <version>\${play2.version}</version>
+        </dependency>
+
+        <!-- only if using JDBC evolutions -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-jdbc-evolutions_2.11</artifactId>
+            <version>\${play2.version}</version>
+        </dependency>
+
+        <!-- only if using Java -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-java_2.11</artifactId>
+            <version>\${play2.version}</version>
+        </dependency>
+
+        <!-- only if using Ebean -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-ebean_2.11</artifactId>
+            <version>${play2-ebean.version}</version>
+        </dependency>
+
+        <!-- only if using JPA -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-java-jpa_2.11</artifactId>
+            <version>\${play2.version}</version>
+        </dependency>
+
+        <!-- only if using JPA -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>4.3.9.Final</version>
+            <exclusions>
+                <!-- required to avoid version downgrade from '1.4.01' to '1.0.b2' -->
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- required for: "run", "start" and "dist" -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-netty-server_2.11</artifactId>
+            <version>\${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- only if enhancement is required -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-enhancer</artifactId>
+            <version>${play2-enhancer.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- only if there are JUnit tests in the project -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-test_2.11</artifactId>
+            <version>\${play2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- only if there are Specs2 tests in the project -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-specs2_2.11</artifactId>
+            <version>\${play2.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>\${project.basedir}/app</sourceDirectory>
+        <testSourceDirectory>\${project.basedir}/test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>\${project.basedir}/conf</directory>
+            </resource>
+            <resource>
+                <directory>\${project.basedir}/public</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- only if using database evolutions -->
+                    <serverJvmArgs>-Dplay.evolutions.db.default.autoApply=true</serverJvmArgs>
+                </configuration>
+                <executions>
+                    <!-- only if there are assets in the project -->
+                    <execution>
+                        <id>default-play2-compile-assets</id>
+                        <goals>
+                            <goal>closure-compile</goal> <!-- only if precompiling js assets -->
+                            <goal>coffee-compile</goal> <!-- only if precompiling coffee assets -->
+                            <goal>less-compile</goal> <!-- only if precompiling less assets -->
+                        </goals>
+                    </execution>
+                    <!-- only if enhancement is required -->
+                    <execution>
+                        <id>default-play2-enhance</id>
+                        <goals>
+                            <goal>enhance</goal>
+                            <goal>ebean-enhance</goal> <!-- only if using Ebean -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
+                <artifactId>sbt-compiler-maven-plugin</artifactId>
+                <version>${sbtCompilerPluginVersion}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+**WARNING:**
+Play! Framework 2.5.x is not compatible with Scala 2.10.x
+
+For more example projects go to [Play! 2.5.x test projects](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play25/).
