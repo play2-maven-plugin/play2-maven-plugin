@@ -17,3 +17,12 @@ Documentation is available at [Play2 Maven Plugin Documentation](https://play2-m
 ### Examples
 
 Complete Maven projects using this plugin are localed in separate [Play2 Maven Test Projects](https://github.com/play2-maven-plugin/play2-maven-test-projects) repository.
+
+<hr>
+
+[<img src="https://www.yourkit.com/images/yklogo.png" />](https://www.yourkit.com/)
+
+YourKit supports open source projects with its full-featured Java Profiler.
+YourKit, LLC is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/)
+and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/),
+innovative and intelligent tools for profiling Java and .NET applications.
