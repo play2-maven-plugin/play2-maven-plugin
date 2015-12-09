@@ -18,11 +18,6 @@
 package com.google.code.play2.plugin;
 
 import java.io.File;
-import java.util.List;
-
-import org.apache.maven.artifact.Artifact;
-//import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Parameter;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
@@ -40,12 +35,6 @@ import org.apache.tools.ant.types.Environment;
 public abstract class AbstractAntJavaBasedPlay2Mojo
     extends AbstractPlay2Mojo
 {
-
-    /**
-     * List of artifacts this plugin depends on.
-     */
-    @Parameter( property = "plugin.artifacts", required = true, readonly = true )
-    private List<Artifact> pluginArtifacts;
 
     /**
      * Internal runnable wrapper for Ant Java task.
@@ -176,27 +165,5 @@ public abstract class AbstractAntJavaBasedPlay2Mojo
         sysPropPlayHome.setFile( propertyValue );
         java.addSysproperty( sysPropPlayHome );
     }
-
-    /*not used protected Artifact getPluginArtifact( String groupId, String artifactId, String type )
-        throws MojoExecutionException
-    {
-        Artifact result = null;
-        for ( Artifact artifact : pluginArtifacts )
-        {
-            if ( artifact.getGroupId().equals( groupId ) && artifact.getArtifactId().equals( artifactId )
-                && type.equals( artifact.getType() ) )
-            {
-                result = artifact;
-                break;
-            }
-        }
-        if ( result == null )
-        {
-            throw new MojoExecutionException(
-                                              String.format( "Unable to locate '%s:%s' in the list of plugin artifacts",
-                                                             groupId, artifactId ) );
-        }
-        return result;
-    }*/
 
 }
