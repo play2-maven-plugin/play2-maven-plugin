@@ -1,3 +1,11 @@
 language: java
-jdk:
-   - oraclejdk7
+
+cache:
+  directories:
+    - $HOME/.m2
+
+install: mvn --version
+
+script: mvn verify --settings .travis.settings.xml
+
+jdk: oraclejdk7
