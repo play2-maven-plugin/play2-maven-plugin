@@ -8,4 +8,4 @@ install: mvn --version
 
 script: mvn verify --settings .travis.settings.xml
 
-jdk: oraclejdk7
+jdk: oraclejdk8
