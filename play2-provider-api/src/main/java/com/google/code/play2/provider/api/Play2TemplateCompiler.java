@@ -21,7 +21,7 @@ import java.io.File;
 
 public interface Play2TemplateCompiler
 {
-	// configuration
+    // configuration
 
     String getCustomOutputDirectoryName();
 
@@ -33,6 +33,6 @@ public interface Play2TemplateCompiler
 
     void setOutputDirectory( File outputDirectory );
 
-	File compile( File templateFile ) throws TemplateCompilationException;
+    File compile( File templateFile ) throws TemplateCompilationException;
 
 }

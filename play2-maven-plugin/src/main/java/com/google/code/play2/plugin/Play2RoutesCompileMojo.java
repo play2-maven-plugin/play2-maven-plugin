@@ -138,7 +138,7 @@ public class Play2RoutesCompileMojo
             boolean modified = true;
             if ( generatedFile.isFile() )
             {
-                modified = ( generatedFile.lastModified() < routesFile.lastModified() );
+                modified = generatedFile.lastModified() < routesFile.lastModified();
             }
 
             if ( modified )

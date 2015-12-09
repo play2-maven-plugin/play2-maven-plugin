@@ -21,7 +21,7 @@ import java.io.File;
 
 public interface Play2RoutesCompiler
 {
-	// configuration
+    // configuration
 
     String getCustomOutputDirectoryName();
 

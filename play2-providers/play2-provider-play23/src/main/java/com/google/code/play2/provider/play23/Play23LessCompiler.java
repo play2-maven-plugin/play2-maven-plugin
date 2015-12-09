@@ -249,7 +249,7 @@ public class Play23LessCompiler
 
         private List<File> dependencies;
 
-        public InternalCompileResult( String css, List<File> dependencies )
+        InternalCompileResult( String css, List<File> dependencies )
         {
             this.css = css;
             this.dependencies = dependencies;

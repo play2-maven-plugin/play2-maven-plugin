@@ -110,7 +110,7 @@ public class Play2EnhanceClassesMojo
                         scanner.addDefaultExcludes();
                         scanner.scan();
                         String[] javaSources = scanner.getIncludedFiles();
-                        if ( sourcesToGenerageAccessors == null)
+                        if ( sourcesToGenerageAccessors == null )
                         {
                             sourcesToGenerageAccessors = toFiles( scannerBaseDir, javaSources );
                         }

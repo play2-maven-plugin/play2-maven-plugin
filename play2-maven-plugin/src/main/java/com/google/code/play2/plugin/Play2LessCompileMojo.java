@@ -138,7 +138,7 @@ public class Play2LessCompileMojo
                 if ( cssFile.isFile() && minifiedCssFile.isFile() )
                 {
                     modified =
-                        ( cssFile.lastModified() < templateFile.lastModified() && minifiedCssFile.lastModified() < templateFile.lastModified() );
+                        cssFile.lastModified() < templateFile.lastModified() && minifiedCssFile.lastModified() < templateFile.lastModified();
                 }
 
                 // maybe dependent files are modified
