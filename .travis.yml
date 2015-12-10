@@ -5,8 +5,8 @@ cache:
     - $HOME/.m2
 
 install:
-  - mvn dependency:resolve-plugins -DexcludeArtifactIds=plexus-component-metadata --update-snapshots --settings .travis.settings.xml -e
-  - mvn dependency:resolve --update-snapshots --settings .travis.settings.xml -e
+  - mvn dependency:resolve-plugins -DexcludeArtifactIds=plexus-component-metadata --quiet --update-snapshots --settings .travis.settings.xml -e
+  - mvn dependency:resolve --quiet --update-snapshots --settings .travis.settings.xml -e
 
 script: mvn clean verify --update-snapshots --settings .travis.settings.xml -e
 
