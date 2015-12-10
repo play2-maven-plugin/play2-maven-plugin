@@ -1,0 +1,14 @@
+machine:
+  environment:
+    _JAVA_OPTIONS: "-Xms512m -Xmx1024m"
+  java:
+    version: oraclejdk8
+
+dependencies:
+ override: 
+  - mvn dependency:resolve-plugins -DexcludeArtifactIds=plexus-component-metadata --settings .travis.settings.xml -e
+  - mvn dependency:resolve --settings .travis.settings.xml -e
+
+test:
+ override: 
+  - mvn verify --settings .travis.settings.xml -e
