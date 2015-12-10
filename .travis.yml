@@ -4,8 +4,10 @@ cache:
   directories:
     - $HOME/.m2
 
-install: mvn --version
+install:
+  - mvn dependency:resolve-plugins -DexcludeArtifactIds=plexus-component-metadata --settings .travis.settings.xml -e
+  - mvn dependency:resolve --settings .travis.settings.xml -e
 
-script: mvn verify --settings .travis.settings.xml
+script: mvn verify --settings .travis.settings.xml -e
 
 jdk: oraclejdk8
