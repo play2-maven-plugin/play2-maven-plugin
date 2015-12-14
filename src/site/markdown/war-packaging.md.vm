@@ -10,7 +10,7 @@
 
 $h2 WAR packaging
 
-Adding WAR packaging is actually very simple process, slightly different for servler 2.5 and 3.0 compatible servers:
+Adding WAR packaging is actually very simple process, slightly different for servler 2.5 and 3.0/3.1 compatible servers:
 
 $h3 Servlet 2.5
 
@@ -50,12 +50,14 @@ Add dependency:
         <dependency>
             <groupId>com.github.play2war</groupId>
             <artifactId>play2-war-core-servlet25_2.10</artifactId>
-            <version>1.2</version> <!-- version "1.2" for Play! 2.2.x, version "1.3-beta2" for Play! 2.3.x -->
+            <!-- <version>${play22WarLatestVersion}</version> for Play! 2.2.x -->
+            <!-- <version>${play23WarLatestVersion}</version> for Play! 2.3.x -->
+            <version>${play24WarLatestVersion}</version> <!-- for Play! 2.4.x -->
         </dependency>
     </dependencies>
 ```
 
-Configure `maven-war-plugin` plugin:
+Configure [maven-war-plugin](https://maven.apache.org/plugins/maven-war-plugin/) plugin:
 
 ```
     <build>
@@ -65,7 +67,7 @@ Configure `maven-war-plugin` plugin:
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
+                <version>${warPluginVersion}</version>
                 <configuration>
                     <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
                     <primaryArtifact>false</primaryArtifact>
@@ -85,7 +87,7 @@ Configure `maven-war-plugin` plugin:
     </build>
 ```
 
-See working [example project](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play23/war/helloworld-war-servlet-2.5) tested with Apache Tomcat 6.0.33 and 7.0.52.
+See working [example project](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play24/war/helloworld-war-servlet-2.5) tested with Apache Tomcat 6.0.44, 7.0.67 and 8.0.30.
 
 $h3 Servlet 3.0
 
@@ -97,12 +99,14 @@ Add dependency:
         <dependency>
             <groupId>com.github.play2war</groupId>
             <artifactId>play2-war-core-servlet30_2.10</artifactId>
-            <version>1.2</version> <!-- version "1.2" for Play! 2.2.x, version "1.3-beta2" for Play! 2.3.x -->
+            <!-- <version>${play22WarLatestVersion}</version> for Play! 2.2.x -->
+            <!-- <version>${play23WarLatestVersion}</version> for Play! 2.3.x -->
+            <version>${play24WarLatestVersion}</version> <!-- for Play! 2.4.x -->
         </dependency>
     </dependencies>
 ```
 
-Configure `maven-war-plugin` plugin:
+Configure [maven-war-plugin](https://maven.apache.org/plugins/maven-war-plugin/) plugin:
 
 
 ```
@@ -113,7 +117,7 @@ Configure `maven-war-plugin` plugin:
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
+                <version>${warPluginVersion}</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <primaryArtifact>false</primaryArtifact>
@@ -133,7 +137,56 @@ Configure `maven-war-plugin` plugin:
     </build>
 ```
 
-See working [example project](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play23/war/helloworld-war-servlet-3.0) tested with Apache Tomcat 7.0.52 and 8.0.3.
+See working [example project](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play24/war/helloworld-war-servlet-3.0) tested with Apache Tomcat 7.0.67 and 8.0.30.
+
+$h3 Servlet 3.1
+
+Add dependency:
+
+```
+    <dependencies>
+        ...
+        <dependency>
+            <groupId>com.github.play2war</groupId>
+            <artifactId>play2-war-core-servlet31_2.10</artifactId>
+            <!-- <version>${play23WarLatestVersion}</version> for Play! 2.3.x -->
+            <version>${play24WarLatestVersion}</version> <!-- for Play! 2.4.x -->
+        </dependency>
+    </dependencies>
+```
+
+Configure [maven-war-plugin](https://maven.apache.org/plugins/maven-war-plugin/) plugin:
+
+
+```
+    <build>
+        ...
+        <plugins>
+            ....
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>${warPluginVersion}</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <primaryArtifact>false</primaryArtifact>
+                    <warSourceDirectory>\${project.basedir}/war</warSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-war</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+```
+
+See working [example project](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play24/war/helloworld-war-servlet-3.1) tested with Apache Tomcat 8.0.30.
 
 $h2 Attaching WAR file to project build artifacts
 
@@ -147,7 +200,7 @@ If you want to install or deploy generated WAR file, you have to attach it to th
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
+                <version>${buildHelperPluginVersion}</version>
                 <executions>
                     <execution>
                         <id>attach-war</id>
