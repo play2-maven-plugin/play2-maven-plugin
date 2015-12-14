@@ -111,7 +111,7 @@ public class Play2ClosureCompileMojo
             boolean modified = true;
             if ( jsFile.isFile() )
             {
-                modified = ( jsFile.lastModified() < srcJsFile.lastModified() );
+                modified = jsFile.lastModified() < srcJsFile.lastModified();
             }
 
             if ( modified )

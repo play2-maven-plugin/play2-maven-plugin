@@ -79,12 +79,12 @@ public class LessDependencyCache
         {
             writer.write( FILE_HEADER );
             writer.newLine();
-            for (String fileName: allDependencies.keySet())
+            for ( String fileName: allDependencies.keySet() )
             {
                 writer.write( fileName );
                 writer.newLine();
                 Set<String> deps = allDependencies.get( fileName );
-                for (String dependencyFileName: deps)
+                for ( String dependencyFileName: deps )
                 {
                     writer.write( FILE_DEPENDENCY_PREFIX );
                     writer.write( dependencyFileName );
@@ -132,20 +132,20 @@ public class LessDependencyCache
     @Override
     public boolean equals( Object obj )
     {
-        return ( obj instanceof LessDependencyCache && allDependencies.equals( ( (LessDependencyCache) obj ).allDependencies ) );
+        return obj instanceof LessDependencyCache && allDependencies.equals( ( (LessDependencyCache) obj ).allDependencies );
     }
     //TEMP
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder('\n');
-        for (String key: allDependencies.keySet())
+        StringBuilder sb = new StringBuilder( '\n' );
+        for ( String key: allDependencies.keySet() )
         {
             //sb.append( String.format( "%s\n", key ) );
             sb.append( key );
             sb.append( '\n' );
             Set<String> deps = allDependencies.get( key );
-            for (String dep: deps)
+            for ( String dep: deps )
             {
                 sb.append( String.format( "  %s\n", dep ) );
             }

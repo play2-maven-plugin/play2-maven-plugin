@@ -114,7 +114,7 @@ public class Play2CoffeeCompileMojo
             if ( jsFile.isFile() && minifiedJsFile.isFile() )
             {
                 modified =
-                    ( jsFile.lastModified() < coffeeFile.lastModified() && minifiedJsFile.lastModified() < coffeeFile.lastModified() );
+                    jsFile.lastModified() < coffeeFile.lastModified() && minifiedJsFile.lastModified() < coffeeFile.lastModified();
             }
 
             if ( modified )
