@@ -7,9 +7,7 @@ cache:
 install:
   - java -XX:+PrintFlagsFinal -version
   - mvn --version
-  - mvn dependency:resolve-plugins -DexcludeArtifactIds=plexus-component-metadata --update-snapshots --settings .travis.settings.xml -e
-  - mvn dependency:resolve --update-snapshots --settings .travis.settings.xml -e
 
-script: mvn clean verify --update-snapshots --settings .travis.settings.xml -e
+script: mvn verify --update-snapshots --settings .travis.settings.xml -e
 
 jdk: oraclejdk8

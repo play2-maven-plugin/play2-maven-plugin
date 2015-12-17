@@ -5,12 +5,11 @@ machine:
     version: oraclejdk8
 
 dependencies:
-  override: 
+  override:
     - java -XX:+PrintFlagsFinal -version
     - mvn --version
-    - mvn dependency:resolve-plugins -DexcludeArtifactIds=plexus-component-metadata --update-snapshots --settings .travis.settings.xml -e
-    - mvn dependency:resolve --update-snapshots --settings .travis.settings.xml -e
+    - mvn test-compile --fail-never --update-snapshots --settings .travis.settings.xml -e
 
 test:
   override: 
-    - mvn clean verify --update-snapshots --settings .travis.settings.xml -e
+    - mvn verify --settings .travis.settings.xml -e
