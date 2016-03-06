@@ -12,7 +12,7 @@ This project declares the following modules:
 
 | Name                                                                | Description               |
 |---------------------------------------------------------------------|---------------------------|
-| [Play2 Provider API](./play2-provider-api/index.html)               | Play2 Provider API        |
-| [Play2 Maven Plugin](./play2-maven-plugin/index.html)               | Play2 Maven Plugin        |
-| [Play2 Providers](./play2-providers/index.html)                     | Play2 Providers           |
+| [Play! 2.x Provider API](./play2-provider-api/index.html)           | Play! 2.x Provider API    |
+| [Play! 2.x Maven Plugin](./play2-maven-plugin/index.html)           | Play! 2.x Maven Plugin    |
+| [Play! 2.x Providers](./play2-providers/index.html)                 | Play! 2.x Providers       |
 

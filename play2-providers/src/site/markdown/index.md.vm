@@ -11,11 +11,11 @@ Built-in providers compatible with different Play! Framework versions.
 
 This project declares the following modules:
 
-| Name                                                     | Description                              |
-|----------------------------------------------------------|------------------------------------------|
-| [Play2 Provider 2.1](./play2-provider-play21/index.html) | Play2 Provider for Play! Framework 2.1.x |
-| [Play2 Provider 2.2](./play2-provider-play22/index.html) | Play2 Provider for Play! Framework 2.2.x |
-| [Play2 Provider 2.3](./play2-provider-play23/index.html) | Play2 Provider for Play! Framework 2.3.x |
-| [Play2 Provider 2.4](./play2-provider-play24/index.html) | Play2 Provider for Play! Framework 2.4.x |
-| [Play2 Provider 2.5](./play2-provider-play25/index.html) | Play2 Provider for Play! Framework 2.5.x |
+| Name                                                                     | Description                        |
+|--------------------------------------------------------------------------|------------------------------------|
+| [Play! 2.x Provider for Play! 2.1.x](./play2-provider-play21/index.html) | Play! 2.x Provider for Play! 2.1.x |
+| [Play! 2.x Provider for Play! 2.2.x](./play2-provider-play22/index.html) | Play! 2.x Provider for Play! 2.2.x |
+| [Play! 2.x Provider for Play! 2.3.x](./play2-provider-play23/index.html) | Play! 2.x Provider for Play! 2.3.x |
+| [Play! 2.x Provider for Play! 2.4.x](./play2-provider-play24/index.html) | Play! 2.x Provider for Play! 2.4.x |
+| [Play! 2.x Provider for Play! 2.5.x](./play2-provider-play25/index.html) | Play! 2.x Provider for Play! 2.5.x |
 

@@ -46,6 +46,15 @@ Simplest project file:
             <version>\${play2.version}</version>
         </dependency>
 
+        <!-- default SLF4J logging implementation, can be replaced by other -->
+        <!-- see https://www.playframework.com/documentation/2.5.x/SettingsLogger for more info -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-logback_2.11</artifactId>
+            <version>${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- required for: "run", "start" and "dist" -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
@@ -101,29 +110,13 @@ Example with optional dependencies and configuration options:
 
     <name>Play! Framework 2.5.x Maven Test Project</name>
 
-    <!-- only if there are Specs2 tests in the project;
-         'com.typesafe.play:play-specs2_2.11' depends on
-         'org.scalaz.stream:scalaz-stream_2.11:0.7a:jar'
-         and this artifact is not available in Maven central repository yet,
-         see https://github.com/scalaz/scalaz-stream/issues/258 -->
-    <repositories>
-        <repository>
-            <id>scalaz-bintray</id>
-            <name>Scalaz Bintray - releases</name>
-            <url>https://dl.bintray.com/scalaz/releases/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <anorm.version>3.0.0-M1</anorm.version>
         <play2.version>${play25LatestVersion}</play2.version>
-        <play2-ebean.version>3.0.0-M1</play2-ebean.version>
+        <play2-ebean.version>3.0.0</play2-ebean.version>
         <play2-enhancer.version>1.1.0</play2-enhancer.version>
         <scala.version>${scala211LatestVersion}</scala.version>
     </properties>
@@ -195,6 +188,15 @@ Example with optional dependencies and configuration options:
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- default SLF4J logging implementation, can be replaced by other -->
+        <!-- see https://www.playframework.com/documentation/2.5.x/SettingsLogger for more info -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-logback_2.11</artifactId>
+            <version>${play2.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- required for: "run", "start" and "dist" -->
