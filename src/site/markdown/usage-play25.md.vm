@@ -83,6 +83,10 @@ Simplest project file:
                 <artifactId>play2-maven-plugin</artifactId>
                 <version>${project.version}</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <!-- if using controllers with dependency injection; default value is "static" -->
+                    <routesGenerator>injected</routesGenerator>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -252,6 +256,9 @@ Example with optional dependencies and configuration options:
                 <version>${project.version}</version>
                 <extensions>true</extensions>
                 <configuration>
+                <configuration>
+                    <!-- if using controllers with dependency injection; default value is "static" -->
+                    <routesGenerator>injected</routesGenerator>
                     <!-- only if using database evolutions -->
                     <serverJvmArgs>-Dplay.evolutions.db.default.autoApply=true</serverJvmArgs>
                 </configuration>
