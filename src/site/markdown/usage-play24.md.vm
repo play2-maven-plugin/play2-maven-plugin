@@ -210,7 +210,6 @@ Example with optional dependencies and configuration options:
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-enhancer</artifactId>
             <version>${play2-enhancer.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- only if there are JUnit tests in the project -->
