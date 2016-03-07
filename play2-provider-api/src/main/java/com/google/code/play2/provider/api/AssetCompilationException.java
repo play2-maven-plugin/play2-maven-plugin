@@ -48,6 +48,8 @@ public class AssetCompilationException
 
     /**
      * Error line number, if defined.
+     * 
+     * @return exception line number
      */
     public Integer line()
     {
@@ -56,6 +58,8 @@ public class AssetCompilationException
 
     /**
      * Column position, if defined.
+     * 
+     * @return exception column position
      */
     public Integer position()
     {
@@ -64,6 +68,8 @@ public class AssetCompilationException
 
     /**
      * Source file.
+     * 
+     * @return exception source file
      */
     public File source()
     {

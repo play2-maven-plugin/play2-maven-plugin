@@ -203,6 +203,11 @@ public class Play2EbeanEnhanceMojo
      * Package names are effectively converted into a directory on the file
      * system, and the class files are found and processed.
      * </p>
+     * 
+     * @param lastEnhanced previous enhancement timestamp
+     * @param outputDirectory directory containing classes to enhance
+     * @param packageNames package names include filter
+     * @return list of files to enhance
      */
     public List<File> collectClassFilesToEnhance( long lastEnhanced, File outputDirectory, String packageNames )
     {

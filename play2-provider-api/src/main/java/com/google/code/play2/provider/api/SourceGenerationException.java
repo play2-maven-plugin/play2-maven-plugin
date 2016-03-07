@@ -40,6 +40,8 @@ public class SourceGenerationException
 
     /**
      * Error line number, if defined.
+     * 
+     * @return exception line number
      */
     public int line()
     {
@@ -48,6 +50,8 @@ public class SourceGenerationException
 
     /**
      * Column position, if defined.
+     * 
+     * @return exception column position
      */
     public int position()
     {
@@ -56,6 +60,8 @@ public class SourceGenerationException
 
     /**
      * Source file.
+     * 
+     * @return exception source file
      */
     public File source()
     {

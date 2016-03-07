@@ -48,6 +48,13 @@ public abstract class AbstractArchivingMojo
     @Component
     private ArchiverManager archiverManager;
 
+    /**
+     * Copies archiver content to a directory instead of creating archive file.
+     * 
+     * @param archiver archiver to extract from
+     * @param destDirectory destination directory
+     * @throws IOException I/O exception
+     */
     protected void expandArchive( Archiver archiver, File destDirectory )
         throws IOException
     {
@@ -93,6 +100,12 @@ public abstract class AbstractArchivingMojo
         }
     }
 
+    /**
+     * Returns preconfigured ZIP archiver
+     * 
+     * @return ZIP archiver
+     * @throws NoSuchArchiverException should never be thrown
+     */
     protected ZipArchiver getZipArchiver()
         throws NoSuchArchiverException
     {
@@ -101,6 +114,12 @@ public abstract class AbstractArchivingMojo
         return result;
     }
 
+    /**
+     * Returns preconfigured WAR archiver
+     * 
+     * @return WAR archiver
+     * @throws NoSuchArchiverException should never be thrown
+     */
     protected WarArchiver getWarArchiver()
         throws NoSuchArchiverException
     {
@@ -112,7 +131,7 @@ public abstract class AbstractArchivingMojo
     /**
      * Check for potential "Duplicate file" exception before archive processing starts
      * 
-     * @param archiver
+     * @param archiver archiver to check
      */
     protected void checkArchiverForProblems( Archiver archiver )
     {
