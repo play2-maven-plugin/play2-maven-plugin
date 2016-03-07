@@ -37,20 +37,20 @@ Simplest project file:
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>\${scala.version}</version>
+            <version>${scala.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- required for: "run", "start" and "dist" -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-netty-server_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
@@ -132,13 +132,13 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>\${scala.version}</version>
+            <version>${scala.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using Anorm -->
@@ -152,21 +152,21 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-jdbc_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using JDBC evolutions -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-jdbc-evolutions_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using Java -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-java_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using Ebean -->
@@ -180,7 +180,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-java-jpa_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using JPA -->
@@ -201,7 +201,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-netty-server_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -217,7 +217,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-test_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -225,7 +225,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-specs2_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -308,7 +308,7 @@ and suffixes in all Play! dependency artifact ids from "`_2.11`" to "`_2.10`", f
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 ```
 
@@ -318,7 +318,7 @@ to
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 ```
 

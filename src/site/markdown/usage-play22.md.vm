@@ -48,13 +48,13 @@ Simplest project file:
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>\${scala.version}</version>
+            <version>${scala.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
     </dependencies>
 
@@ -127,48 +127,48 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>\${scala.version}</version>
+            <version>${scala.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using Anorm -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>anorm_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using JDBC -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-jdbc_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using Java -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-java_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using Ebean -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-java-ebean_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using JPA -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-java-jpa_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 
         <!-- only if using JPA -->
@@ -182,7 +182,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-test_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

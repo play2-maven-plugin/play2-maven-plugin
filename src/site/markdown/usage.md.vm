@@ -123,7 +123,7 @@ If Java classes enhancement is required add `execution` element with `enhance` g
             <plugin>
                 <groupId>com.google.code.play2-maven-plugin</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
-                <version>\${play2.plugin.version}</version>
+                <version>${play2.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     ...
@@ -259,13 +259,13 @@ For example replace
             <plugin>
                 <groupId>com.google.code.play2-maven-plugin</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
-                <version>\${play2.plugin.version}</version>
+                <version>${play2.plugin.version}</version>
                 <extensions>true</extensions>
                 <dependencies>
                     <dependency>
                         <groupId>com.google.code.play2-maven-plugin</groupId>
                         <artifactId>play2-provider-play22</artifactId>
-                        <version>\${play2.plugin.version}</version>
+                        <version>${play2.plugin.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -277,7 +277,7 @@ with
             <plugin>
                 <groupId>com.google.code.play2-maven-plugin</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
-                <version>\${play2.plugin.version}</version>
+                <version>${play2.plugin.version}</version>
                 <extensions>true</extensions>
             </plugin>
 ```
@@ -297,7 +297,7 @@ Add sbt-compiler-maven-plugin
             <plugin>
                 <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
                 <artifactId>sbt-compiler-maven-plugin</artifactId>
-                <version>\${sbt-compiler.plugin.version}</version>
+                <version>${sbt-compiler.plugin.version}</version>
             </plugin>
         </plugins>
     </build>
@@ -317,7 +317,7 @@ a) set `mainLang` to `java` because `mainLang` tricky autodetection mechanism wa
             <plugin>
                 <groupId>com.google.code.play2-maven-plugin</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
-                <version>\${play2.plugin.version}</version>
+                <version>${play2.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     ...
@@ -343,7 +343,7 @@ a) replace
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-compiler</artifactId>
-            <version>\${scala.version}</version>
+            <version>${scala.version}</version>
             <scope>provided</scope>
         </dependency>
 ```
@@ -354,7 +354,7 @@ with
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>\${scala.version}</version>
+            <version>${scala.version}</version>
         </dependency>
 ```
 
@@ -364,7 +364,7 @@ b) replace
             <plugin>
                 <groupId>com.google.code.play2-maven-plugin</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
-                <version>\${play2.plugin.version}</version>
+                <version>${play2.plugin.version}</version>
                 <extensions>true</extensions>
             </plugin>
 ```
@@ -375,13 +375,13 @@ with
             <plugin>
                 <groupId>com.google.code.play2-maven-plugin</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
-                <version>\${play2.plugin.version}</version>
+                <version>${play2.plugin.version}</version>
                 <extensions>true</extensions>
                 <dependencies>
                     <dependency>
                         <groupId>com.google.code.play2-maven-plugin</groupId>
                         <artifactId>play2-provider-play21</artifactId>
-                        <version>\${play2.plugin.version}</version>
+                        <version>${play2.plugin.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -428,7 +428,7 @@ c) add dependency
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-logback_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>runtime</scope>
         </dependency>
 ```
@@ -474,7 +474,7 @@ c) add dependency
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-netty-server_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>runtime</scope>
         </dependency>
 ```
@@ -485,7 +485,7 @@ d) if enhancing classes, add dependency
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-enhancer</artifactId>
-            <version>\${play2-enhancer.version}</version>
+            <version>${play2-enhancer.version}</version>
             <scope>runtime</scope>
         </dependency>
 ```
@@ -505,7 +505,7 @@ e) if using Specs2 tests add dependency
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-specs2_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
             <scope>test</scope>
         </dependency>
 ```
@@ -535,7 +535,7 @@ f) if using JDBC evolutions add dependency
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-jdbc-evolutions_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 ```
 
@@ -545,7 +545,7 @@ g) if using Ebean change
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-java-ebean_2.11</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 ```
 
@@ -555,7 +555,7 @@ to
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-ebean_2.11</artifactId>
-            <version>\${play2-ebean.version}</version>
+            <version>${play2-ebean.version}</version>
         </dependency>
 ```
 
@@ -626,7 +626,7 @@ b) change `groupId` of all Play! dependencies from `play`
         <dependency>
             <groupId>play</groupId>
             <artifactId>play-xxxx_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 ```
 
@@ -636,6 +636,6 @@ to `com.typesafe.play`
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-xxxx_2.10</artifactId>
-            <version>\${play2.version}</version>
+            <version>${play2.version}</version>
         </dependency>
 ```
