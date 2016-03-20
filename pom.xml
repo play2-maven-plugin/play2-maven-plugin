@@ -34,7 +34,7 @@ under the License.
     <name>Play! 2.x</name>
     <description>Play! 2.x</description>
     <inceptionYear>2013</inceptionYear>
-    <url>https://play2-maven-plugin.github.io/</url>
+    <url>https://play2-maven-plugin.github.io/play2-maven-plugin/${project.version}/</url>
 
     <scm>
         <connection>scm:git:git://github.com/play2-maven-plugin/play2-maven-plugin.git</connection>
