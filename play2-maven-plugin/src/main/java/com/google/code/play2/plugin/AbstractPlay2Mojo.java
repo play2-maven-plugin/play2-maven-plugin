@@ -33,8 +33,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -330,10 +330,10 @@ public abstract class AbstractPlay2Mojo
                 setCachedClassLoader( providerId, providerClassLoader );
             }
 
-            String providerClassName =
-                String.format( "com.google.code.play2.provider.%s.%sProvider", providerId,
-                               providerId.substring( 0, 1 ).toUpperCase( Locale.ROOT ) + providerId.substring( 1 ) );
-            Play2Provider provider = (Play2Provider) providerClassLoader.loadClass( providerClassName ).newInstance();
+            ServiceLoader<Play2Provider> providerServiceLoader =
+                ServiceLoader.load( Play2Provider.class, providerClassLoader );
+            // get first (there should be exactly one)
+            Play2Provider provider = providerServiceLoader.iterator().next();
 
             getLog().debug( String.format( "Using autodetected provider \"%s\".", providerId ) );
 
@@ -344,18 +344,6 @@ public abstract class AbstractPlay2Mojo
             throw new MojoExecutionException( "Provider autodetection failed", e );
         }
         catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "Provider autodetection failed", e );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new MojoExecutionException( "Provider autodetection failed", e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new MojoExecutionException( "Provider autodetection failed", e );
-        }
-        catch ( InstantiationException e )
         {
             throw new MojoExecutionException( "Provider autodetection failed", e );
         }
