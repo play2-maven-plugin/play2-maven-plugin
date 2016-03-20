@@ -23,8 +23,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -192,10 +192,10 @@ public abstract class AbstractPlay2EnhanceMojo
                 setSbtCompilerCachedClassLoader( compilerId, compilerClassLoader );
             }
 
-            String compilerClassName =
-                String.format( "com.google.code.sbt.compiler.%s.%sAnalysisProcessor", compilerId,
-                               compilerId.toUpperCase( Locale.ROOT ) );
-            AnalysisProcessor sbtAnalysisProcessor = (AnalysisProcessor) compilerClassLoader.loadClass( compilerClassName ).newInstance();
+            ServiceLoader<AnalysisProcessor> analysisProcessorServiceLoader =
+                ServiceLoader.load( AnalysisProcessor.class, compilerClassLoader );
+            // get first (there should be exactly one)
+            AnalysisProcessor sbtAnalysisProcessor = analysisProcessorServiceLoader.iterator().next();
 
             getLog().debug( String.format( "Using autodetected compiler \"%s\".", compilerId ) );
 
@@ -206,18 +206,6 @@ public abstract class AbstractPlay2EnhanceMojo
             throw new MojoExecutionException( "Compiler autodetection failed", e );
         }
         catch ( ArtifactResolutionException e )
-        {
-            throw new MojoExecutionException( "Compiler autodetection failed", e );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            throw new MojoExecutionException( "Compiler autodetection failed", e );
-        }
-        catch ( IllegalAccessException e )
-        {
-            throw new MojoExecutionException( "Compiler autodetection failed", e );
-        }
-        catch ( InstantiationException e )
         {
             throw new MojoExecutionException( "Compiler autodetection failed", e );
         }
