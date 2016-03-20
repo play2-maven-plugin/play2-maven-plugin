@@ -8,7 +8,7 @@ Project migrated from [Google Code](https://code.google.com/p/play2-maven-plugin
 
 [![Build Status](https://travis-ci.org/play2-maven-plugin/play2-maven-plugin.png?branch=master)](https://travis-ci.org/play2-maven-plugin/play2-maven-plugin)
 [![Build Status](https://circleci.com/gh/play2-maven-plugin/play2-maven-plugin/tree/master.svg?&style=shield)](https://circleci.com/gh/play2-maven-plugin/play2-maven-plugin)
-[![License](http://img.shields.io/:license-Apache%202-red.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
+[![License](http://img.shields.io/:license-Apache%202-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.txt)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.google.code.play2-maven-plugin/play2-maven-plugin/badge.png?style=flat)](http://search.maven.org/#search|ga|1|g%3A%22com.google.code.play2-maven-plugin%22%20AND%20a%3A%22play2-maven-plugin%22)
 
 ### Project documentation
