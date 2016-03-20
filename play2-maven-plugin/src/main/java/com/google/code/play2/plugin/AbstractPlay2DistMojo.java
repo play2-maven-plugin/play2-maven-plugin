@@ -58,7 +58,7 @@ public abstract class AbstractPlay2DistMojo
      * 
      * Comma-separated list of the classifiers of project's additional artifacts
      * to include.
-     * For example "assets" value means that {@code target/${artifactId}-${version}-assets.jar}
+     * For example {@code assets} value means that <code>target/${artifactId}-${version}-assets.jar</code>
      * will be added to {@code lib} directory in distribution archive.
      * 
      * @since 1.0.0
