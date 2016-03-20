@@ -151,6 +151,7 @@ public class Play2RoutesCompileMojo
         }
 
         addSourceRoot( generatedDirectory );
+        configureSourcePositionMappers();
     }
 
     private String getGeneratedFileName( String routesFileName, String defaultNamespace, String mainRoutesFileName )

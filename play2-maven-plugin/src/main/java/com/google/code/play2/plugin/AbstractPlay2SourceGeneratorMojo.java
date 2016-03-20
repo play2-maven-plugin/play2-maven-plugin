@@ -49,4 +49,10 @@ public abstract class AbstractPlay2SourceGeneratorMojo
         }
     }
 
+    protected void configureSourcePositionMappers()
+    {
+        String sourcePositionMappersGAV = String.format( "%s:%s:%s", pluginGroupId, "play2-source-position-mappers", pluginVersion );
+        project.getProperties().setProperty( "sbt._sourcePositionMappers", sourcePositionMappersGAV/*getSourcePositionMappersGAV()*/ );
+    }
+
 }

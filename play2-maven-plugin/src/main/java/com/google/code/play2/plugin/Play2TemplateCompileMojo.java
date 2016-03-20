@@ -133,6 +133,7 @@ public class Play2TemplateCompileMojo
             getLog().info( String.format( "%d templates processed, %d compiled", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( compiledFiles ) ) );
             addSourceRoot( generatedDirectory );
+            configureSourcePositionMappers();
         }
         else
         {

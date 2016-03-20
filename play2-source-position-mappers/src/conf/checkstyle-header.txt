@@ -1,0 +1,17 @@
+^/\*\s*$
+^ \* Copyright 2013-2015 Grzegorz Slowikowski \(gslowikowski at gmail dot com\)\s*$
+^ \*\s*$
+^ \* Licensed under the Apache License, Version 2.0 \(the "License"\);\s*$
+^ \* you may not use this file except in compliance with the License.\s*$
+^ \* You may obtain a copy of the License at\s*$
+^ \*\s*$
+^ \*\s+http://www\.apache\.org/licenses/LICENSE-2\.0\s*$
+^ \*\s*$
+^ \* Unless required by applicable law or agreed to in writing,\s*$
+^ \* software distributed under the License is distributed on an\s*$
+^ \* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\s*$
+^ \* KIND, either express or implied.  See the License for the\s*$
+^ \* specific language governing permissions and limitations\s*$
+^ \* under the License.\s*$
+^ \*/\s*$
+^\s*$

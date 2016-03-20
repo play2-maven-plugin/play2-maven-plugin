@@ -118,13 +118,13 @@ public abstract class AbstractPlay2Mojo
      * Plugin's groupId used for well known providers resolution
      */
     @Parameter( property = "plugin.groupId", readonly = true, required = true )
-    private String pluginGroupId;
+    protected String pluginGroupId;
 
     /**
      * Plugin's version used for well known providers resolution
      */
     @Parameter( property = "plugin.version", readonly = true, required = true )
-    private String pluginVersion;
+    protected String pluginVersion;
 
     /**
      * Map of provider implementations. For now only zero or one allowed.
