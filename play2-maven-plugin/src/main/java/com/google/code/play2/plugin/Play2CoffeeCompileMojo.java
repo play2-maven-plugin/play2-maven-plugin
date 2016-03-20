@@ -124,7 +124,7 @@ public class Play2CoffeeCompileMojo
                 CoffeescriptCompilationResult result = compiler.compile( coffeeFile );
                 String jsContent = result.getJs();
                 createDirectory( jsFile.getParentFile(), false );
-                writeToFile( jsFile, jsContent );
+                writeToFile( jsFile, "UTF-8", jsContent );
                 buildContext.refresh( jsFile );
                 try
                 {
@@ -132,7 +132,7 @@ public class Play2CoffeeCompileMojo
                     String minifiedJsContent = jsCompiler.minify( jsContent, coffeeFile.getName() );
                     // String minifiedJsContent = JavascriptCompiler.minify( jsContent, coffeeFile.getName() );
                     createDirectory( minifiedJsFile.getParentFile(), false );
-                    writeToFile( minifiedJsFile, minifiedJsContent );
+                    writeToFile( minifiedJsFile, "UTF-8", minifiedJsContent );
                     compiledFiles++;
                     buildContext.refresh( minifiedJsFile );
                 }

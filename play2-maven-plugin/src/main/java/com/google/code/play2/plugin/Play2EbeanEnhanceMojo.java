@@ -106,7 +106,7 @@ public class Play2EbeanEnhanceMojo
         long lastEnhanced = 0L;
         if ( timestampFile.exists() )
         {
-            String line = readFileFirstLine( timestampFile );
+            String line = readFileFirstLine( timestampFile, "ASCII" );
             lastEnhanced = Long.parseLong( line );
         }
 
@@ -182,7 +182,7 @@ public class Play2EbeanEnhanceMojo
                 {
                     analysis.writeToFile( analysisCacheFile );
                 }
-                writeToFile( timestampFile, Long.toString( System.currentTimeMillis() ) );
+                writeToFile( timestampFile, "ASCII", Long.toString( System.currentTimeMillis() ) );
             }
         }
 

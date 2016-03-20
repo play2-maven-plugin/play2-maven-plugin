@@ -158,21 +158,25 @@ public abstract class AbstractPlay2Mojo
     protected final BufferedReader createBufferedFileReader( File file, String encoding )
         throws FileNotFoundException, UnsupportedEncodingException
     {
-        return new BufferedReader( new InputStreamReader( new FileInputStream( file ), encoding ) );
+        FileInputStream fis = new FileInputStream( file );
+        InputStreamReader isr = encoding != null ? new InputStreamReader( fis, encoding ) : new InputStreamReader( fis );
+        return new BufferedReader( isr );
     }
 
     protected final BufferedWriter createBufferedFileWriter( File file, String encoding )
         throws FileNotFoundException, UnsupportedEncodingException
     {
-        return new BufferedWriter( new OutputStreamWriter( new FileOutputStream( file ), encoding ) );
+        FileOutputStream fos = new FileOutputStream( file );
+        OutputStreamWriter osw = encoding != null ? new OutputStreamWriter( fos, encoding ) : new OutputStreamWriter( fos );
+        return new BufferedWriter( osw );
     }
 
-    protected String readFileFirstLine( File file )
+    protected String readFileFirstLine( File file, String encoding )
         throws IOException
     {
         String result = null;
 
-        BufferedReader is = createBufferedFileReader( file, "UTF-8" );
+        BufferedReader is = createBufferedFileReader( file, encoding );
         try
         {
             result = is.readLine();
@@ -184,10 +188,10 @@ public abstract class AbstractPlay2Mojo
         return result;
     }
 
-    protected void writeToFile( File file, String line )
+    protected void writeToFile( File file, String encoding, String line )
         throws IOException
     {
-        BufferedWriter writer = createBufferedFileWriter( file, "UTF-8" );
+        BufferedWriter writer = createBufferedFileWriter( file, encoding );
         try
         {
             writer.write( line );

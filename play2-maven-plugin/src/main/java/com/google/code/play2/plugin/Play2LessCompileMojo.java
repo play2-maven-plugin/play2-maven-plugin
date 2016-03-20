@@ -176,12 +176,12 @@ public class Play2LessCompileMojo
                 // writeOutputToFiles(new File(generatedDirectory, "public"), fileName, cssContent,
                 // minifiedCssContent);
                 createDirectory( cssFile.getParentFile(), false );
-                writeToFile( cssFile, cssContent );
+                writeToFile( cssFile, "UTF-8", cssContent );
                 buildContext.refresh( cssFile );
                 if ( minifiedCssContent != null )
                 {
                     createDirectory( minifiedCssFile.getParentFile(), false );
-                    writeToFile( minifiedCssFile, minifiedCssContent );
+                    writeToFile( minifiedCssFile, "UTF-8", minifiedCssContent );
                     buildContext.refresh( minifiedCssFile );
                 }
                 else

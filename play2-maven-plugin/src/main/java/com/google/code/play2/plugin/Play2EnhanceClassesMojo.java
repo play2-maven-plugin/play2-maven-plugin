@@ -90,7 +90,7 @@ public class Play2EnhanceClassesMojo
             long lastEnhanced = 0L;
             if ( timestampFile.exists() )
             {
-                String line = readFileFirstLine( timestampFile );
+                String line = readFileFirstLine( timestampFile, "ASCII" );
                 lastEnhanced = Long.parseLong( line );
             }
 
@@ -190,7 +190,7 @@ public class Play2EnhanceClassesMojo
                 {
                     analysis.writeToFile( analysisCacheFile );
                 }
-                writeToFile( timestampFile, Long.toString( System.currentTimeMillis() ) );
+                writeToFile( timestampFile, "ASCII", Long.toString( System.currentTimeMillis() ) );
             }
         }
         catch ( IOException e )

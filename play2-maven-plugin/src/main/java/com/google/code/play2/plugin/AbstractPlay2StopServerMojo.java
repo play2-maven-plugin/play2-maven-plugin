@@ -42,7 +42,7 @@ public abstract class AbstractPlay2StopServerMojo
                                                              pidFile.getName() ) );
         }
 
-        String pid = readFileFirstLine( pidFile ).trim();
+        String pid = readFileFirstLine( pidFile, "ASCII" ).trim();
         if ( "unknown".equals( pid ) )
         {
             throw new MojoExecutionException(

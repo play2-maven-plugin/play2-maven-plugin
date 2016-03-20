@@ -122,13 +122,13 @@ public class Play2ClosureCompileMojo
                 String jsContent = result.getJs();
                 String minifiedJsContent = result.getMinifiedJs();
                 createDirectory( jsFile.getParentFile(), false );
-                writeToFile( jsFile, jsContent );
+                writeToFile( jsFile, "UTF-8", jsContent );
                 buildContext.refresh( jsFile );
 
                 if ( minifiedJsContent != null )
                 {
                     createDirectory( minifiedJsFile.getParentFile(), false );
-                    writeToFile( minifiedJsFile, minifiedJsContent );
+                    writeToFile( minifiedJsFile, "UTF-8", minifiedJsContent );
                     buildContext.refresh( minifiedJsFile );
                 }
                 else
