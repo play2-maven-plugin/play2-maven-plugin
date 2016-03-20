@@ -23,14 +23,11 @@ import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
-
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.provider.api.Play2Provider;
 import com.google.code.play2.provider.api.Play2TemplateCompiler;
@@ -44,7 +41,7 @@ import com.google.code.play2.provider.api.TemplateCompilationException;
  */
 @Mojo( name = "template-compile", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class Play2TemplateCompileMojo
-    extends AbstractPlay2Mojo
+    extends AbstractPlay2SourceGeneratorMojo
 {
 
     /**
@@ -54,14 +51,6 @@ public class Play2TemplateCompileMojo
      */
     @Parameter( property = "play2.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
-
-    /**
-     * For M2E integration.
-     */
-    @Component
-    private BuildContext buildContext;
-
-    private static final String defaultTargetDirectoryName = "src_managed";
 
     private static final String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
 
@@ -143,11 +132,7 @@ public class Play2TemplateCompileMojo
         {
             getLog().info( String.format( "%d templates processed, %d compiled", Integer.valueOf( processedFiles ),
                                           Integer.valueOf( compiledFiles ) ) );
-            if ( !compileSourceRoots.contains( generatedDirectory.getAbsolutePath() ) )
-            {
-                project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
-                getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
-            }
+            addSourceRoot( generatedDirectory );
         }
         else
         {

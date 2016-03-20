@@ -22,14 +22,11 @@ import java.io.IOException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import org.codehaus.plexus.util.DirectoryScanner;
-
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.code.play2.provider.api.Play2Provider;
 import com.google.code.play2.provider.api.Play2RoutesCompiler;
@@ -43,7 +40,7 @@ import com.google.code.play2.provider.api.RoutesCompilationException;
  */
 @Mojo( name = "routes-compile", defaultPhase = LifecyclePhase.GENERATE_SOURCES )
 public class Play2RoutesCompileMojo
-    extends AbstractPlay2Mojo
+    extends AbstractPlay2SourceGeneratorMojo
 {
 
     /**
@@ -72,14 +69,6 @@ public class Play2RoutesCompileMojo
      */
     @Parameter( property = "play2.routesGenerator", required = true, defaultValue = "static" )
     private String routesGenerator;
-
-    /**
-     * For M2E integration.
-     */
-    @Component
-    private BuildContext buildContext;
-
-    private static final String defaultTargetDirectoryName = "src_managed";
 
     private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
 
@@ -161,11 +150,7 @@ public class Play2RoutesCompileMojo
             }
         }
 
-        if ( !project.getCompileSourceRoots().contains( generatedDirectory.getAbsolutePath() ) )
-        {
-            project.addCompileSourceRoot( generatedDirectory.getAbsolutePath() );
-            getLog().debug( "Added source directory: " + generatedDirectory.getAbsolutePath() );
-        }
+        addSourceRoot( generatedDirectory );
     }
 
     private String getGeneratedFileName( String routesFileName, String defaultNamespace, String mainRoutesFileName )
