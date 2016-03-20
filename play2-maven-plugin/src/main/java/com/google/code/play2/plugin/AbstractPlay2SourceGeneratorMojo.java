@@ -17,11 +17,16 @@
 
 package com.google.code.play2.plugin;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import org.sonatype.plexus.build.incremental.BuildContext;
+
+import com.google.code.play2.provider.api.SourceGenerationException;
 
 /**
  * Source generator base class for Play! mojos.
@@ -31,6 +36,16 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 public abstract class AbstractPlay2SourceGeneratorMojo
     extends AbstractPlay2Mojo
 {
+    /**
+     * Source files encoding.
+     * <br>
+     * <br>
+     * If not specified, the encoding value will be the value of the {@code file.encoding} system property.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "project.build.sourceEncoding" )
+    protected String sourceEncoding;
 
     /**
      * For M2E integration.
@@ -53,6 +68,59 @@ public abstract class AbstractPlay2SourceGeneratorMojo
     {
         String sourcePositionMappersGAV = String.format( "%s:%s:%s", pluginGroupId, "play2-source-position-mappers", pluginVersion );
         project.getProperties().setProperty( "sbt._sourcePositionMappers", sourcePositionMappersGAV/*getSourcePositionMappersGAV()*/ );
+    }
+
+    protected void reportCompilationProblems( File source, SourceGenerationException e )
+    {
+        if ( e.line() > 0 )
+        {
+            getLog().error( String.format( "%s:%d: %s", source.getAbsolutePath(), Integer.valueOf( e.line() ),
+                                           e.getMessage() ) );
+            String lineContent = readFileNthLine( source, e.line() - 1, "unknown" );
+            getLog().error( lineContent );
+            if ( e.position() > 0 )
+            {
+                int pointerSpaceLength = Math.min( e.position() - 1, lineContent.length() );
+                char[] pointerLine = new char[ pointerSpaceLength + 1 ];
+                for ( int i = 0; i < pointerSpaceLength; i++ )
+                {
+                    pointerLine[ i ] = lineContent.charAt( i ) == '\t' ? '\t' : ' ';
+                }
+                pointerLine[ pointerSpaceLength ] = '^';
+                getLog().error( String.valueOf( pointerLine ) );
+            }
+        }
+        else
+        {
+            getLog().error( String.format( "%s: %s", source.getAbsolutePath(), e.getMessage()/* message */) );
+        }
+    }
+
+    private String readFileNthLine( File file, int lineNo, String defaultValue )
+    {
+        String result = null;
+        try
+        {
+            BufferedReader is = createBufferedFileReader( file, sourceEncoding/*FIXME-what if not specified?*/ );
+            try
+            {
+                int i = 0;
+                while ( i <= lineNo )
+                {
+                    result = is.readLine();
+                    i++;
+                }
+            }
+            finally
+            {
+                is.close();
+            }
+        }
+        catch (IOException e)
+        {
+            result = defaultValue;
+        }
+        return result;
     }
 
 }

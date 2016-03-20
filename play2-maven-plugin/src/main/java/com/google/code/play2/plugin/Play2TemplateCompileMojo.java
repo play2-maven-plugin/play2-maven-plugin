@@ -65,10 +65,6 @@ public class Play2TemplateCompileMojo
                                                              mainLang ) );
         }
 
-        List<String> compileSourceRoots = project.getCompileSourceRoots();
-        int processedFiles = 0;
-        int compiledFiles = 0;
-
         Play2Provider play2Provider = getProvider();
         Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
 
@@ -83,6 +79,10 @@ public class Play2TemplateCompileMojo
         compiler.setOutputDirectory( generatedDirectory );
         compiler.setMainLang( mainLang );
 
+        int processedFiles = 0;
+        int compiledFiles = 0;
+        int errors = 0;
+        List<String> compileSourceRoots = project.getCompileSourceRoots();
         for ( String sourceRoot : compileSourceRoots )
         {
             File sourceRootDirectory = new File( sourceRoot );
@@ -120,8 +120,8 @@ public class Play2TemplateCompileMojo
                         }
                         catch ( TemplateCompilationException e )
                         {
-                            throw new MojoExecutionException( String.format( "Template compilation failed (%s)",
-                                                                             templateFile.getPath() ), e );
+                            errors ++;
+                            reportCompilationProblems( templateFile, e );
                         }
                     }
                 }
@@ -130,8 +130,14 @@ public class Play2TemplateCompileMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "%d templates processed, %d compiled", Integer.valueOf( processedFiles ),
-                                          Integer.valueOf( compiledFiles ) ) );
+            if ( errors > 0 )
+            {
+                throw new MojoFailureException( "Template compilation failed" );
+            }
+
+            getLog().info( String.format( "%d template%s processed, %d compiled", Integer.valueOf( processedFiles ),
+                                          processedFiles > 1 ? "s" : "", Integer.valueOf( compiledFiles ) ) );
+
             addSourceRoot( generatedDirectory );
             configureSourcePositionMappers();
         }
@@ -139,7 +145,6 @@ public class Play2TemplateCompileMojo
         {
             getLog().info( "No templates to compile" );
         }
-
     }
 
 }

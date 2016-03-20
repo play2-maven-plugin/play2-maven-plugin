@@ -85,7 +85,7 @@ public class Play2RoutesCompileMojo
 
         if ( !confDirectory.isDirectory() )
         {
-            getLog().info( "No routes to compile" );
+            getLog().info( "No routers to compile" );
             return;
         }
 
@@ -98,7 +98,7 @@ public class Play2RoutesCompileMojo
 
         if ( files.length == 0 )
         {
-            getLog().debug( "No routes to compile" );
+            getLog().info( "No routers to compile" );
             return;
         }
 
@@ -119,6 +119,8 @@ public class Play2RoutesCompileMojo
         String defaultNamespace = compiler.getDefaultNamespace();
         String mainRoutesFileName = compiler.getMainRoutesFileName();
 
+        int compiledFiles = 0;
+        int errors = 0;
         for ( String fileName : files )
         {
             File routesFile = new File( confDirectory, fileName );
@@ -135,13 +137,14 @@ public class Play2RoutesCompileMojo
                 try
                 {
                     compiler.compile( routesFile );
+                    compiledFiles++;
                     buildContextRefresh( generatedDirectory, generatedFileName );
                     getLog().debug( String.format( "\"%s\" processed", fileName ) );
                 }
                 catch ( RoutesCompilationException e )
                 {
-                    throw new MojoExecutionException( String.format( "Routes compilation failed (%s)",
-                                                                     routesFile.getPath() ), e );
+                    errors ++;
+                    reportCompilationProblems( routesFile, e );
                 }
             }
             else
@@ -150,6 +153,13 @@ public class Play2RoutesCompileMojo
             }
         }
 
+        if ( errors > 0 )
+        {
+            throw new MojoFailureException( "Routers compilation failed" );
+        }
+
+        getLog().info( String.format( "%d router%s processed, %d compiled", Integer.valueOf( files.length ),
+                                      files.length > 1 ? "s" : "", Integer.valueOf( compiledFiles ) ) );
         addSourceRoot( generatedDirectory );
         configureSourcePositionMappers();
     }

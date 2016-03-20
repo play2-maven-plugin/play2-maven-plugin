@@ -32,7 +32,7 @@ public class SourceGenerationException
 
     public SourceGenerationException( File source, String message, int atLine, int column )
     {
-        super( "Compilation error[" + message + "]" );
+        super( message );
         this.source = source;
         this.line = atLine;
         this.position = column;
