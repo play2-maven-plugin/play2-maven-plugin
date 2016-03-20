@@ -146,8 +146,8 @@ public class Play2ClosureCompileMojo
             }
         }
 
-        getLog().info( String.format( "%d assets processed, %d compiled", Integer.valueOf( fileNames.length ),
-                                      Integer.valueOf( compiledFiles ) ) );
+        getLog().info( String.format( "%d %s processed, %d compiled", Integer.valueOf( fileNames.length ),
+                                      fileNames.length > 1 ? "assets" : "asset", Integer.valueOf( compiledFiles ) ) );
     }
 
 }
