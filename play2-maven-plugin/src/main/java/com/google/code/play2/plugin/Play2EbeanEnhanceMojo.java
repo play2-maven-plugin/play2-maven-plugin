@@ -188,8 +188,8 @@ public class Play2EbeanEnhanceMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "%d Ebean classes processed, %d enhanced", Integer.valueOf( processedFiles ),
-                                          Integer.valueOf( enhancedFiles ) ) );
+            getLog().info( String.format( "%d Ebean %s processed, %d enhanced", Integer.valueOf( processedFiles ),
+                                          processedFiles > 1 ? "classes" : "class", Integer.valueOf( enhancedFiles ) ) );
         }
         else
         {

@@ -248,7 +248,8 @@ public class Play2EnhanceClassesMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "Generate accessors - %d Java classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+            getLog().info( String.format( "Generate accessors - %d Java %s processed, %d enhanced",
+                                          Integer.valueOf( processedFiles ), processedFiles > 1 ? "classes" : "class",
                                           Integer.valueOf( enhancedFiles ) ) );
         }
         else
@@ -291,7 +292,8 @@ public class Play2EnhanceClassesMojo
 
         if ( processedFiles > 0 )
         {
-            getLog().info( String.format( "Rewrite access - %d classes processed, %d enhanced", Integer.valueOf( processedFiles ),
+            getLog().info( String.format( "Rewrite access - %d %s processed, %d enhanced",
+                                          Integer.valueOf( processedFiles ), processedFiles > 1 ? "classes" : "class",
                                           Integer.valueOf( enhancedFiles ) ) );
         }
         else
