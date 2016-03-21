@@ -81,7 +81,7 @@ Just change plugin version from
     <properties>
         ...
         <play2.plugin.version>1.0.0-beta3</play2.plugin.version>
-        ...
+        <sbt-compiler.plugin.version>1.0.0-beta5</sbt-compiler.plugin.version>
     </properties>
 ```
 
@@ -91,7 +91,7 @@ to
     <properties>
         ...
         <play2.plugin.version>1.0.0-beta4</play2.plugin.version>
-        ...
+        <sbt-compiler.plugin.version>1.0.0-beta7</sbt-compiler.plugin.version>
     </properties>
 ```
 
