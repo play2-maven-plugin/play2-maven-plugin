@@ -73,6 +73,28 @@ to `~/.m2/settings.xml` file. More info: http://maven.apache.org/guides/mini/gui
 
 $h3 Plugin version migrations.
 
+**1.0.0-beta4 to 1.0.0-beta5 migration**
+
+Just change plugin version from
+
+```
+    <properties>
+        ...
+        <play2.plugin.version>1.0.0-beta4</play2.plugin.version>
+        <sbt-compiler.plugin.version>1.0.0-beta7</sbt-compiler.plugin.version>
+    </properties>
+```
+
+to
+
+```
+    <properties>
+        ...
+        <play2.plugin.version>1.0.0-beta5</play2.plugin.version>
+        <sbt-compiler.plugin.version>1.0.0-beta8</sbt-compiler.plugin.version>
+    </properties>
+```
+
 **1.0.0-beta3 to 1.0.0-beta4 migration**
 
 Just change plugin version from
