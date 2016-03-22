@@ -123,7 +123,7 @@ Example with optional dependencies and configuration options:
 
         <anorm.version>2.4.0</anorm.version>
         <play2.version>${play24LatestVersion}</play2.version>
-        <play2-ebean.version>1.0.0</play2-ebean.version>
+        <play2-ebean.version>2.0.0</play2-ebean.version>
         <play2-enhancer.version>1.1.0</play2-enhancer.version>
         <scala.version>${scala211LatestVersion}</scala.version>
     </properties>
