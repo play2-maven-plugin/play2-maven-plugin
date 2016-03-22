@@ -84,8 +84,8 @@ Simplest project file:
                 <version>${project.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <!-- if using controllers with dependency injection; default value is "static" -->
-                    <routesGenerator>injected</routesGenerator>
+                    <!-- if using controllers without dependency injection; default value is "injected" -->
+                    <routesGenerator>static</routesGenerator>
                 </configuration>
             </plugin>
 
@@ -256,8 +256,8 @@ Example with optional dependencies and configuration options:
                 <extensions>true</extensions>
                 <configuration>
                 <configuration>
-                    <!-- if using controllers with dependency injection; default value is "static" -->
-                    <routesGenerator>injected</routesGenerator>
+                    <!-- if using controllers without dependency injection; default value is "injected" -->
+                    <routesGenerator>static</routesGenerator>
                     <!-- only if using database evolutions -->
                     <serverJvmArgs>-Dplay.evolutions.db.default.autoApply=true</serverJvmArgs>
                 </configuration>
