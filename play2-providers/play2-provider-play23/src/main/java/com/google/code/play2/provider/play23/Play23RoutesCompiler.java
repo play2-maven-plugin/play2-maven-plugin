@@ -35,6 +35,8 @@ public class Play23RoutesCompiler
 
     private static final String[] scalaAdditionalImports = new String[] { "controllers.Assets.Asset" };
 
+    private static final String[] supportedGenerators = new String[] { "static" };
+
     private String mainLang;
 
     private File outputDirectory;
@@ -55,6 +57,12 @@ public class Play23RoutesCompiler
     public String getMainRoutesFileName()
     {
         return "routes_routing.scala";
+    }
+
+    @Override
+    public String[] getSupportedGenerators()
+    {
+        return supportedGenerators;
     }
 
     @Override

@@ -41,11 +41,13 @@ public class Play24RoutesCompiler
 
     private static final String[] scalaAdditionalImports = new String[] { "controllers.Assets.Asset" };
 
+    private static final String[] supportedGenerators = new String[] { "static", "injected" };
+
     private String mainLang;
 
     private File outputDirectory;
 
-    private String generator = "static";
+    private String generator;
 
     @Override
     public String getCustomOutputDirectoryName()
@@ -66,6 +68,12 @@ public class Play24RoutesCompiler
     }
 
     @Override
+    public String[] getSupportedGenerators()
+    {
+        return supportedGenerators;
+    }
+
+    @Override
     public void setMainLang( String mainLang )
     {
         this.mainLang = mainLang;
@@ -80,7 +88,10 @@ public class Play24RoutesCompiler
     @Override
     public void setGenerator( String generator )
     {
-        this.generator = generator; //TODO - add validation
+        if ( Arrays.asList( supportedGenerators ).contains( generator ) )
+        {
+            this.generator = generator;
+        }
     }
 
     @Override

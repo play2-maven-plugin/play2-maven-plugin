@@ -19,6 +19,7 @@ package com.google.code.play2.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -63,11 +64,11 @@ public class Play2RoutesCompileMojo
      * Routes generator type ("static" or "injected").
      * <br>
      * <br>
-     * Supported by Play! 2.4.x and later.
+     * Supported by Play! 2.4.x and later. If not set, provider default generator type will be used.
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play2.routesGenerator", required = true, defaultValue = "static" )
+    @Parameter( property = "play2.routesGenerator" )
     private String routesGenerator;
 
     private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
@@ -113,9 +114,37 @@ public class Play2RoutesCompileMojo
         }
         File generatedDirectory = new File( targetDirectory, outputDirectoryName + "/main" );
 
+        String[] supportedGenerators = compiler.getSupportedGenerators();
+        if ( routesGenerator != null && !routesGenerator.isEmpty() )
+        {
+            if ( Arrays.asList( supportedGenerators ).contains( routesGenerator ) )
+            {
+                compiler.setGenerator( routesGenerator );
+                getLog().info( String.format( "Generating %s router", routesGenerator ) );
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                for ( String supportedGenerator : supportedGenerators )
+                {
+                    sb.append( ", \"" );
+                    sb.append( supportedGenerator );
+                    sb.append( '\"' );
+                }
+                String supportedGeneratorsStr = sb.substring( 2 );
+                String msg =
+                    String.format( "\"%s\" router generator not supported. Supported generators: %s.", routesGenerator,
+                                   supportedGeneratorsStr );
+                throw new MojoExecutionException( msg );
+            }
+        }
+        else
+        {
+            getLog().info( String.format( "Generating %s router", supportedGenerators[0] ) ); // default
+        }
+
         compiler.setMainLang( mainLang );
         compiler.setOutputDirectory( generatedDirectory );
-        compiler.setGenerator( routesGenerator );
         String defaultNamespace = compiler.getDefaultNamespace();
         String mainRoutesFileName = compiler.getMainRoutesFileName();
 

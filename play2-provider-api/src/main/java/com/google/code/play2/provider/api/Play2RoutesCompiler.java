@@ -29,6 +29,8 @@ public interface Play2RoutesCompiler
 
     String getMainRoutesFileName();
 
+    String[] getSupportedGenerators();
+
     // operation
 
     void setMainLang( String mainLang );
