@@ -10,9 +10,10 @@ Maven plugin for Play! **1.x** is available [here](https://github.com/play1-mave
 
 This project declares the following modules:
 
-| Name                                                                | Description               |
-|---------------------------------------------------------------------|---------------------------|
-| [Play! 2.x Provider API](./play2-provider-api/index.html)           | Play! 2.x Provider API    |
-| [Play! 2.x Maven Plugin](./play2-maven-plugin/index.html)           | Play! 2.x Maven Plugin    |
-| [Play! 2.x Providers](./play2-providers/index.html)                 | Play! 2.x Providers       |
+| Name                                                                            | Description                       |
+|---------------------------------------------------------------------------------|-----------------------------------|
+| [Play! 2.x Provider API](./play2-provider-api/index.html)                       | Play! 2.x Provider API            |
+| [Play! 2.x Maven Plugin](./play2-maven-plugin/index.html)                       | Play! 2.x Maven Plugin            |
+| [Play! 2.x Providers](./play2-providers/index.html)                             | Play! 2.x Providers               |
+| [Play! 2.x Source Position Mappers](./play2-source-position-mappers/index.html) | Play! 2.x Source Position Mappers |
 
