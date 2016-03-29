@@ -65,7 +65,7 @@ public abstract class AbstractPlay2SourcePositionMapper implements SourcePositio
                 out.write( buffer, 0, len );
                 len = is.read( buffer );
             }
-            return new String( out.toByteArray(), charsetName );
+            return charsetName != null ? new String( out.toByteArray(), charsetName ) : new String( out.toByteArray() );
         }
         finally
         {
