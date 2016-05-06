@@ -36,6 +36,9 @@ import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
+import com.google.code.play2.provider.api.Play2Provider;
+import com.google.code.play2.provider.api.Play2Runner;
+
 /**
  * Base class for Play&#33; distribution packaging mojos.
  * 
@@ -85,6 +88,11 @@ public abstract class AbstractPlay2DistMojo
     protected ZipArchiver prepareArchiver()
         throws IOException, MojoExecutionException, NoSuchArchiverException
     {
+        Play2Provider play2Provider = getProvider();
+        Play2Runner play2Runner = play2Provider.getRunner();
+
+        String prodServerMainClassName = play2Runner.getServerMainClass();
+
         ZipArchiver zipArchiver = getZipArchiver();
 
         File baseDir = project.getBasedir();
@@ -182,10 +190,10 @@ public abstract class AbstractPlay2DistMojo
             zipArchiver.addFile( jarFile, packageName + "/lib/" + destFileName/* jarFile.getName() */ );
         }
 
-        File linuxStartFile = createLinuxStartFile( buildDirectory );
+        File linuxStartFile = createLinuxStartFile( buildDirectory, prodServerMainClassName );
         zipArchiver.addFile( linuxStartFile, packageName + "/start" );
 
-        File windowsStartFile = createWindowsStartFile( buildDirectory );
+        File windowsStartFile = createWindowsStartFile( buildDirectory, prodServerMainClassName );
         zipArchiver.addFile( windowsStartFile, packageName + "/start.bat" );
 
         File readmeFile = new File( baseDir, "README" );
@@ -204,7 +212,7 @@ public abstract class AbstractPlay2DistMojo
         return zipArchiver;
     }
 
-    private File createLinuxStartFile( File buildDirectory )
+    private File createLinuxStartFile( File buildDirectory, String prodServerMainClassName )
         throws IOException
     {
         File result = new File( buildDirectory, "start" );
@@ -223,7 +231,9 @@ public abstract class AbstractPlay2DistMojo
                 writer.write( " -Dconfig.file=`dirname $0`/" );
                 writer.write( configFile.getName() );
             }
-            writer.write( " play.core.server.NettyServer $scriptdir" );
+            writer.write( " " );
+            writer.write( prodServerMainClassName );
+            writer.write( " $scriptdir" );
             writer.newLine();
         }
         finally
@@ -234,7 +244,7 @@ public abstract class AbstractPlay2DistMojo
         return result;
     }
 
-    private File createWindowsStartFile( File buildDirectory )
+    private File createWindowsStartFile( File buildDirectory, String prodServerMainClassName )
         throws IOException
     {
         File result = new File( buildDirectory, "start.bat" );
@@ -251,7 +261,9 @@ public abstract class AbstractPlay2DistMojo
                 writer.write( " -Dconfig.file=%scriptdir%/" );
                 writer.write( configFile.getName() );
             }
-            writer.write( " play.core.server.NettyServer %scriptdir%" );
+            writer.write( " " );
+            writer.write( prodServerMainClassName );
+            writer.write( " %scriptdir%" );
             writer.newLine();
         }
         finally
