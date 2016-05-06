@@ -35,8 +35,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import com.google.code.sbt.compiler.api.AnalysisProcessor;
 import com.google.code.sbt.compiler.api.Compiler; // required by JavaDoc
@@ -168,7 +166,7 @@ public abstract class AbstractPlay2EnhanceMojo
                     getResolvedArtifact( sbtCompilerPluginGroupId, "sbt-compiler-" + compilerId,
                                          getSbtCompilerPluginVersion() );
 
-                Set<Artifact> compilerDependencies = getAllDependencies( compilerArtifact );
+                Set<Artifact> compilerDependencies = getAllDependencies( compilerArtifact, null );
                 List<File> classPathFiles = new ArrayList<File>( compilerDependencies.size() + 2 );
                 classPathFiles.add( compilerArtifact.getFile() );
                 for ( Artifact dependencyArtifact : compilerDependencies )
@@ -209,15 +207,7 @@ public abstract class AbstractPlay2EnhanceMojo
         {
             throw new MojoExecutionException( "Compiler autodetection failed", e );
         }
-        catch ( InvalidDependencyVersionException e )
-        {
-            throw new MojoExecutionException( "Compiler autodetection failed", e );
-        }
         catch ( MalformedURLException e )
-        {
-            throw new MojoExecutionException( "Compiler autodetection failed", e );
-        }
-        catch ( ProjectBuildingException e )
         {
             throw new MojoExecutionException( "Compiler autodetection failed", e );
         }

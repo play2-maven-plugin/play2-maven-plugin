@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -40,22 +40,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 
 import org.codehaus.plexus.util.FileUtils;
 
@@ -85,12 +82,6 @@ public abstract class AbstractPlay2Mojo
     protected MavenProject project;
 
     /**
-     * Maven project builder used to resolve artifacts.
-     */
-    @Component
-    protected MavenProjectBuilder projectBuilder;
-
-    /**
      * Artifact factory used to look up artifacts in the remote repository.
      */
     @Component
@@ -113,6 +104,12 @@ public abstract class AbstractPlay2Mojo
      */
     @Parameter( property = "project.remoteArtifactRepositories", readonly = true, required = true )
     protected List<ArtifactRepository> remoteRepos;
+
+    /**
+     * For retrieval of artifact's metadata.
+     */
+    @Component
+    protected ArtifactMetadataSource metadataSource;
 
     /**
      * Plugin's groupId used for well known providers resolution
@@ -312,7 +309,7 @@ public abstract class AbstractPlay2Mojo
                 Artifact providerArtifact =
                     getResolvedArtifact( pluginGroupId, "play2-provider-" + providerId, pluginVersion );
 
-                Set<Artifact> providerDependencies = getAllDependencies( providerArtifact );
+                Set<Artifact> providerDependencies = getAllDependencies( providerArtifact, null );
                 List<File> classPathFiles = new ArrayList<File>( providerDependencies.size() + 2 );
                 classPathFiles.add( providerArtifact.getFile() );
                 for ( Artifact dependencyArtifact : providerDependencies )
@@ -351,15 +348,7 @@ public abstract class AbstractPlay2Mojo
         {
             throw new MojoExecutionException( "Provider autodetection failed", e );
         }
-        catch ( InvalidDependencyVersionException e )
-        {
-            throw new MojoExecutionException( "Provider autodetection failed", e );
-        }
         catch ( MalformedURLException e )
-        {
-            throw new MojoExecutionException( "Provider autodetection failed", e );
-        }
-        catch ( ProjectBuildingException e )
         {
             throw new MojoExecutionException( "Provider autodetection failed", e );
         }
@@ -375,54 +364,20 @@ public abstract class AbstractPlay2Mojo
         return artifact;
     }
 
-    protected/*private*/ Set<Artifact> getAllDependencies( Artifact artifact )
-        throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException,
-        ProjectBuildingException
+    protected/*private*/ Set<Artifact> getAllDependencies( Artifact artifact, ArtifactFilter filter )
+        throws ArtifactNotFoundException, ArtifactResolutionException
     {
-        Set<Artifact> result = new HashSet<Artifact>();
-        MavenProject p = projectBuilder.buildFromRepository( artifact, remoteRepos, localRepo );
-        Set<Artifact> d = resolveDependencyArtifacts( p );
-        result.addAll( d );
-        for ( Artifact dependency : d )
-        {
-            Set<Artifact> transitive = getAllDependencies( dependency );
-            result.addAll( transitive );
-        }
-        return result;
+        return getAllDependencies( Collections.singleton( artifact ), filter );
     }
 
-    /**
-     * This method resolves the dependency artifacts from the project.
-     * 
-     * @param theProject The POM.
-     * @return resolved set of dependency artifacts.
-     * @throws ArtifactResolutionException
-     * @throws ArtifactNotFoundException
-     * @throws InvalidDependencyVersionException
-     */
-    private Set<Artifact> resolveDependencyArtifacts( MavenProject theProject )
-        throws ArtifactNotFoundException, ArtifactResolutionException, InvalidDependencyVersionException
+    private Set<Artifact> getAllDependencies( Set<Artifact> artifacts, ArtifactFilter filter )
+        throws ArtifactNotFoundException, ArtifactResolutionException
     {
-        AndArtifactFilter filter = new AndArtifactFilter();
-        filter.add( new ScopeArtifactFilter( Artifact.SCOPE_TEST ) );
-        filter.add( new NonOptionalArtifactFilter() );
-        // TODO follow the dependenciesManagement and override rules
-        Set<Artifact> artifacts = theProject.createArtifacts( factory, Artifact.SCOPE_RUNTIME, filter );
-        for ( Artifact artifact : artifacts )
-        {
-            resolver.resolve( artifact, remoteRepos, localRepo );
-        }
-        return artifacts;
-    }
-
-    private static class NonOptionalArtifactFilter
-        implements ArtifactFilter
-    {
-        @Override
-        public boolean include( Artifact artifact )
-        {
-            return !artifact.isOptional();
-        }
+        Artifact originatingArtifact = factory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
+        ArtifactResolutionResult resolutionResult =
+            resolver.resolveTransitively( artifacts, originatingArtifact, localRepo, remoteRepos, metadataSource,
+                                          filter );
+        return resolutionResult.getArtifacts();
     }
 
 }
