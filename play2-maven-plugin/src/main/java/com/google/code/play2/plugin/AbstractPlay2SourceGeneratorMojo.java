@@ -101,7 +101,7 @@ public abstract class AbstractPlay2SourceGeneratorMojo
         String result = null;
         try
         {
-            BufferedReader is = createBufferedFileReader( file, sourceEncoding/*FIXME-what if not specified?*/ );
+            BufferedReader is = createBufferedFileReader( file, sourceEncoding );
             try
             {
                 int i = 0;
