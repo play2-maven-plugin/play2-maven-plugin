@@ -22,8 +22,7 @@ import java.util.Arrays;
 
 import scala.collection.JavaConversions;
 
-import play.router.RoutesCompiler$;
-import play.router.RoutesCompiler.RoutesCompilationError;
+import play.router.RoutesCompiler;
 
 import com.google.code.play2.provider.api.Play2RoutesCompiler;
 import com.google.code.play2.provider.api.RoutesCompilationException;
@@ -99,11 +98,11 @@ public class Play23RoutesCompiler
 
         try
         {
-            RoutesCompiler$.MODULE$.compile( routesFile, outputDirectory,
-                                             JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ), true,
-                                             true, false );
+            RoutesCompiler.compile( routesFile, outputDirectory,
+                                    JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ), true, true,
+                                    false );
         }
-        catch ( RoutesCompilationError e )
+        catch ( RoutesCompiler.RoutesCompilationError e )
         {
             throw new RoutesCompilationException( e.source(), e.message(), (Integer) e.line().get(),
                                                   (Integer) e.column().get() );

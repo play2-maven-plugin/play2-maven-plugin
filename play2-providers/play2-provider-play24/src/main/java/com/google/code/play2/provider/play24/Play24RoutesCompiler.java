@@ -27,7 +27,6 @@ import scala.util.Either;
 import play.routes.compiler.InjectedRoutesGenerator$;
 import play.routes.compiler.RoutesCompilationError;
 import play.routes.compiler.RoutesCompiler;
-import play.routes.compiler.RoutesCompiler$;
 import play.routes.compiler.RoutesGenerator;
 import play.routes.compiler.StaticRoutesGenerator$;
 
@@ -118,7 +117,7 @@ public class Play24RoutesCompiler
                                                    JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ),
                                                    true, true, false ); // TODO - should be parametrizable in the future
         Either<Seq<RoutesCompilationError>, Seq<File>> result =
-            RoutesCompiler$.MODULE$.compile( routesCompilerTask, routesGenerator, outputDirectory );
+            RoutesCompiler.compile( routesCompilerTask, routesGenerator, outputDirectory );
         if ( result.isLeft() )
         {
             RoutesCompilationError e = result.left().get().apply( 0 );
