@@ -19,7 +19,6 @@ package com.google.code.play2.plugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -101,7 +100,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
         File generatedDirectory = new File( targetDirectory, targetDirectoryName );
 
         boolean resourceAlreadyAdded = false;
-        for ( Resource res : (List<Resource>) project.getResources() )
+        for ( Resource res : project.getResources() )
         {
             if ( res.getDirectory().equals( generatedDirectory.getAbsolutePath() ) )
             {

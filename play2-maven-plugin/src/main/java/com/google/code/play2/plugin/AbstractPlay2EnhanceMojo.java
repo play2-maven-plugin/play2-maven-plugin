@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -162,19 +161,14 @@ public abstract class AbstractPlay2EnhanceMojo
             }
             if ( compilerClassLoader == null )
             {
-                Artifact compilerArtifact =
+                Set<Artifact> compilerArtifacts =
                     getResolvedArtifact( sbtCompilerPluginGroupId, "sbt-compiler-" + compilerId,
                                          getSbtCompilerPluginVersion() );
-
-                Set<Artifact> compilerDependencies = getAllDependencies( compilerArtifact, null );
-                List<File> classPathFiles = new ArrayList<File>( compilerDependencies.size() + 2 );
-                classPathFiles.add( compilerArtifact.getFile() );
-                for ( Artifact dependencyArtifact : compilerDependencies )
+                List<File> classPathFiles = new ArrayList<File>( compilerArtifacts.size()/*compilerDependencies.size() + 2*/ );
+                for ( Artifact dependencyArtifact : compilerArtifacts/*compilerDependencies*/ )
                 {
                     classPathFiles.add( dependencyArtifact.getFile() );
                 }
-//                String javaHome = System.getProperty( "java.home" );
-//                classPathFiles.add( new File( javaHome, "../lib/tools.jar" ) );
 
                 List<URL> classPathUrls = new ArrayList<URL>( classPathFiles.size() );
                 for ( File classPathFile : classPathFiles )
@@ -198,10 +192,6 @@ public abstract class AbstractPlay2EnhanceMojo
             getLog().debug( String.format( "Using autodetected compiler \"%s\".", compilerId ) );
 
             return sbtAnalysisProcessor;
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "Compiler autodetection failed", e );
         }
         catch ( ArtifactResolutionException e )
         {

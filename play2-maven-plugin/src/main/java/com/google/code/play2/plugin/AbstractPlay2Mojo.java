@@ -31,7 +31,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -39,20 +38,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.artifact.resolver.ResolutionErrorHandler;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 
 import org.codehaus.plexus.util.FileUtils;
 
@@ -79,19 +77,13 @@ public abstract class AbstractPlay2Mojo
      * <i>Maven Internal</i>: Project to interact with.
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
-    protected MavenProject project;
+    protected MavenProject project; // == session.getCurrentProject()
 
     /**
-     * Artifact factory used to look up artifacts in the remote repository.
+     * The current build session instance.
      */
-    @Component
-    protected ArtifactFactory factory;
-
-    /**
-     * Artifact resolver used to resolve artifacts.
-     */
-    @Component
-    protected ArtifactResolver resolver;
+    @Parameter( defaultValue= "${session}", readonly = true, required = true )
+    protected MavenSession session;
 
     /**
      * Location of the local repository.
@@ -106,10 +98,16 @@ public abstract class AbstractPlay2Mojo
     protected List<ArtifactRepository> remoteRepos;
 
     /**
-     * For retrieval of artifact's metadata.
+     * ...
      */
     @Component
-    protected ArtifactMetadataSource metadataSource;
+    protected RepositorySystem repositorySystem;
+
+    /**
+     * ...
+     */
+    @Component
+    protected ResolutionErrorHandler resolutionErrorHandler;
 
     /**
      * Plugin's groupId used for well known providers resolution
@@ -306,13 +304,10 @@ public abstract class AbstractPlay2Mojo
 
             if ( providerClassLoader == null )
             {
-                Artifact providerArtifact =
+                Set<Artifact> providerArtifacts =
                     getResolvedArtifact( pluginGroupId, "play2-provider-" + providerId, pluginVersion );
-
-                Set<Artifact> providerDependencies = getAllDependencies( providerArtifact, null );
-                List<File> classPathFiles = new ArrayList<File>( providerDependencies.size() + 2 );
-                classPathFiles.add( providerArtifact.getFile() );
-                for ( Artifact dependencyArtifact : providerDependencies )
+                List<File> classPathFiles = new ArrayList<File>( providerArtifacts.size()/*providerDependencies.size() + 2*/ );
+                for ( Artifact dependencyArtifact : providerArtifacts/*providerDependencies*/ )
                 {
                     classPathFiles.add( dependencyArtifact.getFile() );
                 }
@@ -340,10 +335,6 @@ public abstract class AbstractPlay2Mojo
 
             return provider;
         }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new MojoExecutionException( "Provider autodetection failed", e );
-        }
         catch ( ArtifactResolutionException e )
         {
             throw new MojoExecutionException( "Provider autodetection failed", e );
@@ -356,28 +347,16 @@ public abstract class AbstractPlay2Mojo
 
     // Private utility methods
 
-    protected/*private*/ Artifact getResolvedArtifact( String groupId, String artifactId, String version )
-        throws ArtifactNotFoundException, ArtifactResolutionException
+    protected/*private*/ Set<Artifact> getResolvedArtifact( String groupId, String artifactId, String version )
+        throws ArtifactResolutionException
     {
-        Artifact artifact = factory.createArtifact( groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar" );
-        resolver.resolve( artifact, remoteRepos, localRepo );
-        return artifact;
-    }
-
-    protected/*private*/ Set<Artifact> getAllDependencies( Artifact artifact, ArtifactFilter filter )
-        throws ArtifactNotFoundException, ArtifactResolutionException
-    {
-        return getAllDependencies( Collections.singleton( artifact ), filter );
-    }
-
-    private Set<Artifact> getAllDependencies( Set<Artifact> artifacts, ArtifactFilter filter )
-        throws ArtifactNotFoundException, ArtifactResolutionException
-    {
-        Artifact originatingArtifact = factory.createBuildArtifact( "dummy", "dummy", "1.0", "jar" );
-        ArtifactResolutionResult resolutionResult =
-            resolver.resolveTransitively( artifacts, originatingArtifact, localRepo, remoteRepos, metadataSource,
-                                          filter );
-        return resolutionResult.getArtifacts();
+        Artifact artifact =
+            repositorySystem.createArtifact( groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar" );
+        ArtifactResolutionRequest request =
+            new ArtifactResolutionRequest().setArtifact( artifact ).setLocalRepository( localRepo ).setRemoteRepositories( remoteRepos ).setResolveTransitively( true );
+        ArtifactResolutionResult result = repositorySystem.resolve( request );
+        resolutionErrorHandler.throwErrors( request, result );        
+        return result.getArtifacts();
     }
 
 }
