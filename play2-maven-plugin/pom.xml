@@ -189,8 +189,7 @@ under the License.
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
-            <version>2.0.6</version> <!-- compatible with M2Eclipse 1.4 (Scala IDE 3.0.x), M2E 1.5 (Scala IDE 4.0.x) contains p-u-3.0.17 -->
-            <!--<version>3.0.21</version>-->
+            <version>3.0.24</version>
         </dependency>
 
         <dependency>
