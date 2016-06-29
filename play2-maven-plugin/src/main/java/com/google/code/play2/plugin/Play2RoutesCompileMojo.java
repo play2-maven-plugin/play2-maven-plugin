@@ -149,7 +149,8 @@ public class Play2RoutesCompileMojo
         String mainRoutesFileName = compiler.getMainRoutesFileName();
 
         int compiledFiles = 0;
-        int errors = 0;
+        RoutesCompilationException firstException = null;
+
         for ( String fileName : files )
         {
             File routesFile = new File( confDirectory, fileName );
@@ -172,7 +173,10 @@ public class Play2RoutesCompileMojo
                 }
                 catch ( RoutesCompilationException e )
                 {
-                    errors ++;
+                    if ( firstException == null )
+                    {
+                        firstException = e;
+                    }
                     reportCompilationProblems( routesFile, e );
                 }
             }
@@ -182,9 +186,9 @@ public class Play2RoutesCompileMojo
             }
         }
 
-        if ( errors > 0 )
+        if ( firstException != null )
         {
-            throw new MojoFailureException( "Routers compilation failed" );
+            throw new MojoFailureException( "Routers compilation failed", firstException );
         }
 
         getLog().info( String.format( "%d router%s processed, %d compiled", Integer.valueOf( files.length ),

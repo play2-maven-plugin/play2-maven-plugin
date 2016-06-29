@@ -68,7 +68,6 @@ public class Play2TemplateCompileMojo
         Play2Provider play2Provider = getProvider();
         Play2TemplateCompiler compiler = play2Provider.getTemplatesCompiler();
 
-
         File targetDirectory = new File( project.getBuild().getDirectory() );
         String outputDirectoryName = compiler.getCustomOutputDirectoryName();
         if ( outputDirectoryName == null )
@@ -81,7 +80,8 @@ public class Play2TemplateCompileMojo
 
         int processedFiles = 0;
         int compiledFiles = 0;
-        int errors = 0;
+        TemplateCompilationException firstException = null;
+
         List<String> compileSourceRoots = project.getCompileSourceRoots();
         for ( String sourceRoot : compileSourceRoots )
         {
@@ -120,7 +120,10 @@ public class Play2TemplateCompileMojo
                         }
                         catch ( TemplateCompilationException e )
                         {
-                            errors ++;
+                            if ( firstException == null )
+                            {
+                                firstException = e;
+                            }
                             reportCompilationProblems( templateFile, e );
                         }
                     }
@@ -130,9 +133,9 @@ public class Play2TemplateCompileMojo
 
         if ( processedFiles > 0 )
         {
-            if ( errors > 0 )
+            if ( firstException != null )
             {
-                throw new MojoFailureException( "Template compilation failed" );
+                throw new MojoFailureException( "Template compilation failed", firstException );
             }
 
             getLog().info( String.format( "%d template%s processed, %d compiled", Integer.valueOf( processedFiles ),
