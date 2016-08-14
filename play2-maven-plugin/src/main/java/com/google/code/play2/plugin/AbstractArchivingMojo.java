@@ -29,6 +29,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.war.WarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.archiver.tar.TarArchiver;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.io.RawInputStreamFacade;
@@ -110,6 +111,20 @@ public abstract class AbstractArchivingMojo
         throws NoSuchArchiverException
     {
         ZipArchiver result = (ZipArchiver) archiverManager.getArchiver( "zip" );
+        result.setDuplicateBehavior( Archiver.DUPLICATES_FAIL ); // Just in case
+        return result;
+    }
+
+    /**
+     * Returns preconfigured ZIP archiver
+     * 
+     * @return ZIP archiver
+     * @throws NoSuchArchiverException should never be thrown
+     */
+    protected TarArchiver getTarArchiver()
+        throws NoSuchArchiverException
+    {
+        TarArchiver result = (TarArchiver) archiverManager.getArchiver( "tar" );
         result.setDuplicateBehavior( Archiver.DUPLICATES_FAIL ); // Just in case
         return result;
     }
