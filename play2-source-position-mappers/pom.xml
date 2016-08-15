@@ -52,51 +52,10 @@ under the License.
                             <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
                             <link>http://sbt-compiler-maven-plugin.github.io/sbt-compiler-maven-plugin/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
                         </links>
-                        <notimestamp>true</notimestamp>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
-
-    <profiles>
-        <profile>
-            <id>publicsite</id> <!-- site version to be uploaded -->
-
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <links>
-                                <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
-                                <link>http://sbt-compiler-maven-plugin.github.io/sbt-compiler-maven-plugin/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
-                            </links>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-
-        <profile>
-            <id>fullsite</id>
-
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <links>
-                                <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
-                                <link>http://sbt-compiler-maven-plugin.github.io/sbt-compiler-maven-plugin/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
-                            </links>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-    </profiles>
 
 </project>
