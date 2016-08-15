@@ -95,10 +95,10 @@ under the License.
                     <groupId>org.apache.maven</groupId>
                     <artifactId>maven-repository-metadata</artifactId>
                 </exclusion>
-                <exclusion>
+                <!-- required by javadoc <exclusion>
                     <groupId>org.apache.maven</groupId>
                     <artifactId>maven-settings</artifactId>
-                </exclusion>
+                </exclusion> -->
                 <exclusion>
                     <groupId>org.apache.maven</groupId>
                     <artifactId>maven-settings-builder</artifactId>
@@ -119,10 +119,10 @@ under the License.
                     <groupId>org.sonatype.plexus</groupId>
                     <artifactId>plexus-sec-dispatcher</artifactId>
                 </exclusion>
-                <exclusion>
+                <!-- required by javadoc <exclusion>
                     <groupId>org.sonatype.aether</groupId>
                     <artifactId>aether-api</artifactId>
-                </exclusion>
+                </exclusion> -->
                 <exclusion>
                     <groupId>org.sonatype.aether</groupId>
                     <artifactId>aether-impl</artifactId>
@@ -229,8 +229,8 @@ under the License.
                         <links>
                             <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
                             <link>http://maven.apache.org/ref/${maven.version}/maven-artifact/apidocs/</link>
+                            <link>http://maven.apache.org/ref/${maven.version}/maven-core/apidocs/</link>
                             <link>http://maven.apache.org/ref/${maven.version}/maven-plugin-api/apidocs/</link>
-                            <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
                             <link>http://play2-maven-plugin.github.io/external-apidocs/org/apache/ant/ant/${ant.version}/</link>
                             <link>http://play2-maven-plugin.github.io/external-apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
                             <link>http://sbt-compiler-maven-plugin.github.io/sbt-compiler-maven-plugin/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
@@ -295,8 +295,8 @@ under the License.
                             <links>
                                 <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
                                 <link>http://maven.apache.org/ref/${maven.version}/maven-artifact/apidocs/</link>
+                                <link>http://maven.apache.org/ref/${maven.version}/maven-core/apidocs/</link>
                                 <link>http://maven.apache.org/ref/${maven.version}/maven-plugin-api/apidocs/</link>
-                                <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
                                 <link>http://play2-maven-plugin.github.io/external-apidocs/org/apache/ant/ant/${ant.version}/</link>
                                 <link>http://play2-maven-plugin.github.io/external-apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
                                 <link>http://sbt-compiler-maven-plugin.github.io/sbt-compiler-maven-plugin/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
@@ -339,8 +339,8 @@ under the License.
                             <links>
                                 <link>http://docs.oracle.com/javase/1.6.0/docs/api/</link>
                                 <link>http://maven.apache.org/ref/${maven.version}/maven-artifact/apidocs/</link>
+                                <link>http://maven.apache.org/ref/${maven.version}/maven-core/apidocs/</link>
                                 <link>http://maven.apache.org/ref/${maven.version}/maven-plugin-api/apidocs/</link>
-                                <link>http://maven.apache.org/ref/${maven.version}/maven-project/apidocs/</link>
                                 <link>http://play2-maven-plugin.github.io/external-apidocs/org/apache/ant/ant/${ant.version}/</link>
                                 <link>http://play2-maven-plugin.github.io/external-apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
                                 <link>http://sbt-compiler-maven-plugin.github.io/sbt-compiler-maven-plugin/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
