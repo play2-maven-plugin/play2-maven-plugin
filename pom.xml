@@ -250,7 +250,7 @@ under the License.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.4</version>
+                    <version>3.5.1</version>
                     <configuration>
                         <attributes>
                             <buildHelperPluginVersion>1.9.1</buildHelperPluginVersion>
@@ -272,7 +272,7 @@ under the License.
                         <dependency>
                             <groupId>org.apache.maven.doxia</groupId>
                             <artifactId>doxia-module-markdown</artifactId>
-                            <version>1.6</version>
+                            <version>1.7</version>
                         </dependency>
                     </dependencies>
                 </plugin>
