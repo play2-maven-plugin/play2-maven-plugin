@@ -39,7 +39,7 @@ under the License.
     <properties>
         <ant.version>1.9.4</ant.version>
         <maven.version>3.0</maven.version>
-        <maven-plugin-plugin.version>3.4</maven-plugin-plugin.version>
+        <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
         <plexus-archiver.version>3.0</plexus-archiver.version>
     </properties>
 
@@ -212,24 +212,6 @@ under the License.
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jxr-plugin</artifactId>
-                    <configuration>
-                        <excludes>
-                            <exclude>com/google/code/play2/plugin/HelpMojo.java</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <configuration>
-                        <excludeFilterFile>${basedir}/findbugs-exclude.xml</excludeFilterFile>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <sourcepath>${project.basedir}/src/main/java:${project.basedir}/../play2-provider-api/src/main/java</sourcepath>
@@ -243,6 +225,16 @@ under the License.
                             <link>http://play2-maven-plugin.github.io/external-apidocs/org/codehaus/plexus/plexus-archiver/${plexus-archiver.version}/</link>
                             <link>http://sbt-compiler-maven-plugin.github.io/sbt-compiler-maven-plugin/${sbt-compiler.plugin.version}/sbt-compiler-api/apidocs/</link>
                         </links>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>com/google/code/play2/plugin/HelpMojo.java</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
 
@@ -272,6 +264,14 @@ under the License.
                         <excludes>
                             <exclude>com/google/code/play2/plugin/HelpMojo.java</exclude>
                         </excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <configuration>
+                        <excludeFilterFile>${basedir}/findbugs-exclude.xml</excludeFilterFile>
                     </configuration>
                 </plugin>
             </plugins>
