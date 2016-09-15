@@ -505,18 +505,6 @@ under the License.
                             </reportSet>
                         </reportSets>
                     </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jxr-plugin</artifactId>
-                        <reportSets>
-                            <reportSet>
-                                <reports>
-                                    <report>jxr</report> <!-- skip: aggregate, test-jxr and test-aggregate reports -->
-                                </reports>
-                            </reportSet>
-                        </reportSets>
-                    </plugin>
                 </plugins>
             </reporting>
         </profile>
