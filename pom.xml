@@ -77,7 +77,7 @@ under the License.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <sbt-compiler.plugin.version>1.0.0-beta8</sbt-compiler.plugin.version>
+        <sbt-compiler.plugin.version>1.0.0-beta9</sbt-compiler.plugin.version>
     </properties>
 
     <modules>
