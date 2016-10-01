@@ -19,6 +19,9 @@ package com.google.code.play2.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -52,6 +55,14 @@ public class Play2TemplateCompileMojo
     @Parameter( property = "play2.mainLang", required = true, defaultValue = "scala" )
     private String mainLang;
 
+    /**
+     * Additional imports for templates.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.templateAdditionalImports" )
+    private String templateAdditionalImports;
+
     private static final String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
 
     @Override
@@ -76,7 +87,23 @@ public class Play2TemplateCompileMojo
         }
         File generatedDirectory = new File( targetDirectory, outputDirectoryName + "/main" );
         compiler.setOutputDirectory( generatedDirectory );
-        compiler.setMainLang( mainLang );
+
+        List<String> resolvedAdditionalImports = Collections.emptyList();
+        if ( "java".equalsIgnoreCase( mainLang ) )
+        {
+            resolvedAdditionalImports = compiler.getDefaultJavaImports();
+        }
+        else if ( "scala".equalsIgnoreCase( mainLang ) )
+        {
+            resolvedAdditionalImports = compiler.getDefaultScalaImports();
+        }
+        if ( templateAdditionalImports != null && !"".equals( templateAdditionalImports ) )
+        {
+            resolvedAdditionalImports = new ArrayList<String>( resolvedAdditionalImports ); // mutable list
+            String[] additionalImports = templateAdditionalImports.split( "[ \\r\\n]+" );
+            resolvedAdditionalImports.addAll( Arrays.asList( additionalImports ) );
+        }
+        compiler.setAdditionalImports( resolvedAdditionalImports );
 
         int processedFiles = 0;
         int compiledFiles = 0;

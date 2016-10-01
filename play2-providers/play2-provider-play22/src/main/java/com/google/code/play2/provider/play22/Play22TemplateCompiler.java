@@ -18,6 +18,8 @@
 package com.google.code.play2.provider.play22;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 import scala.Option;
 
@@ -69,11 +71,11 @@ public class Play22TemplateCompiler
         "play.api.data._",
         "views.%format%._" };
 
-    private String mainLang;
-
     private File sourceDirectory;
 
     private File outputDirectory;
+
+    private List<String> additionalImports;
 
     @Override
     public String getCustomOutputDirectoryName()
@@ -82,9 +84,15 @@ public class Play22TemplateCompiler
     }
 
     @Override
-    public void setMainLang( String mainLang )
+    public List<String> getDefaultJavaImports()
     {
-        this.mainLang = mainLang;
+        return Arrays.asList( javaAdditionalImports );
+    }
+
+    @Override
+    public List<String> getDefaultScalaImports()
+    {
+        return Arrays.asList( scalaAdditionalImports );
     }
 
     @Override
@@ -100,6 +108,12 @@ public class Play22TemplateCompiler
     }
 
     @Override
+    public void setAdditionalImports( List<String> additionalImports )
+    {
+        this.additionalImports = additionalImports;
+    }
+
+    @Override
     public File compile( File templateFile )
         throws TemplateCompilationException
     {
@@ -107,11 +121,11 @@ public class Play22TemplateCompiler
 
         String fileName = templateFile.getName();
         String ext = fileName.substring( fileName.lastIndexOf( '.' ) + 1 );
-        String importsAsString = getImportsAsString( ext );
         int index = getTemplateExtIndex( ext );
         if ( index >= 0 )
         {
             String formatterType = formatterTypes[index];
+            String importsAsString = getImportsAsString( ext );
             try
             {
                 Option<File> resultOption =
@@ -143,15 +157,6 @@ public class Play22TemplateCompiler
 
     private String getImportsAsString( String format )
     {
-        String[] additionalImports = {};
-        if ( "java".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = javaAdditionalImports;
-        }
-        else if ( "scala".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = scalaAdditionalImports;
-        }
         StringBuilder sb = new StringBuilder();
         for ( String additionalImport : additionalImports )
         {

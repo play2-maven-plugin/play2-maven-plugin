@@ -18,6 +18,7 @@
 package com.google.code.play2.provider.api;
 
 import java.io.File;
+import java.util.List;
 
 public interface Play2TemplateCompiler
 {
@@ -25,13 +26,17 @@ public interface Play2TemplateCompiler
 
     String getCustomOutputDirectoryName();
 
-    // operation
+    List<String> getDefaultJavaImports();
 
-    void setMainLang( String mainLang );
+    List<String> getDefaultScalaImports();
+
+    // operation
 
     void setSourceDirectory( File sourceDirectory );
 
     void setOutputDirectory( File outputDirectory );
+
+    void setAdditionalImports( List<String> additionalImports );
 
     File compile( File templateFile ) throws TemplateCompilationException;
 

@@ -18,7 +18,6 @@
 package com.google.code.play2.provider.play25;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 import scala.Option;
@@ -47,22 +46,16 @@ public class Play25TemplateCompiler
         "play.twirl.api.XmlFormat",
         "play.twirl.api.JavaScriptFormat" };
 
-    private String mainLang;
-
     private File sourceDirectory;
 
     private File outputDirectory;
+
+    private List<String> additionalImports;
 
     @Override
     public String getCustomOutputDirectoryName()
     {
         return "twirl";
-    }
-
-    @Override
-    public void setMainLang( String mainLang )
-    {
-        this.mainLang = mainLang;
     }
 
     @Override
@@ -78,6 +71,24 @@ public class Play25TemplateCompiler
     }
 
     @Override
+    public List<String> getDefaultJavaImports()
+    {
+        return TemplateImports.defaultJavaTemplateImports;
+    }
+
+    @Override
+    public List<String> getDefaultScalaImports()
+    {
+        return TemplateImports.defaultScalaTemplateImports;
+    }
+
+    @Override
+    public void setAdditionalImports( List<String> additionalImports )
+    {
+        this.additionalImports = additionalImports;
+    }
+
+    @Override
     public File compile( File templateFile )
         throws TemplateCompilationException
     {
@@ -85,11 +96,11 @@ public class Play25TemplateCompiler
 
         String fileName = templateFile.getName();
         String ext = fileName.substring( fileName.lastIndexOf( '.' ) + 1 );
-        String importsAsString = getImportsAsString( ext );
         int index = getTemplateExtIndex( ext );
         if ( index >= 0 )
         {
             String formatterType = formatterTypes[index];
+            String importsAsString = getImportsAsString( ext );
             try
             {
                 Option<File> resultOption =
@@ -121,15 +132,6 @@ public class Play25TemplateCompiler
 
     private String getImportsAsString( String format )
     {
-        List<String> additionalImports = Collections.emptyList();
-        if ( "java".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = TemplateImports.defaultJavaTemplateImports;
-        }
-        else if ( "scala".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = TemplateImports.defaultScalaTemplateImports;
-        }
         StringBuilder sb = new StringBuilder();
         for ( String additionalImport : additionalImports )
         {
