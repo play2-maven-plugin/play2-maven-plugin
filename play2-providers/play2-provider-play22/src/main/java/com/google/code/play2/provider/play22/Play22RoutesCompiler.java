@@ -19,6 +19,7 @@ package com.google.code.play2.provider.play22;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import scala.collection.JavaConversions;
 
@@ -36,9 +37,9 @@ public class Play22RoutesCompiler
 
     private static final String[] supportedGenerators = new String[] { "static" };
 
-    private String mainLang;
-
     private File outputDirectory;
+
+    private List<String> additionalImports;
 
     @Override
     public String getCustomOutputDirectoryName()
@@ -65,9 +66,15 @@ public class Play22RoutesCompiler
     }
 
     @Override
-    public void setMainLang( String mainLang )
+    public List<String> getDefaultJavaImports()
     {
-        this.mainLang = mainLang;
+        return Arrays.asList( javaAdditionalImports );
+    }
+
+    @Override
+    public List<String> getDefaultScalaImports()
+    {
+        return Arrays.asList( scalaAdditionalImports );
     }
 
     @Override
@@ -83,23 +90,19 @@ public class Play22RoutesCompiler
     }
 
     @Override
+    public void setAdditionalImports( List<String> additionalImports )
+    {
+        this.additionalImports = additionalImports;
+    }
+
+    @Override
     public void compile( File routesFile )
         throws RoutesCompilationException
     {
-        String[] additionalImports = {};
-        if ( "java".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = javaAdditionalImports;
-        }
-        else if ( "scala".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = scalaAdditionalImports;
-        }
-
         try
         {
-            RoutesCompiler.compile( routesFile, outputDirectory,
-                                    JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ), true, false );
+            RoutesCompiler.compile( routesFile, outputDirectory, JavaConversions.asScalaBuffer( additionalImports ),
+                                    true, false );
         }
         catch ( RoutesCompiler.RoutesCompilationError e )
         {

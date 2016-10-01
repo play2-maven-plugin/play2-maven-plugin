@@ -19,7 +19,10 @@ package com.google.code.play2.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -71,6 +74,14 @@ public class Play2RoutesCompileMojo
     @Parameter( property = "play2.routesGenerator" )
     private String routesGenerator;
 
+    /**
+     * Additional imports for the router.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.routesAdditionalImports" )
+    private String routesAdditionalImports;
+
     private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
 
     @Override
@@ -113,6 +124,7 @@ public class Play2RoutesCompileMojo
             outputDirectoryName = defaultTargetDirectoryName;
         }
         File generatedDirectory = new File( targetDirectory, outputDirectoryName + "/main" );
+        compiler.setOutputDirectory( generatedDirectory );
 
         String[] supportedGenerators = compiler.getSupportedGenerators();
         if ( routesGenerator != null && !routesGenerator.isEmpty() )
@@ -143,8 +155,23 @@ public class Play2RoutesCompileMojo
             getLog().info( String.format( "Generating %s router", supportedGenerators[0] ) ); // default
         }
 
-        compiler.setMainLang( mainLang );
-        compiler.setOutputDirectory( generatedDirectory );
+        List<String> resolvedAdditionalImports = Collections.emptyList();
+        if ( "java".equalsIgnoreCase( mainLang ) )
+        {
+            resolvedAdditionalImports = compiler.getDefaultJavaImports();
+        }
+        else if ( "scala".equalsIgnoreCase( mainLang ) )
+        {
+            resolvedAdditionalImports = compiler.getDefaultScalaImports();
+        }
+        if ( routesAdditionalImports != null && !"".equals( routesAdditionalImports ) )
+        {
+            resolvedAdditionalImports = new ArrayList<String>( resolvedAdditionalImports ); // mutable list
+            String[] additionalImports = routesAdditionalImports.split( "[ \\r\\n]+" );
+            resolvedAdditionalImports.addAll( Arrays.asList( additionalImports ) );
+        }
+        compiler.setAdditionalImports( resolvedAdditionalImports );
+
         String defaultNamespace = compiler.getDefaultNamespace();
         String mainRoutesFileName = compiler.getMainRoutesFileName();
 

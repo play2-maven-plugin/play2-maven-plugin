@@ -18,6 +18,7 @@
 package com.google.code.play2.provider.api;
 
 import java.io.File;
+import java.util.List;
 
 public interface Play2RoutesCompiler
 {
@@ -31,13 +32,17 @@ public interface Play2RoutesCompiler
 
     String[] getSupportedGenerators();
 
-    // operation
+    List<String> getDefaultJavaImports();
 
-    void setMainLang( String mainLang );
+    List<String> getDefaultScalaImports();
+
+    // operation
 
     void setOutputDirectory( File outputDirectory );
 
     void setGenerator( String generator );
+
+    void setAdditionalImports( List<String> additionalImports );
 
     void compile( File routesFile )
         throws RoutesCompilationException;

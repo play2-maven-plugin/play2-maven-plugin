@@ -19,6 +19,7 @@ package com.google.code.play2.provider.play25;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import scala.collection.JavaConversions;
 import scala.collection.Seq;
@@ -42,11 +43,11 @@ public class Play25RoutesCompiler
 
     private static final String[] supportedGenerators = new String[] { "injected", "static" };
 
-    private String mainLang;
-
     private File outputDirectory;
 
     private String generator;
+
+    private List<String> additionalImports;
 
     @Override
     public String getCustomOutputDirectoryName()
@@ -73,9 +74,15 @@ public class Play25RoutesCompiler
     }
 
     @Override
-    public void setMainLang( String mainLang )
+    public List<String> getDefaultJavaImports()
     {
-        this.mainLang = mainLang;
+        return Arrays.asList( javaAdditionalImports );
+    }
+
+    @Override
+    public List<String> getDefaultScalaImports()
+    {
+        return Arrays.asList( scalaAdditionalImports );
     }
 
     @Override
@@ -94,27 +101,22 @@ public class Play25RoutesCompiler
     }
 
     @Override
+    public void setAdditionalImports( List<String> additionalImports )
+    {
+        this.additionalImports = additionalImports;
+    }
+
+    @Override
     public void compile( File routesFile )
         throws RoutesCompilationException
     {
-        String[] additionalImports = {};
-        if ( "java".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = javaAdditionalImports;
-        }
-        else if ( "scala".equalsIgnoreCase( mainLang ) )
-        {
-            additionalImports = scalaAdditionalImports;
-        }
-
         RoutesGenerator routesGenerator = InjectedRoutesGenerator$.MODULE$;
         if ( "static".equals( generator ) )
         {
             routesGenerator = StaticRoutesGenerator$.MODULE$;
         }
         RoutesCompiler.RoutesCompilerTask routesCompilerTask =
-            new RoutesCompiler.RoutesCompilerTask( routesFile,
-                                                   JavaConversions.asScalaBuffer( Arrays.asList( additionalImports ) ),
+            new RoutesCompiler.RoutesCompilerTask( routesFile, JavaConversions.asScalaBuffer( additionalImports ),
                                                    true, true, false ); // TODO - should be parametrizable in the future
         Either<Seq<RoutesCompilationError>, Seq<File>> result =
             RoutesCompiler.compile( routesCompilerTask, routesGenerator, outputDirectory );
