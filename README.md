@@ -1,6 +1,6 @@
 ### About
 
-Play2 Maven Plugin is [Maven](http://maven.apache.org) plugin for [Play! Framework](http://www.playframework.org) applications.
+Play2 Maven Plugin is [Apache Maven](http://maven.apache.org) plugin for [Play! Framework](http://www.playframework.org) applications.
 
 Project migrated from [Google Code](https://code.google.com/p/play2-maven-plugin/).
 
