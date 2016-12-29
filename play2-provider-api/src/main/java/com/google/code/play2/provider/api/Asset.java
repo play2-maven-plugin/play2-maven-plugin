@@ -17,15 +17,28 @@
 
 package com.google.code.play2.provider.api;
 
-public interface Play2Runner
+import java.io.File;
+
+public class Asset
 {
-    String getServerMainClass(); // prod server
+    private String prefix;
 
-    boolean supportsRunInDevMode();
+    private File dir;
 
-    String getPlayDocsModuleId( String scalaBinaryVersion, String playVersion );
-    
-    Play2DevServer runInDevMode( Play2RunnerConfiguration configuration )
-        throws Throwable;
+    public Asset( String prefix, File dir )
+    {
+        this.prefix = prefix;
+        this.dir = dir;
+    }
+
+    public String getPrefix()
+    {
+        return prefix;
+    }
+
+    public File getDir()
+    {
+        return dir;
+    }
 
 }

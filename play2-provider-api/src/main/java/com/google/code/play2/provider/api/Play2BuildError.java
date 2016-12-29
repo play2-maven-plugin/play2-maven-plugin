@@ -17,15 +17,29 @@
 
 package com.google.code.play2.provider.api;
 
-public interface Play2Runner
+public class Play2BuildError
+    extends Exception
 {
-    String getServerMainClass(); // prod server
+    private static final long serialVersionUID = 1L;
 
-    boolean supportsRunInDevMode();
+    public Play2BuildError()
+    {
+        super();
+    }
 
-    String getPlayDocsModuleId( String scalaBinaryVersion, String playVersion );
-    
-    Play2DevServer runInDevMode( Play2RunnerConfiguration configuration )
-        throws Throwable;
+    public Play2BuildError( String message )
+    {
+        super( message );
+    }
+
+    public Play2BuildError( Throwable cause )
+    {
+        super( cause );
+    }
+
+    public Play2BuildError( String message, Throwable cause )
+    {
+        super( message, cause );
+    }
 
 }

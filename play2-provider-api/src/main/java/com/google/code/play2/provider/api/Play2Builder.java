@@ -17,15 +17,13 @@
 
 package com.google.code.play2.provider.api;
 
-public interface Play2Runner
+import java.io.Closeable;
+
+public interface Play2Builder
+    extends Closeable
 {
-    String getServerMainClass(); // prod server
+    boolean/*Play2BuildResult*/ build() throws Play2BuildFailure, Play2BuildError;
 
-    boolean supportsRunInDevMode();
-
-    String getPlayDocsModuleId( String scalaBinaryVersion, String playVersion );
-    
-    Play2DevServer runInDevMode( Play2RunnerConfiguration configuration )
-        throws Throwable;
+    Object[] findSource( String className, Integer line );
 
 }
