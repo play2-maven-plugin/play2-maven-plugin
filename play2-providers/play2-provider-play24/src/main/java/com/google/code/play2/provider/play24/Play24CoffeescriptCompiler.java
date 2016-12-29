@@ -64,13 +64,13 @@ public class Play24CoffeescriptCompiler
         {
             Scriptable error = (Scriptable) e.getValue();
             String msg = (String) ScriptableObject.getProperty( error, "message" );
-            Integer line = null;
+            int line = 0;
             Matcher m = Pattern.compile( ".*on line ([0-9]+).*" ).matcher( msg );
             if ( m.find() )
             {
                 line = Integer.parseInt( m.group( 1 ) );
             }
-            throw new AssetCompilationException( source, msg, line, null );
+            throw new AssetCompilationException( source, msg, line, 0/*null*/ );
         }
     }
 

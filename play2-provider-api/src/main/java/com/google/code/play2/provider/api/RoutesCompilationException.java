@@ -22,11 +22,11 @@ import java.io.File;
 public class RoutesCompilationException
     extends SourceGenerationException
 {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    public RoutesCompilationException( File source, String message, Integer atLine, Integer column )
+    public RoutesCompilationException( File source, String message, int line, int position )
     {
-        super( source, message, atLine, column );
+        super( source, message, line, position );
     }
 
 }

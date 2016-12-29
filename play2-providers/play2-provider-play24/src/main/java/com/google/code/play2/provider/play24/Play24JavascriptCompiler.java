@@ -117,12 +117,12 @@ public class Play24JavascriptCompiler
                         break;
                     }
                 }
-                throw new AssetCompilationException( errorFile, error.description, error.lineNumber, null );
+                throw new AssetCompilationException( errorFile, error.description, error.lineNumber, 0/*null*/ );
             }
         }
         catch ( Exception e )
         {
-            throw new AssetCompilationException( source, "Internal Closure Compiler error (see logs)", null, null, e );
+            throw new AssetCompilationException( e, source, "Internal Closure Compiler error (see logs)", 0/*null*/, 0/*null*/ );
         }
     }
 
@@ -195,7 +195,7 @@ public class Play24JavascriptCompiler
         else
         {
             JSError error = compiler.getErrors()[0];
-            throw new AssetCompilationException( null, error.description, error.lineNumber, null );
+            throw new AssetCompilationException( null, error.description, error.lineNumber, 0/*null*/ );
         }
         /*
          * compiler.compile(Array[SourceFile](), input, options).success match { case true => compiler.toSource() case

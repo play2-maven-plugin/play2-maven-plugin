@@ -20,60 +20,18 @@ package com.google.code.play2.provider.api;
 import java.io.File;
 
 public class AssetCompilationException
-    extends Exception
+    extends Play2BuildException
 {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    private File source;
-
-    private Integer line;
-
-    private Integer position;
-
-    public AssetCompilationException( File source, String message, Integer atLine, Integer column )
+    public AssetCompilationException( File source, String message, int line, int position )
     {
-        super( "Compilation error[" + message + "]" );
-        this.source = source;
-        this.line = atLine;
-        this.position = column;
+        super( source, message, line, position );
     }
 
-    public AssetCompilationException( File source, String message, Integer atLine, Integer column, Throwable cause )
+    public AssetCompilationException( Throwable cause, File source, String message, int line, int position )
     {
-        super( "Compilation error[" + message + "]", cause );
-        this.source = source;
-        this.line = atLine;
-        this.position = column;
-    }
-
-    /**
-     * Error line number, if defined.
-     * 
-     * @return exception line number
-     */
-    public Integer line()
-    {
-        return line;
-    }
-
-    /**
-     * Column position, if defined.
-     * 
-     * @return exception column position
-     */
-    public Integer position()
-    {
-        return position;
-    }
-
-    /**
-     * Source file.
-     * 
-     * @return exception source file
-     */
-    public File source()
-    {
-        return source;
+        super( cause, source, message, line, position );
     }
 
 }

@@ -69,13 +69,11 @@ public class Play21LessCompiler
             String filename = (String) ScriptableObject.getProperty( error, "filename" );
             File file = new File( filename );
             throw new AssetCompilationException(
+                                                 e,
                                                  file,
                                                  (String) ScriptableObject.getProperty( error, "message" ),
-                                                 Integer.valueOf( ( (Double) ScriptableObject.getProperty( error,
-                                                                                                           "line" ) ).intValue() ),
-                                                 Integer.valueOf( ( (Double) ScriptableObject.getProperty( error,
-                                                                                                           "column" ) ).intValue() ),
-                                                 e );
+                                                 ( (Double) ScriptableObject.getProperty( error, "line" ) ).intValue(),
+                                                 ( (Double) ScriptableObject.getProperty( error, "column" ) ).intValue() );
         }
     }
 

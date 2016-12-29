@@ -68,13 +68,11 @@ public class Play24LessCompiler
             String filename = ScriptableObject.getProperty( error, "filename" ).toString();
             File file = new File( filename );
             throw new AssetCompilationException(
+                                                 e,
                                                  file,
                                                  ScriptableObject.getProperty( error, "message" ).toString(),
-                                                 Integer.valueOf( ( (Double) ScriptableObject.getProperty( error,
-                                                                                                           "line" ) ).intValue() ),
-                                                 Integer.valueOf( ( (Double) ScriptableObject.getProperty( error,
-                                                                                                           "column" ) ).intValue() ),
-                                                 e );
+                                                 ( (Double) ScriptableObject.getProperty( error, "line" ) ).intValue(),
+                                                 ( (Double) ScriptableObject.getProperty( error, "column" ) ).intValue() );
         }
     }
 

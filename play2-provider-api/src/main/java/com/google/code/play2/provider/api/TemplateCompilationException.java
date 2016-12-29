@@ -22,11 +22,11 @@ import java.io.File;
 public class TemplateCompilationException
     extends SourceGenerationException
 {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
-    public TemplateCompilationException( File source, String message, int atLine, int column )
+    public TemplateCompilationException( File source, String message, int line, int position )
     {
-        super( source, message, atLine, column );
+        super( source, message, line, position );
     }
 
 }
