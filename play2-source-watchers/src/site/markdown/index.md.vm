@@ -1,0 +1,19 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 About ${project.name}
+
+Built-in source files watch services.
+
+### Project Modules
+
+This project declares the following modules:
+
+| Name                                                                     | Description                        |
+|--------------------------------------------------------------------------|------------------------------------|
+| [JDK7 Source Watcher](./play2-source-watcher-jdk7/index.html)            | JDK7 Source Watcher                |
+| [JNotify Source Watcher](./play2-source-watcher-jnotify/index.html)      | JNotify Source Watcher             |
+| [Polling Source Watcher](./play2-source-watcher-polling/index.html)      | Polling Source Watcher             |
+

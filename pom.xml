@@ -85,6 +85,8 @@ under the License.
         <module>play2-provider-api</module>
         <module>play2-providers</module>
         <module>play2-source-position-mappers</module>
+        <module>play2-source-watcher-api</module>
+        <module>play2-source-watchers</module>
     </modules>
 
     <build>

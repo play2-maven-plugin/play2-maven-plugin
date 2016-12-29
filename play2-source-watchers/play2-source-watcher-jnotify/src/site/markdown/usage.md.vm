@@ -1,0 +1,117 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Selecting ${project.name}
+
+This file watch service is selected automatically on Apple machines and
+Linux or Windows machines with Java version before 1.7.
+
+If you want to force this service when it wasn't selected implicitely, there are three ways of doing so:
+
+$h4 - using project property.
+
+Add `play2.fileWatchService` project property with value `jnotify`.
+
+This is simplest and recommended way.
+
+```
+<project>
+    ...
+    <properties>
+        ...
+        <play2.fileWatchService>jnotify</play2.fileWatchService>
+    </properties>
+    ...
+</project>
+```
+
+$h4 - using plugin configuration parameter.
+
+Add `fileWatchService` parameter with value `jnotify` to plugin configuration section.
+
+```
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    ...
+                    <fileWatchService>jnotify</fileWatchService>
+                </configuration>
+            </plugin>
+            ...
+        </plugins>
+    </build>
+    ...
+</project>
+```
+
+$h4 - watch service as plugin dependency.
+
+Add file watch service artifact as plugin dependency.
+
+**Warning**:
+Only one file watch service can be added as plugin's dependency at a time. It will be selected regardless
+of the value of `fileWatchService` plugin configuration parameter or `play2.fileWatchService` project property.
+
+```
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            ...
+        </plugins>
+    </build>
+    ...
+</project>
+```
+
+$h2 Configuring ${project.name}
+
+This service has only one configuration parameter - `play2.nativeLibsDirectory`.
+This is the directory, where JNotify native library will be extracted.
+
+By default it's `native_libraries` subdirectory of project build (`target`) directory.
+
+It can be changed by adding `play2.nativeLibsDirectory` to project properties:
+
+```
+<project>
+    ...
+    <properties>
+        ...
+        <play2.nativeLibsDirectory>path/to/jnotify/native/library</play2.nativeLibsDirectory>
+    </properties>
+    ...
+</project>
+```
+
+or directly to Maven call:
+
+```
+mvn play2:run -Dplay2.nativeLibsDirectory=path/to/jnotify/native/library
+```

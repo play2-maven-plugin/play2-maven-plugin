@@ -1,0 +1,115 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Selecting ${project.name}
+
+This file watch service is selected automatically on machines with operation systems
+other than Linux, Windows, and Apple ones.
+
+If you want to force this service when it wasn't selected implicitely, there are three ways of doing so:
+
+$h4 - using project property.
+
+Add `play2.fileWatchService` project property with value `polling`.
+
+This is simplest and recommended way.
+
+```
+<project>
+    ...
+    <properties>
+        ...
+        <play2.fileWatchService>polling</play2.fileWatchService>
+    </properties>
+    ...
+</project>
+```
+
+$h4 - using plugin configuration parameter.
+
+Add `fileWatchService` parameter with value `polling` to plugin configuration section.
+
+```
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    ...
+                    <fileWatchService>polling</fileWatchService>
+                </configuration>
+            </plugin>
+            ...
+        </plugins>
+    </build>
+    ...
+</project>
+```
+
+$h4 - watch service as plugin dependency.
+
+Add file watch service artifact as plugin dependency.
+
+**Warning**:
+Only one file watch service can be added as plugin's dependency at a time. It will be selected regardless
+of the value of `fileWatchService` plugin configuration parameter or `play2.fileWatchService` project property.
+
+```
+<project>
+    ...
+    <build>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <dependencies>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            ...
+        </plugins>
+    </build>
+    ...
+</project>
+```
+
+$h2 Configuring ${project.name}
+
+This service has only one configuration parameter - `play2.pollInterval`.
+This is the poll interval in milliseconds. Default value is `1000` (1 second).
+
+It can be changed by adding `play2.pollInterval` to project properties:
+
+```
+<project>
+    ...
+    <properties>
+        ...
+        <play2.pollInterval>500</play2.pollInterval>
+    </properties>
+    ...
+</project>
+```
+
+or directly to Maven call:
+
+```
+mvn play2:run -Dplay2.pollInterval=500
+```
