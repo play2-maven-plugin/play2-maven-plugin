@@ -39,6 +39,11 @@ import com.google.code.play2.provider.api.Play2Runner;
 public abstract class AbstractPlay2StartServerMojo
     extends AbstractPlay2ServerMojo
 {
+    /**
+     * Default HTTP port.
+     */
+    private static final int DEFAULT_HTTP_PORT = 9000;
+
     protected Java getStartServerTask( boolean spawn )
         throws MojoExecutionException
     {
@@ -85,7 +90,7 @@ public abstract class AbstractPlay2StartServerMojo
 
     protected String getRootUrl( String relativeUrl )
     {
-        int serverPort = 9000;
+        int serverPort = DEFAULT_HTTP_PORT;
         if ( httpPort != null && httpPort.length() > 0 )
         {
             serverPort = Integer.parseInt( httpPort );

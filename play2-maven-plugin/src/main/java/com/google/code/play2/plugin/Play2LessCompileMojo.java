@@ -47,9 +47,9 @@ import com.google.code.play2.provider.api.Play2Provider;
 public class Play2LessCompileMojo
     extends AbstractPlay2AssetsCompileMojo
 {
-    private static final String cacheDirectoryName = "cache";
+    private static final String CACHE_DIRECTORY_NAME = "cache";
 
-    private static final String cacheFileName = "less";
+    private static final String CACHE_FILE_NAME = "less";
 
     /**
      * Less compiler entry points includes, separated by commas.
@@ -100,8 +100,8 @@ public class Play2LessCompileMojo
         LessDependencyCache allDependencies = new LessDependencyCache();
 
         File targetDirectory = new File( project.getBuild().getDirectory() );
-        File cacheDirectory = new File( targetDirectory, cacheDirectoryName );
-        File lessCacheFile = new File( cacheDirectory, cacheFileName );
+        File cacheDirectory = new File( targetDirectory, CACHE_DIRECTORY_NAME );
+        File lessCacheFile = new File( cacheDirectory, CACHE_FILE_NAME );
         if ( lessCacheFile.isFile() )
         {
             allDependencies.readFromFile( lessCacheFile );

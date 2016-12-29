@@ -53,7 +53,7 @@ public abstract class AbstractPlay2SourceGeneratorMojo
     @Component
     protected BuildContext buildContext;
 
-    protected static final String defaultTargetDirectoryName = "src_managed";
+    protected static final String DEFAULT_TARGET_DIRECTORY_NAME = "src_managed";
 
     protected void addSourceRoot( File generatedDirectory )
     {
@@ -67,7 +67,7 @@ public abstract class AbstractPlay2SourceGeneratorMojo
     protected void configureSourcePositionMappers()
     {
         String sourcePositionMappersGAV = String.format( "%s:%s:%s", pluginGroupId, "play2-source-position-mappers", pluginVersion );
-        project.getProperties().setProperty( "sbt._sourcePositionMappers", sourcePositionMappersGAV/*getSourcePositionMappersGAV()*/ );
+        project.getProperties().setProperty( "sbt._sourcePositionMappers", sourcePositionMappersGAV );
     }
 
     protected void reportCompilationProblems( File source, SourceGenerationException e )
@@ -92,7 +92,7 @@ public abstract class AbstractPlay2SourceGeneratorMojo
         }
         else
         {
-            getLog().error( String.format( "%s: %s", source.getAbsolutePath(), e.getMessage()/* message */) );
+            getLog().error( String.format( "%s: %s", source.getAbsolutePath(), e.getMessage() /* message */ ) );
         }
     }
 
@@ -116,7 +116,7 @@ public abstract class AbstractPlay2SourceGeneratorMojo
                 is.close();
             }
         }
-        catch (IOException e)
+        catch ( IOException e )
         {
             result = defaultValue;
         }

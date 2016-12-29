@@ -33,7 +33,7 @@ import java.util.Set;
 public class PidFileDeleter
     extends Thread
 {
-    private static PidFileDeleter INSTANCE;
+    private static PidFileDeleter instance;
 
     private Set<File> pidFiles = new HashSet<File>( 1 );
 
@@ -44,12 +44,12 @@ public class PidFileDeleter
 
     public static synchronized PidFileDeleter getInstance()
     {
-        if ( INSTANCE == null )
+        if ( instance == null )
         {
-            INSTANCE = new PidFileDeleter();
-            Runtime.getRuntime().addShutdownHook( INSTANCE );
+            instance = new PidFileDeleter();
+            Runtime.getRuntime().addShutdownHook( instance );
         }
-        return INSTANCE;
+        return instance;
     }
 
     public void add( File pidFile )

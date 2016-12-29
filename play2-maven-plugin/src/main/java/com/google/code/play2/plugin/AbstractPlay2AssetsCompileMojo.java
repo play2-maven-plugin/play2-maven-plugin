@@ -40,7 +40,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
     @Parameter( property = "play2.assetsDirectory", readonly = true, defaultValue = "${project.basedir}/app/assets" )
     private File assetsDirectory;
 
-    private static final String targetDirectoryName = "resource_managed/main";
+    private static final String TARGET_DIRECTORY_NAME = "resource_managed/main";
 
     @Override
     protected void internalExecute()
@@ -68,7 +68,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
         if ( fileNames.length > 0 )
         {
             File targetDirectory = new File( project.getBuild().getDirectory() );
-            File generatedDirectory = new File( targetDirectory, targetDirectoryName );
+            File generatedDirectory = new File( targetDirectory, TARGET_DIRECTORY_NAME );
             File outputDirectory = new File( generatedDirectory, "public" );
 
             try
@@ -97,7 +97,7 @@ public abstract class AbstractPlay2AssetsCompileMojo
     private void addTargetDirectoryToResources()
     {
         File targetDirectory = new File( project.getBuild().getDirectory() );
-        File generatedDirectory = new File( targetDirectory, targetDirectoryName );
+        File generatedDirectory = new File( targetDirectory, TARGET_DIRECTORY_NAME );
 
         boolean resourceAlreadyAdded = false;
         for ( Resource res : project.getResources() )

@@ -49,7 +49,7 @@ import com.google.code.sbt.compiler.api.AnalysisProcessor;
 public class Play2EnhanceClassesMojo
     extends AbstractPlay2EnhanceMojo
 {
-    private static final String defaultTemplatesTargetDirectoryName = "src_managed";
+    private static final String DEFAULT_TEMPLATES_TARGET_DIRECTORY_NAME = "src_managed";
 
     /**
      * Project classpath.
@@ -137,7 +137,7 @@ public class Play2EnhanceClassesMojo
                 String templatesOutputDirectoryName = play2Provider.getTemplatesCompiler().getCustomOutputDirectoryName();
                 if ( templatesOutputDirectoryName == null )
                 {
-                    templatesOutputDirectoryName = defaultTemplatesTargetDirectoryName;
+                    templatesOutputDirectoryName = DEFAULT_TEMPLATES_TARGET_DIRECTORY_NAME;
                 }
                 File scannerBaseDir = new File( targetDirectory, templatesOutputDirectoryName + "/main" );
                 if ( scannerBaseDir.isDirectory() )

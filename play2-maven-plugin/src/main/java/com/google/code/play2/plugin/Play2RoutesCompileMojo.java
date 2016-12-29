@@ -82,7 +82,7 @@ public class Play2RoutesCompileMojo
     @Parameter( property = "play2.routesAdditionalImports" )
     private String routesAdditionalImports;
 
-    private static final String[] routesIncludes = new String[] { "*.routes", "routes" };
+    private static final String[] ROUTES_INCLUDES = new String[] { "*.routes", "routes" };
 
     @Override
     protected void internalExecute()
@@ -103,7 +103,7 @@ public class Play2RoutesCompileMojo
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir( confDirectory );
-        scanner.setIncludes( routesIncludes );
+        scanner.setIncludes( ROUTES_INCLUDES );
         scanner.addDefaultExcludes();
         scanner.scan();
         String[] files = scanner.getIncludedFiles();
@@ -121,7 +121,7 @@ public class Play2RoutesCompileMojo
         String outputDirectoryName = compiler.getCustomOutputDirectoryName();
         if ( outputDirectoryName == null )
         {
-            outputDirectoryName = defaultTargetDirectoryName;
+            outputDirectoryName = DEFAULT_TARGET_DIRECTORY_NAME;
         }
         File generatedDirectory = new File( targetDirectory, outputDirectoryName + "/main" );
         compiler.setOutputDirectory( generatedDirectory );

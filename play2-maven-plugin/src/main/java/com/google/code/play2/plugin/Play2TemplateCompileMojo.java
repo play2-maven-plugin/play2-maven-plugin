@@ -63,7 +63,7 @@ public class Play2TemplateCompileMojo
     @Parameter( property = "play2.templateAdditionalImports" )
     private String templateAdditionalImports;
 
-    private static final String[] scalaTemplatesIncludes = new String[] { "**/*.scala.*" };
+    private static final String[] SCALA_TEMPLATES_INCLUDES = new String[] { "**/*.scala.*" };
 
     @Override
     protected void internalExecute()
@@ -83,7 +83,7 @@ public class Play2TemplateCompileMojo
         String outputDirectoryName = compiler.getCustomOutputDirectoryName();
         if ( outputDirectoryName == null )
         {
-            outputDirectoryName = defaultTargetDirectoryName;
+            outputDirectoryName = DEFAULT_TARGET_DIRECTORY_NAME;
         }
         File generatedDirectory = new File( targetDirectory, outputDirectoryName + "/main" );
         compiler.setOutputDirectory( generatedDirectory );
@@ -118,7 +118,7 @@ public class Play2TemplateCompileMojo
             {
                 DirectoryScanner scanner = new DirectoryScanner();
                 scanner.setBasedir( sourceRootDirectory );
-                scanner.setIncludes( scalaTemplatesIncludes );
+                scanner.setIncludes( SCALA_TEMPLATES_INCLUDES );
                 scanner.addDefaultExcludes();
                 scanner.scan();
                 String[] files = scanner.getIncludedFiles();
