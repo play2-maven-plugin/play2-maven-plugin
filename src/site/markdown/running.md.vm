@@ -1,0 +1,74 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#if($project.version.endsWith("SNAPSHOT"))
+#set($testProjectsGitBranch = 'master')
+#else
+#set($testProjectsGitBranch = "test-projects-${project.version}")
+#end
+
+$h2 Running in development mode
+
+To run project in development mode (`sbt run` equivalent) call
+
+```
+mvn play2:run
+```
+
+Application runs in current (Maven) JVM process, there is no forking possibility.
+
+Project does not require building before. First build will be executed on first request.
+
+By default `process-classes` phase is executed to build the project. This can be customized
+in three ways:
+
+a) adding `runGoals` parameter to plugin configuration:
+
+```
+    <build>
+        ...
+        <plugins>
+            ....
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    ...
+                    <runGoals>compile</runGoals>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+b) adding `play2.runGoals` property to project properties:
+
+```
+    <properties>
+        ...
+        <play2.runGoals>compile</play2.runGoals>
+    </properties>
+```
+
+c) adding `-Dplay2.runGoals` to Maven call:
+
+```
+mvn play2:run -Dplay2.runGoals=compile
+```
+
+$h3 Multi-module builds
+
+...
+
+$h3 Processing web assets
+
+...
+
+$h3 Other configuration options
+
+...
+
