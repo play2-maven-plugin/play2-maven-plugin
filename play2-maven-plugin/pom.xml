@@ -33,12 +33,12 @@ under the License.
     <description>Play! 2.x Maven Plugin</description>
 
     <prerequisites>
-        <maven>3.0</maven>
+        <maven>3.1.0</maven>
     </prerequisites>
 
     <properties>
         <ant.version>1.9.4</ant.version>
-        <maven.version>3.0</maven.version>
+        <maven.version>3.1.0</maven.version>
         <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
         <plexus-archiver.version>3.0</plexus-archiver.version>
     </properties>
@@ -47,6 +47,18 @@ under the License.
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>play2-provider-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>play2-source-position-mappers</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>play2-source-watcher-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -120,20 +132,69 @@ under the License.
                     <artifactId>plexus-sec-dispatcher</artifactId>
                 </exclusion>
                 <!-- required by javadoc <exclusion>
-                    <groupId>org.sonatype.aether</groupId>
+                    <groupId>org.eclipse.aether</groupId>
                     <artifactId>aether-api</artifactId>
                 </exclusion> -->
                 <exclusion>
-                    <groupId>org.sonatype.aether</groupId>
+                    <groupId>org.eclipse.aether</groupId>
                     <artifactId>aether-impl</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.sonatype.aether</groupId>
+                    <groupId>org.eclipse.aether</groupId>
                     <artifactId>aether-util</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>org.sonatype.sisu</groupId>
-                    <artifactId>sisu-inject-plexus</artifactId>
+                    <groupId>org.eclipse.sisu</groupId>
+                    <artifactId>org.eclipse.sisu.plexus</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-embedder</artifactId>
+            <version>${maven.version}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-cli</groupId>
+                    <artifactId>commons-cli</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-compat</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-model-builder</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.maven</groupId>
+                    <artifactId>maven-settings</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-classworlds</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-component-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.sisu</groupId>
+                    <artifactId>org.eclipse.sisu.plexus</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.sonatype.plexus</groupId>
+                    <artifactId>plexus-cipher</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.sonatype.plexus</groupId>
+                    <artifactId>plexus-sec-dispatcher</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

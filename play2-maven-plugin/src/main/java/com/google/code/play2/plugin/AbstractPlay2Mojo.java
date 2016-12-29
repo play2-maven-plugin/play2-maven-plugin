@@ -82,7 +82,7 @@ public abstract class AbstractPlay2Mojo
     /**
      * The current build session instance.
      */
-    @Parameter( defaultValue= "${session}", readonly = true, required = true )
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
 
     /**
@@ -231,16 +231,17 @@ public abstract class AbstractPlay2Mojo
     }
 
     // Cached classloaders
-    private static final ConcurrentHashMap<String, ClassLoader> cachedClassLoaders = new ConcurrentHashMap<String, ClassLoader>( 2 );
+    private static final ConcurrentHashMap<String, ClassLoader> CACHED_CLASS_LOADERS =
+        new ConcurrentHashMap<String, ClassLoader>( 2 );
 
     private static ClassLoader getCachedClassLoader( String providerId )
     {
-        return cachedClassLoaders.get( providerId );
+        return CACHED_CLASS_LOADERS.get( providerId );
     }
 
     private static void setCachedClassLoader( String providerId, ClassLoader classLoader )
     {
-        cachedClassLoaders.put( providerId, classLoader );
+        CACHED_CLASS_LOADERS.put( providerId, classLoader );
     }
 
     protected Play2Provider getProvider()
@@ -350,12 +351,25 @@ public abstract class AbstractPlay2Mojo
     protected/*private*/ Set<Artifact> getResolvedArtifact( String groupId, String artifactId, String version )
         throws ArtifactResolutionException
     {
+        return getResolvedArtifact( groupId, artifactId, version, true );
+    }
+
+    protected/*private*/ Set<Artifact> getResolvedArtifact( String groupId, String artifactId, String version,
+                                                             boolean transitively )
+        throws ArtifactResolutionException
+    {
         Artifact artifact =
             repositorySystem.createArtifact( groupId, artifactId, version, Artifact.SCOPE_RUNTIME, "jar" );
+        return getResolvedArtifact( artifact, transitively );
+    }
+
+    protected/*private*/ Set<Artifact> getResolvedArtifact( Artifact artifact, boolean transitively )
+        throws ArtifactResolutionException
+    {
         ArtifactResolutionRequest request =
-            new ArtifactResolutionRequest().setArtifact( artifact ).setLocalRepository( localRepo ).setRemoteRepositories( remoteRepos ).setResolveTransitively( true );
+            new ArtifactResolutionRequest().setArtifact( artifact ).setLocalRepository( localRepo ).setRemoteRepositories( remoteRepos ).setResolveTransitively( transitively );
         ArtifactResolutionResult result = repositorySystem.resolve( request );
-        resolutionErrorHandler.throwErrors( request, result );        
+        resolutionErrorHandler.throwErrors( request, result );
         return result.getArtifacts();
     }
 
