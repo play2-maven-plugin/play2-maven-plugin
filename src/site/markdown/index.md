@@ -1,6 +1,6 @@
 ## About Play2 Maven Plugin
 
-This is [Maven](http://maven.apache.org) plugin for [Play! Framework](http://www.playframework.org).
+This is [Maven](http://maven.apache.org) plugin for [Play! Framework](https://www.playframework.com).
 
 Supports Play! **2.1.x**, **2.2.x**, **2.3.x**, **2.4.x** and **2.5.x** versions only (2.0.x versions are not supported).
 
@@ -12,8 +12,10 @@ This project declares the following modules:
 
 | Name                                                                            | Description                       |
 |---------------------------------------------------------------------------------|-----------------------------------|
-| [Play! 2.x Provider API](./play2-provider-api/index.html)                       | Play! 2.x Provider API            |
 | [Play! 2.x Maven Plugin](./play2-maven-plugin/index.html)                       | Play! 2.x Maven Plugin            |
+| [Play! 2.x Provider API](./play2-provider-api/index.html)                       | Play! 2.x Provider API            |
 | [Play! 2.x Providers](./play2-providers/index.html)                             | Play! 2.x Providers               |
 | [Play! 2.x Source Position Mappers](./play2-source-position-mappers/index.html) | Play! 2.x Source Position Mappers |
+| [Play! 2.x Source Watcher API](./play2-source-watcher-api/index.html)           | Play! 2.x Source Watcher API      |
+| [Play! 2.x Source Watchers](./play2-source-watchers/index.html)                 | Play! 2.x Source Watchers         |
 
