@@ -1,5 +1,3 @@
-package com.google.code.play2.spm.template;
-
 /*
  * Copyright 2013-2016 Grzegorz Slowikowski (gslowikowski at gmail dot com)
  *
@@ -17,6 +15,8 @@ package com.google.code.play2.spm.template;
  * under the License.
  */
 
+package com.google.code.play2.spm.template;
+
 class Play2TemplateLine
 {
     public int line;
@@ -27,7 +27,7 @@ class Play2TemplateLine
 
     public String content;
 
-    public Play2TemplateLine( int line, int start, int end, String content )
+    Play2TemplateLine( int line, int start, int end, String content )
     {
         this.line = line;
         this.start = start;

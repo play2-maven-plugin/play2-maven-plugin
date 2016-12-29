@@ -27,7 +27,7 @@ public class Play2TemplateSourcePosition implements SourcePosition
     private File source; // not nullable
     private Play2TemplateLocation location; // not nullable
                     
-    public Play2TemplateSourcePosition(File source, Play2TemplateLocation location)
+    public Play2TemplateSourcePosition( File source, Play2TemplateLocation location )
     {
         this.source = source;
         this.location = location;

@@ -25,15 +25,16 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class Play2TemplateGeneratedSource
+public class Play2TemplateGeneratedSource
 {
-    private static String META_MATRIX = "MATRIX";
-    private static String META_SOURCE = "SOURCE";
+    private static final String META_LINES = "LINES";
+    private static final String META_MATRIX = "MATRIX";
+    private static final String META_SOURCE = "SOURCE";
 
-    private static String META_UNDEFINED = "UNDEFINED";
+    private static final String META_UNDEFINED = "UNDEFINED";
 
-    private static Pattern META_PATTERN = Pattern.compile( "([A-Z]+): (.*)" );
-    private static Pattern UNDEFINED_META_PATTERN = Pattern.compile( "([A-Z]+):" );
+    private static final Pattern META_PATTERN = Pattern.compile( "([A-Z]+): (.*)" );
+    private static final Pattern UNDEFINED_META_PATTERN = Pattern.compile( "([A-Z]+):" );
 
     private Map<String, String> meta = Collections.emptyMap();
 
@@ -69,11 +70,21 @@ class Play2TemplateGeneratedSource
 
     public int mapPosition( int generatedPosition )
     {
-        List<Pair> m = matrix();
-        for ( int i = 0; i < m.size(); i++ )
+        return mapPositionOrLine( META_MATRIX, generatedPosition );
+    }
+
+    public int mapLine( int generatedLine )
+    {
+        return mapPositionOrLine( META_LINES, generatedLine );
+    }
+
+    public int mapPositionOrLine( String metaSectionName, int generatedPositionOrLine )
+    {
+        List<Pair> l = metaData( metaSectionName );
+        for ( int i = 0; i < l.size(); i++ )
         {
-            Pair p = m.get( i );
-            if ( p._1 > generatedPosition )
+            Pair p = l.get( i );
+            if ( p._1 > generatedPositionOrLine )
             {
                 if ( i == 0 )
                 {
@@ -81,51 +92,51 @@ class Play2TemplateGeneratedSource
                 }
                 else
                 {
-                    Pair pos = m.get( i - 1 );
-                    return pos._2 + ( generatedPosition - pos._1 );
+                    Pair pos = l.get( i - 1 );
+                    return pos._2 + ( generatedPositionOrLine - pos._1 );
                 }
             }
         }
         // not found
-        Pair pos = m.get( m.size() - 1 );
-        return pos._2 + ( generatedPosition - pos._1 );
+        Pair pos = l.get( l.size() - 1 );
+        return pos._2 + ( generatedPositionOrLine - pos._1 );
     }
 
-    private List<Pair> matrix()
+    private List<Pair> metaData( String metaSectionName )
     {
-        List<Pair> matrix = null;
+        List<Pair> lines = null;
 
-        String m = meta.get( META_MATRIX );
+        String m = meta.get( metaSectionName );
         if ( m != null )
         {
             String[] pos = m.split( "\\|" );
-            matrix = new ArrayList<Pair>( pos.length );
+            lines = new ArrayList<Pair>( pos.length );
             for ( String p : pos )
             {
                 String[] c = p.split( "->" );
                 try
                 {
-                    matrix.add( new Pair( Integer.parseInt( c[0] ), Integer.parseInt( c[1] ) ) );
+                    lines.add( new Pair( Integer.parseInt( c[0] ), Integer.parseInt( c[1] ) ) );
                 }
                 catch ( Exception e )
                 {
-                    matrix.add( new Pair( 0, 0 ) ); // Skip if MATRIX meta is corrupted
+                    lines.add( new Pair( 0, 0 ) ); // Skip if LINES meta is corrupted
                 }
             }
         }
         else
         {
-            matrix = Collections.emptyList();
+            lines = Collections.emptyList();
         }
 
-        return matrix;
+        return lines;
     }
 
     private static class Pair
     {
         int _1, _2;
 
-        public Pair( int _1, int _2 )
+        Pair( int _1, int _2 )
         {
             this._1 = _1;
             this._2 = _2;

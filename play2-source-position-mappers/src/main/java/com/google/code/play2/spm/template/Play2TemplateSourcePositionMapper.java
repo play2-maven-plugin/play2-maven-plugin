@@ -30,7 +30,7 @@ import com.google.code.play2.spm.AbstractPlay2SourcePositionMapper;
  */
 public class Play2TemplateSourcePositionMapper extends AbstractPlay2SourcePositionMapper
 {
-    private static String META_SEPARATOR = "-- GENERATED --";
+    private static final String META_SEPARATOR = "-- GENERATED --";
 
     /**
      * Performs mapping from the position in generated source file to the position in Twirl template file it was
@@ -56,35 +56,46 @@ public class Play2TemplateSourcePositionMapper extends AbstractPlay2SourcePositi
         int generatedOffset = p.getOffset();
         if ( generatedFile != null && generatedFile.isFile() && generatedOffset >= 0 )
         {
-            String generatedFileContent = readFileAsString( generatedFile );
-            String[] fileSections = generatedFileContent.split( META_SEPARATOR );
-            if ( fileSections.length > 1 )
+            Play2TemplateGeneratedSource generated = getGeneratedSource( generatedFile );
+            if ( generated != null )
             {
-                String[] metaSectionLines = fileSections[1].trim().split( "\n" );
-                if ( metaSectionLines.length > 0 )
+                String sourceFileName = generated.getSourceFileName();
+                if ( sourceFileName != null )
                 {
-                    Play2TemplateGeneratedSource generated = new Play2TemplateGeneratedSource( metaSectionLines );
-                    String sourceFileName = generated.getSourceFileName();
-                    if ( sourceFileName != null )
+                    File sourceFile = new File( sourceFileName );
+                    if ( sourceFile.isFile() )
                     {
-                        File sourceFile = new File( sourceFileName );
-                        if ( sourceFile.isFile() )
+                        int sourceOffset = generated.mapPosition( generatedOffset );
+                        String sourceFileContent = readFileAsString( sourceFile );
+                        if ( sourceFileContent.length() > sourceOffset )
                         {
-                            int sourceOffset = generated.mapPosition( generatedOffset );
-                            String sourceFileContent = readFileAsString( sourceFile );
-                            if ( sourceFileContent.length() > sourceOffset )
-                            {
-                                String[] sourceFileLines = sourceFileContent.split( "\n" ); // readLines( sourceFile );
-                                Play2TemplateLocation sourceLocation =
-                                    new Play2TemplateMapping( sourceFileLines ).location( sourceOffset );
-                                if ( sourceLocation != null )
-                                {
-                                    result = new Play2TemplateSourcePosition( sourceFile, sourceLocation );
-                                }
-                            }
+                            String[] sourceFileLines = sourceFileContent.split( "\n" );
+                            Play2TemplateLocation sourceLocation =
+                                new Play2TemplateMapping( sourceFileLines ).location( sourceOffset );
+                            //if ( sourceLocation != null )
+                            //{
+                                result = new Play2TemplateSourcePosition( sourceFile, sourceLocation );
+                            //}
                         }
                     }
                 }
+            }
+        }
+        return result;
+    }
+
+    public Play2TemplateGeneratedSource getGeneratedSource( File generatedFile ) throws IOException
+    {
+        Play2TemplateGeneratedSource result = null;
+
+        String generatedFileContent = readFileAsString( generatedFile );
+        String[] fileSections = generatedFileContent.split( META_SEPARATOR );
+        if ( fileSections.length > 1 )
+        {
+            String[] metaSectionLines = fileSections[1].trim().split( "\n" );
+            if ( metaSectionLines.length > 0 )
+            {
+                result = new Play2TemplateGeneratedSource( metaSectionLines );
             }
         }
         return result;

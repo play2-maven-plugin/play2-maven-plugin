@@ -22,13 +22,13 @@ import java.util.regex.Pattern;
 
 class Play2RoutesGeneratedSource
 {
-    static String SOURCE_PREFIX = "// @SOURCE:";
+    static final String SOURCE_PREFIX = "// @SOURCE:";
 
-    private static Pattern LINE_MARKER = Pattern.compile( "\\s*// @LINE:\\s*(\\d+)\\s*" );
+    private static final Pattern LINE_MARKER = Pattern.compile( "\\s*// @LINE:\\s*(\\d+)\\s*" );
 
     private String[] lines; // generated file lines
 
-    public Play2RoutesGeneratedSource( String[] lines )
+    Play2RoutesGeneratedSource( String[] lines )
     {
         this.lines = lines;
     }

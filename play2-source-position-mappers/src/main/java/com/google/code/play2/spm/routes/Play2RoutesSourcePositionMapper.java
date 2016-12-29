@@ -32,7 +32,7 @@ import com.google.code.play2.spm.AbstractPlay2SourcePositionMapper;
  */
 public class Play2RoutesSourcePositionMapper extends AbstractPlay2SourcePositionMapper
 {
-    private static String GENERATOR_LINE = "// @GENERATOR:play-routes-compiler";
+    private static final String GENERATOR_LINE = "// @GENERATOR:play-routes-compiler";
 
     /**
      * Performs mapping from the position in generated source file to the position in {@code routes} file it was

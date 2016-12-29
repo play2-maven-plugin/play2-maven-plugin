@@ -27,7 +27,7 @@ class Play2TemplateLocation
 
     public String content;
 
-    public Play2TemplateLocation( int line, int column, int offset, String content )
+    Play2TemplateLocation( int line, int column, int offset, String content )
     {
         this.line = line;
         this.column = column;

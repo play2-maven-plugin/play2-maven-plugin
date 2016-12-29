@@ -24,7 +24,7 @@ class Play2TemplateMapping
 {
     private List<Play2TemplateLine> lines;
 
-    public Play2TemplateMapping( String[] sourceLines )
+    Play2TemplateMapping( String[] sourceLines )
     {
         lines = new ArrayList<Play2TemplateLine>( sourceLines.length );
         int line = 0;
