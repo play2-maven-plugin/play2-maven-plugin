@@ -36,7 +36,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import com.google.code.sbt.compiler.api.AnalysisProcessor;
-import com.google.code.sbt.compiler.api.Compiler; // required by JavaDoc
 import com.google.code.sbt.compiler.api.Compilers;
 
 public abstract class AbstractPlay2EnhanceMojo
@@ -46,22 +45,18 @@ public abstract class AbstractPlay2EnhanceMojo
     /**
      * Forced SBT version.<br>
      * <br>
-     * Used to automatically select one of the "well known" SBT compilers if no compiler added explicitly as plugin's dependency.
-     * There are three cases possible:
+     * Used to automatically select one of the "well known" SBT compilation analysis processors (if no SBT compiler
+     * added explicitly as plugin's dependency).
+     * <br>
+     * There are two cases possible:
      * <ul>
      * <li>
-     * If {@link #sbtVersion} is specified, compatible {@link Compiler} implementation
-     * is selected and configured to use {@link #sbtVersion} SBT version for compilation.
+     * If {@link #sbtVersion} is specified, {@link AnalysisProcessor} implementation compatible with that SBT version
+     * is selected.
      * </li>
      * <li>
-     * If {@link #sbtVersion} is not specified, and {@link #playVersion} is specified
-     * {@link #playVersion} parameter value is used to indirectly select compatible {@link Compiler} implementation
-     * and it's {@link Compiler#getDefaultSbtVersion()} SBT version used for compilation.
-     * </li>
-     * <li>
-     * If both {@link #sbtVersion} and {@link #playVersion} are not specified
-     * the most recent {@link Compiler} implementation is selected
-     * and it's {@link Compiler#getDefaultSbtVersion()} SBT version used for compilation.
+     * If {@link #sbtVersion} is not specified, {@link #playVersion} parameter value is used to indirectly select
+     * {@link AnalysisProcessor} implementation compatible with that Play! Framework version.
      * </li>
      * </ul>
      * 
@@ -76,9 +71,9 @@ public abstract class AbstractPlay2EnhanceMojo
     @Parameter( property = "plugin.artifacts", required = true, readonly = true )
     private List<Artifact> pluginArtifacts;
 
-    private static final String sbtCompilerPluginGroupId = "com.google.code.sbt-compiler-maven-plugin";
+    private static final String SBT_COMPILER_PLUGIN_GROUP_ID = "com.google.code.sbt-compiler-maven-plugin";
 
-    private static final String sbtCompilerPluginApiArtifactId = "sbt-compiler-api";
+    private static final String SBT_COMPILER_PLUGIN_API_ARTIFACT_ID = "sbt-compiler-api";
 
     /**
      * Map of SBT compiler implementations. For now only zero or one allowed.
@@ -89,16 +84,17 @@ public abstract class AbstractPlay2EnhanceMojo
     // SBT compiler resolution for Analysis cache processing
 
     // Cached classloaders
-    private static final ConcurrentHashMap<String, ClassLoader> sbtCompilerCachedClassLoaders = new ConcurrentHashMap<String, ClassLoader>( 2 );
+    private static final ConcurrentHashMap<String, ClassLoader> SBT_COMPILER_CACHED_CLASS_LOADERS =
+        new ConcurrentHashMap<String, ClassLoader>( 2 );
 
     private static ClassLoader getSbtCompilerCachedClassLoader( String compilerId )
     {
-        return sbtCompilerCachedClassLoaders.get( compilerId );
+        return SBT_COMPILER_CACHED_CLASS_LOADERS.get( compilerId );
     }
 
     private static void setSbtCompilerCachedClassLoader( String compilerId, ClassLoader classLoader )
     {
-        sbtCompilerCachedClassLoaders.put( compilerId, classLoader );
+        SBT_COMPILER_CACHED_CLASS_LOADERS.put( compilerId, classLoader );
     }
 
     protected AnalysisProcessor getSbtAnalysisProcessor()
@@ -121,7 +117,7 @@ public abstract class AbstractPlay2EnhanceMojo
     {
         if ( analysisProcessors.size() > 1 )
         {
-            throw new MojoExecutionException( "Too many compiles defined. A maximum of one allowed." );
+            throw new MojoExecutionException( "Too many compilers defined. A maximum of one allowed." );
         }
 
         Map.Entry<String, AnalysisProcessor> compilerEntry = analysisProcessors.entrySet().iterator().next();
@@ -162,7 +158,7 @@ public abstract class AbstractPlay2EnhanceMojo
             if ( compilerClassLoader == null )
             {
                 Set<Artifact> compilerArtifacts =
-                    getResolvedArtifact( sbtCompilerPluginGroupId, "sbt-compiler-" + compilerId,
+                    getResolvedArtifact( SBT_COMPILER_PLUGIN_GROUP_ID, "sbt-compiler-" + compilerId,
                                          getSbtCompilerPluginVersion() );
                 List<File> classPathFiles = new ArrayList<File>( compilerArtifacts.size()/*compilerDependencies.size() + 2*/ );
                 for ( Artifact dependencyArtifact : compilerArtifacts/*compilerDependencies*/ )
@@ -205,7 +201,7 @@ public abstract class AbstractPlay2EnhanceMojo
 
     private String getSbtCompilerPluginVersion() throws MojoExecutionException
     {
-        return getPluginArtifact( sbtCompilerPluginGroupId, sbtCompilerPluginApiArtifactId, "jar" ).getBaseVersion();
+        return getPluginArtifact( SBT_COMPILER_PLUGIN_GROUP_ID, SBT_COMPILER_PLUGIN_API_ARTIFACT_ID, "jar" ).getBaseVersion();
     }
 
     private/*protected*/ Artifact getPluginArtifact( String groupId, String artifactId, String type )
