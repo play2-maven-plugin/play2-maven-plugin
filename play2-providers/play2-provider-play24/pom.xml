@@ -107,10 +107,66 @@ under the License.
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <configuration>
+                        <excludes>play/runsupport/classloader/*</excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <sourcepath>${project.basedir}/src/main/java:${project.basedir}/../../play2-provider-api/src/main/java</sourcepath>
                         <subpackages>com.google.code.play2.provider.play24</subpackages>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jxr-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>play/runsupport/classloader/*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>play/runsupport/classloader/*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>clirr-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>play/runsupport/classloader/*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <configuration>
+                        <excludeFilterFile>${basedir}/findbugs-exclude.xml</excludeFilterFile>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>javancss-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>play/runsupport/classloader/*</exclude>
+                        </excludes>
                     </configuration>
                 </plugin>
             </plugins>
