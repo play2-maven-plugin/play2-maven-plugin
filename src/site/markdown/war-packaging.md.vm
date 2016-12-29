@@ -10,7 +10,7 @@
 
 $h2 WAR packaging
 
-Adding WAR packaging is actually very simple process, slightly different for servler 2.5 and 3.0/3.1 compatible servers:
+Adding WAR packaging is actually very simple process, slightly different for servlet `2.5` and `3.0`/`3.1` compatible servers:
 
 $h3 Servlet 2.5
 
