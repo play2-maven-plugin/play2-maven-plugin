@@ -17,7 +17,9 @@
 
 package com.google.code.play2.provider.play21;
 
+import com.google.code.play2.provider.api.Play2DevServer;
 import com.google.code.play2.provider.api.Play2Runner;
+import com.google.code.play2.provider.api.Play2RunnerConfiguration;
 
 public class Play21Runner
     implements Play2Runner
@@ -26,6 +28,25 @@ public class Play21Runner
     public String getServerMainClass()
     {
         return "play.core.server.NettyServer";
+    }
+
+    @Override
+    public boolean supportsRunInDevMode()
+    {
+        return false;
+    }
+
+    @Override
+    public String getPlayDocsModuleId( String scalaBinaryVersion, String playVersion )
+    {
+        return null; // feature not supported
+    }
+
+    @Override
+    public Play2DevServer runInDevMode( Play2RunnerConfiguration configuration )
+        throws Throwable
+    {
+        return null; // feature not supported
     }
 
 }
