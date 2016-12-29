@@ -82,7 +82,6 @@ under the License.
             <version>${twirl.version}</version>
         </dependency>
 
-        <!-- contains PropertiesEnhancer -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>build-link</artifactId>
