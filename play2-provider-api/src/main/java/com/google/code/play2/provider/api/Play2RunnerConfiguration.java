@@ -74,7 +74,12 @@ public class Play2RunnerConfiguration implements Serializable
     /**
      * ...
      */
-    private List<Asset> assets;
+    private String assetsPrefix;
+
+    /**
+     * ...
+     */
+    private File assetsDirectory;
 
     /**
      * ...
@@ -251,19 +256,39 @@ public class Play2RunnerConfiguration implements Serializable
      * 
      * @return ...
      */
-    public List<Asset> getAssets()
+    public String getAssetsPrefix()
     {
-        return assets;
+        return assetsPrefix;
     }
 
     /**
      * Sets ... .
      * 
-     * @param assets ...
+     * @param assetsPrefix ...
      */
-    public void setAssets( List<Asset> assets )
+    public void setAssetsPrefix( String assetsPrefix )
     {
-        this.assets = assets;
+        this.assetsPrefix = assetsPrefix;
+    }
+
+    /**
+     * Returns ... .
+     * 
+     * @return ...
+     */
+    public File getAssetsDirectory()
+    {
+        return assetsDirectory;
+    }
+
+    /**
+     * Sets ... .
+     * 
+     * @param assetsDirectory ...
+     */
+    public void setAssetsDirectory( File assetsDirectory )
+    {
+        this.assetsDirectory = assetsDirectory;
     }
 
     /**

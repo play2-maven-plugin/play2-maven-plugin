@@ -48,7 +48,6 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
-import com.google.code.play2.provider.api.Asset;
 import com.google.code.play2.provider.api.Play2Builder;
 import com.google.code.play2.provider.api.Play2DevServer;
 import com.google.code.play2.provider.api.Play2Provider;
@@ -122,7 +121,7 @@ public class Play2RunMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play2.assetsDirectory", defaultValue = "public" ) //TODO  required or not?
+    @Parameter( property = "play2.assetsDirectory", defaultValue = "${project.basedir}/public" ) //TODO  required or not?
     private File assetsDirectory;
 
     /**
@@ -338,6 +337,11 @@ public class Play2RunMojo
             runAdditionalGoals != null && !"".equals( runAdditionalGoals ) ? Arrays.asList( runAdditionalGoals.trim().split( " " ) )
                             : Collections.<String>emptyList();
 
+        if ( !assetsPrefix.endsWith( "/" ) )
+        {
+            assetsPrefix = assetsPrefix + "/";
+        }
+
         getLog().debug( "Required reactor modules:" );
         List<MavenProject> upstreamProjects = session.getProjectDependencyGraph().getUpstreamProjects( project, true );
         List<MavenProject> allRequiredReactorModules = new ArrayList<MavenProject>( 1 + upstreamProjects.size() );
@@ -405,13 +409,6 @@ public class Play2RunMojo
             }
         }
         newProperties.setProperty( "project.build.directory", project.getBuild().getDirectory() );
-
-        //List<Asset> assets = Collections.singletonList( new Asset( assetsPrefix, assetsDirectory ) );
-        List<Asset> assets = Collections.emptyList();
-        if ( assetsPrefix != null && !assetsPrefix.isEmpty() && assetsDirectory != null )
-        {
-            assets = Collections.singletonList( new Asset( assetsPrefix, assetsDirectory ) );
-        }
 
         Map<String, String> devSettingsMap = new HashMap<String, String>();
         if ( devSettings != null )
@@ -490,9 +487,9 @@ public class Play2RunMojo
             }
 
             Play2Builder buildLink =
-                new MavenPlay2Builder( allRequiredReactorModules, sourceEncoding, goals, additionalGoals, /* logger */getLog(), session,
-                                       lifecycleExecutor, container, templateCompilationOutputDirectory,
-                                       sbtAnalysisProcessor, playWatchService );
+                new MavenPlay2Builder( allRequiredReactorModules, sourceEncoding, goals, additionalGoals, assetsPrefix,
+                                       getLog(), session, lifecycleExecutor, container,
+                                       templateCompilationOutputDirectory, sbtAnalysisProcessor, playWatchService );
 
             Play2RunnerConfiguration configuration = new Play2RunnerConfiguration();
             configuration.setBaseDirectory( baseDir );
@@ -503,7 +500,8 @@ public class Play2RunMojo
             configuration.setHttpPort( resolvedHttpPort );
             configuration.setHttpsPort( resolvedHttpsPort );
             configuration.setHttpAddress( resolvedHttpAddress );
-            configuration.setAssets( assets );
+            configuration.setAssetsPrefix( assetsPrefix );
+            configuration.setAssetsDirectory( assetsDirectory );
             configuration.setDevSettings( devSettingsMap );
             configuration.setBuildLink( buildLink );
 

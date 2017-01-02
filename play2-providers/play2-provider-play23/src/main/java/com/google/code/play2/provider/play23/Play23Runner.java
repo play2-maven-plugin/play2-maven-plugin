@@ -75,7 +75,9 @@ public class Play23Runner
         ClassLoader applicationLoader =
             new NamedURLClassLoader( "PlayDependencyClassLoader",
                                      Reloader.toUrls( configuration.getDependencyClasspath() ), delegatingLoader );
-        ClassLoader assetsLoader = new AssetsClassLoader( applicationLoader, configuration.getAssets() );
+        ClassLoader assetsLoader =
+            new AssetsClassLoader( applicationLoader, configuration.getAssetsPrefix(),
+                                   configuration.getAssetsDirectory() );
 
         Reloader reloader =
             new Reloader( configuration.getBuildLink(), assetsLoader, configuration.getBaseDirectory(),

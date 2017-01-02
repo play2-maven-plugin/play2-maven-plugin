@@ -20,58 +20,49 @@ package com.google.code.play2.provider.play25.run;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
-
-import com.google.code.play2.provider.api.Asset;
 
 /**
  * A class loader for serving assets.
  *
- * Serves assets from the given directories, at the given prefix.
+ * Serves assets from the given directory, at the given prefix.
  */
 public class AssetsClassLoader
     extends ClassLoader
 {
-    private List<Asset> assets;
+    private String prefix;
+    private File directory;
 
     /**
      * Creates assets class loader.
      * 
      * @param parent parent class loader.
-     * @param assets a list of assets directories, paired with the prefix they should be served from.
+     * @param prefix assets urls prefix.
+     * @param directory assets directory.
      */
-    public AssetsClassLoader( ClassLoader parent, List<Asset> assets )
+    public AssetsClassLoader( ClassLoader parent, String prefix, File directory )
     {
         super( parent );
-        this.assets = assets;
+        this.prefix = prefix;
+        this.directory = directory;
     }
 
     @Override /* ClassLoader */
     public URL findResource( String name )
     {
         URL result = null;
-        for ( Asset asset : assets )
+        if ( name.startsWith( prefix ) && new File( directory, name.substring( prefix.length() ) ).isFile() )
         {
-            if ( exists( name, asset.getPrefix(), asset.getDir() ) )
+            try
             {
-                try
-                {
-                    result = new File( asset.getDir(), name.substring( asset.getPrefix().length() ) ).toURI().toURL();
-                }
-                catch ( MalformedURLException e )
-                {
-                    // ignore, result = null;
-                    // maybe RuntimeException should be thrown here?
-                }
-                break;
+                result = new File( directory, name.substring( prefix.length() ) ).toURI().toURL();
+            }
+            catch ( MalformedURLException e )
+            {
+                // ignore, result = null;
+                // maybe RuntimeException should be thrown here?
             }
         }
         return result;
-    }
-
-    private boolean exists( String name, String prefix, File dir )
-    {
-        return name.startsWith( prefix ) && new File( dir, name.substring( prefix.length() ) ).isFile();
     }
 
 }

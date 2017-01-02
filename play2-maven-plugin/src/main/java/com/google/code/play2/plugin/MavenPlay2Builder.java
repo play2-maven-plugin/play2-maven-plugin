@@ -77,6 +77,8 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
 
     private List<String> additionalGoals;
 
+    private String assetsPrefix;
+
     private Log logger;
 
     private MavenSession session;
@@ -109,8 +111,9 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
     private Map<MavenProject, Long> currentClasspathTimestamps;
     private Map<MavenProject, Set<String>> currentClasspathFilePaths;
 
-    public MavenPlay2Builder( List<MavenProject> projects, String sourceEncoding, List<String> goals, List<String> additionalGoals, Log logger,
-                              MavenSession session, LifecycleExecutor lifecycleExecutor, PlexusContainer container,
+    public MavenPlay2Builder( List<MavenProject> projects, String sourceEncoding, List<String> goals,
+                              List<String> additionalGoals, String assetsPrefix, Log logger, MavenSession session,
+                              LifecycleExecutor lifecycleExecutor, PlexusContainer container,
                               File templateCompilationOutputDirectory, AnalysisProcessor sbtAnalysisProcessor,
                               FileWatchService playWatchService )
     {
@@ -118,6 +121,7 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
         this.sourceEncoding = sourceEncoding;
         this.goals = goals;
         this.additionalGoals = additionalGoals;
+        this.assetsPrefix = assetsPrefix;
         this.logger = logger;
         this.session = session;
         this.lifecycleExecutor = lifecycleExecutor;
@@ -424,7 +428,7 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
             {
                 DirectoryScanner classPathScanner = new DirectoryScanner();
                 classPathScanner.setBasedir( outputDirectory );
-                classPathScanner.setExcludes( new String[] { "public/**" } ); //TODO - improve (how?) / parametrize?
+                classPathScanner.setExcludes( new String[] { assetsPrefix + "**" } );
                 classPathScanner.scan();
                 String[] files = classPathScanner.getIncludedFiles();
                 for ( String fileName: files )
