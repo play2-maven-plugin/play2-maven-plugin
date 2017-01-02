@@ -82,7 +82,7 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
     private Log logger;
 
     private MavenSession session;
-    
+
     private LifecycleExecutor lifecycleExecutor;
 
     private PlexusContainer container;
@@ -307,7 +307,7 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
                     {
                         pbe = getPlayBuildException( mfeCause );
                     }
-                    
+
                     if ( pbe != null )
                     {
                         throw new Play2BuildFailure( pbe, sourceEncoding );
@@ -607,4 +607,5 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
         }
         return result;
     }
+
 }
