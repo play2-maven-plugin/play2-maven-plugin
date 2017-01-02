@@ -115,17 +115,18 @@ public class Play2RunMojo
      * Directory containing web assets.
      * <br>
      * <br>
-     * If project contains assets processed by SbtWeb plugin (via <a href="https://github.com/sbtrun-maven-plugin/sbtrun-maven-plugin">sbtrun-maven-plugin</a>)
-     * this value should be set to <code>${project.basedir}/target/web/public/main</code>.
+     * Assets can be treated as resources (and added to <code>${project.build.outputDirectory}</code>) or not.
+     * <br>
+     * By default they are expected to be added to resources. This simplifies packaging.
      * <br>
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play2.assetsDirectory", defaultValue = "${project.basedir}/public" ) //TODO  required or not?
+    @Parameter( property = "play2.assetsDirectory", defaultValue = "${project.build.outputDirectory}/public" ) //TODO  required or not?
     private File assetsDirectory;
 
     /**
-     * Web asset urls prefix.
+     * Web asset URLs prefix.
      * <br>
      * 
      * @since 1.0.0
