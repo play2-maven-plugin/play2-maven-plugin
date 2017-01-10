@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,24 +78,29 @@ public class Play2EbeanEnhanceMojo
             config = ConfigFactory.parseFileAnySyntax( applicationConfFile );
         }
 
-        String models = null;
+        String models;
         try
         {
-            Set<Map.Entry<String, ConfigValue>> entries = config.getConfig( "ebean" ).entrySet();
+            Set<Map.Entry<String, ConfigValue>> entries = config.getConfig( "ebean" ).resolve().entrySet();
+
+            StringBuilder modelsCollector = new StringBuilder();
             for ( Map.Entry<String, ConfigValue> entry : entries )
             {
-                ConfigValue configValue = entry.getValue();
-                Object configValueUnwrapped = configValue.unwrapped();
-                // TODO-optimize
-                if ( models == null )
+                Object configValueUnwrapped = entry.getValue().unwrapped();
+
+                Collection itemsToEnhance = ( configValueUnwrapped instanceof Collection ) ?
+                        (Collection) configValueUnwrapped : Collections.singleton( configValueUnwrapped );
+
+                for( Object itemToEnhance : itemsToEnhance )
                 {
-                    models = configValueUnwrapped.toString();
-                }
-                else
-                {
-                    models = models + "," + configValueUnwrapped.toString();
+                    if ( modelsCollector.length() != 0 )
+                    {
+                        modelsCollector.append( ',' );
+                    }
+                    modelsCollector.append( itemToEnhance.toString() );
                 }
             }
+            models = modelsCollector.toString();
         }
         catch ( ConfigException.Missing e )
         {
@@ -211,7 +218,7 @@ public class Play2EbeanEnhanceMojo
      */
     public List<File> collectClassFilesToEnhance( long lastEnhanced, File outputDirectory, String packageNames )
     {
-        if ( packageNames == null )
+        if ( packageNames == null || packageNames.isEmpty())
         {
             return collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, "", true );
             // return;
