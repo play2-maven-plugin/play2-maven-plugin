@@ -20,15 +20,23 @@ package com.google.code.play2.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import com.typesafe.config.*;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigValue;
+import com.typesafe.config.ConfigValueType;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
 import com.google.code.play2.provider.api.Play2Provider;
@@ -97,11 +105,13 @@ public class Play2EbeanEnhanceMojo
             File analysisCacheFile = getAnalysisCacheFile();
             if ( !analysisCacheFile.exists() )
             {
-                throw new MojoExecutionException( String.format( "Analysis cache file \"%s\" not found", analysisCacheFile.getAbsolutePath() ) );
+                throw new MojoExecutionException( String.format( "Analysis cache file \"%s\" not found",
+                                                                 analysisCacheFile.getAbsolutePath() ) );
             }
             if ( !analysisCacheFile.isFile() )
             {
-                throw new MojoExecutionException( String.format( "Analysis cache \"%s\" is not a file", analysisCacheFile.getAbsolutePath() ) );
+                throw new MojoExecutionException( String.format( "Analysis cache \"%s\" is not a file",
+                                                                 analysisCacheFile.getAbsolutePath() ) );
             }
             Analysis analysis = null;
             AnalysisProcessor sbtAnalysisProcessor = getSbtAnalysisProcessor();
@@ -156,20 +166,19 @@ public class Play2EbeanEnhanceMojo
         }
     }
 
-    private Config getPlayConfiguration() {
+    private Config getPlayConfiguration()
+    {
         String configResource = System.getProperty( "config.resource" );
         if ( configResource != null )
         {
             return ConfigFactory.parseResources( configResource );
-        } else
-        {
-            String configFileName = System.getProperty( "config.file", "conf/application.conf" );
-            File applicationConfFile = new File( project.getBasedir(), configFileName );
-            return ConfigFactory.parseFileAnySyntax( applicationConfFile );
         }
+        String configFileName = System.getProperty( "config.file", "conf/application.conf" );
+        File applicationConfFile = new File( project.getBasedir(), configFileName );
+        return ConfigFactory.parseFileAnySyntax( applicationConfFile );
     }
 
-    private String getEBeanModelsToEnhance(Config config)
+    private String getEBeanModelsToEnhance( Config config )
     {
         try
         {
@@ -182,7 +191,8 @@ public class Play2EbeanEnhanceMojo
                 if ( configValue.valueType() == ConfigValueType.STRING )
                 {
                     collector.append( ',' ).append( configValue.unwrapped().toString() );
-                } else
+                }
+                else
                 {
                     String configKey = "ebean." + entry.getKey();
                     List<String> tmpModels = config.getStringList( configKey );
@@ -193,7 +203,8 @@ public class Play2EbeanEnhanceMojo
                 }
             }
             return collector.length() != 0 ? collector.substring( 1 ) : null;
-        } catch ( ConfigException.Missing e )
+        }
+        catch ( ConfigException.Missing e )
         {
             return "models.*";
         }
@@ -213,14 +224,14 @@ public class Play2EbeanEnhanceMojo
      */
     public List<File> collectClassFilesToEnhance( long lastEnhanced, File outputDirectory, String packageNames )
     {
-        if ( packageNames == null || packageNames.isEmpty())
+        if ( packageNames == null || packageNames.isEmpty() )
         {
             return collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, "", true );
             // return;
         }
 
         List<File> result = new ArrayList<File>();
-        
+
         String[] pkgs = packageNames.split( "," );
         for ( int i = 0; i < pkgs.length; i++ )
         {
@@ -246,7 +257,8 @@ public class Play2EbeanEnhanceMojo
         return result;
     }
 
-    private List<File> collectClassFilesToEnhanceFromPackage( long lastEnhanced, File outputDirectory, String dir, boolean recurse )
+    private List<File> collectClassFilesToEnhanceFromPackage( long lastEnhanced, File outputDirectory, String dir,
+                                                              boolean recurse )
     {
         List<File> result = new ArrayList<File>();
 
@@ -268,7 +280,8 @@ public class Play2EbeanEnhanceMojo
                     if ( recurse )
                     {
                         String subdir = dir + "/" + file.getName();
-                        result.addAll( collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir, recurse ) );
+                        result.addAll( collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, subdir,
+                                                                              recurse ) );
                     }
                 }
                 else
