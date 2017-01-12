@@ -20,22 +20,15 @@ package com.google.code.play2.plugin;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.typesafe.config.*;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigException;
-import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigValue;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
 import com.google.code.play2.provider.api.Play2Provider;
@@ -63,42 +56,8 @@ public class Play2EbeanEnhanceMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        Config config = null;
-        String configResource = System.getProperty( "config.resource" );
-        if ( configResource != null )
-        {
-            config = ConfigFactory.parseResources( configResource );
-        }
-        else
-        {
-            String configFileName = System.getProperty( "config.file", "conf/application.conf" );
-            File applicationConfFile = new File( project.getBasedir(), configFileName );
-            config = ConfigFactory.parseFileAnySyntax( applicationConfFile );
-        }
-
-        String models = null;
-        try
-        {
-            Set<Map.Entry<String, ConfigValue>> entries = config.getConfig( "ebean" ).entrySet();
-            for ( Map.Entry<String, ConfigValue> entry : entries )
-            {
-                ConfigValue configValue = entry.getValue();
-                Object configValueUnwrapped = configValue.unwrapped();
-                // TODO-optimize
-                if ( models == null )
-                {
-                    models = configValueUnwrapped.toString();
-                }
-                else
-                {
-                    models = models + "," + configValueUnwrapped.toString();
-                }
-            }
-        }
-        catch ( ConfigException.Missing e )
-        {
-            models = "models.*";
-        }
+        Config config = getPlayConfiguration().resolve();
+        String models  = getEBeanModelsToEnhance( config );
 
         File outputDirectory = new File( project.getBuild().getOutputDirectory() );
 
@@ -197,6 +156,49 @@ public class Play2EbeanEnhanceMojo
         }
     }
 
+    private Config getPlayConfiguration() {
+        String configResource = System.getProperty( "config.resource" );
+        if ( configResource != null )
+        {
+            return ConfigFactory.parseResources( configResource );
+        } else
+        {
+            String configFileName = System.getProperty( "config.file", "conf/application.conf" );
+            File applicationConfFile = new File( project.getBasedir(), configFileName );
+            return ConfigFactory.parseFileAnySyntax( applicationConfFile );
+        }
+    }
+
+    private String getEBeanModelsToEnhance(Config config)
+    {
+        try
+        {
+            StringBuilder collector = new StringBuilder();
+
+            Set<Map.Entry<String, ConfigValue>> entries = config.getConfig( "ebean" ).entrySet();
+            for ( Map.Entry<String, ConfigValue> entry : entries )
+            {
+                ConfigValue configValue = entry.getValue();
+                if ( configValue.valueType() == ConfigValueType.STRING )
+                {
+                    collector.append( ',' ).append( configValue.unwrapped().toString() );
+                } else
+                {
+                    String configKey = "ebean." + entry.getKey();
+                    List<String> tmpModels = config.getStringList( configKey );
+                    for ( String tmpModel : tmpModels )
+                    {
+                        collector.append( ',' ).append( tmpModel );
+                    }
+                }
+            }
+            return collector.length() != 0 ? collector.substring( 1 ) : null;
+        } catch ( ConfigException.Missing e )
+        {
+            return "models.*";
+        }
+    }
+
     /**
      * Process all the comma delimited list of packages.
      * <p>
@@ -211,7 +213,7 @@ public class Play2EbeanEnhanceMojo
      */
     public List<File> collectClassFilesToEnhance( long lastEnhanced, File outputDirectory, String packageNames )
     {
-        if ( packageNames == null )
+        if ( packageNames == null || packageNames.isEmpty())
         {
             return collectClassFilesToEnhanceFromPackage( lastEnhanced, outputDirectory, "", true );
             // return;
