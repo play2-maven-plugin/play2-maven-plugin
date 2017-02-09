@@ -115,12 +115,13 @@ public class JNotifyFileWatchService
         }
 
         String libraryResourceName = System.mapLibraryName( libraryName );
+        libraryResourceName = libraryResourceName.replace("dylib", "jnilib"); //fix for JDK-7161051 bug.
         File outputFile = new File( nativeLibsDirectory, libraryResourceName );
         if ( !outputFile.exists() )
         {
             try
             {
-                copyResourceToFile( "META-INF/native/" + libraryOS, System.mapLibraryName( libraryName ),
+                copyResourceToFile( "META-INF/native/" + libraryOS, libraryResourceName,
                                     nativeLibsDirectory );
             }
             catch ( IOException e )
