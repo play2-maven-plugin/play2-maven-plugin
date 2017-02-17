@@ -1,5 +1,5 @@
 ^/\*\s*$
-^ \* Copyright 2013-2016 Grzegorz Slowikowski \(gslowikowski at gmail dot com\)\s*$
+^ \* Copyright 2013-2017 Grzegorz Slowikowski \(gslowikowski at gmail dot com\)\s*$
 ^ \*\s*$
 ^ \* Licensed under the Apache License, Version 2.0 \(the "License"\);\s*$
 ^ \* you may not use this file except in compliance with the License.\s*$
