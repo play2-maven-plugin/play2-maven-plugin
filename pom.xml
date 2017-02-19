@@ -258,7 +258,7 @@ under the License.
                             <warPluginVersion>2.6</warPluginVersion>
                             <sbtCompilerPluginVersion>${sbt-compiler.plugin.version}</sbtCompilerPluginVersion> <!-- Velocity does not allow dots in template names -->
                             <scala210LatestVersion>2.10.6</scala210LatestVersion>
-                            <scala211LatestVersion>2.11.7</scala211LatestVersion>
+                            <scala211LatestVersion>2.11.8</scala211LatestVersion>
                             <scala212LatestVersion>2.12.1</scala212LatestVersion>
                             <play21LatestVersion>2.1.5</play21LatestVersion>
                             <play22LatestVersion>2.2.6</play22LatestVersion>
