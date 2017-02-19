@@ -7,7 +7,7 @@ $h2 Usage - general instructions
 
 $h3 Different Play! versions support
 
-Plugin supports following Play! Framework versions: 2.1.x, 2.2.x, 2.3.x, 2.4.x and 2.5.x.
+Plugin supports following Play! Framework versions: 2.1.x, 2.2.x, 2.3.x, 2.4.x, 2.5.x and 2.6.x.
 
 There are some configuration differences:
 
@@ -20,6 +20,8 @@ There are some configuration differences:
 - [Play! Framework 2.4.x usage](./usage-play24.html)
 
 - [Play! Framework 2.5.x usage](./usage-play25.html)
+
+- [Play! Framework 2.6.x usage](./usage-play26.html)
 
 $h3 Using plugin SNAPSHOT versions
 
@@ -467,6 +469,63 @@ with
                 </dependencies>
             </plugin>
 ```
+
+**Play! 2.5.x to Play! 2.6.x migration**
+
+a) change Play! version from
+
+```
+    <properties>
+        ...
+        <play2.version>${play25LatestVersion}</play2.version>
+    </properties>
+```
+
+to
+
+```
+    <properties>
+        ...
+        <play2.version>${play26LatestVersion}</play2.version>
+    </properties>
+```
+
+b) add dependency
+
+```
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-guice_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```
+
+c) if using Java forms add dependency (previously it was part of Play! Java module)
+
+```
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-java-forms_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```
+and optionally configure additional template imports
+
+```
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${play2.plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    ...
+                    <templateAdditionalImports>play.data._ play.core.j.PlayFormsMagicForJava._</templateAdditionalImports>
+                </configuration>
+            </plugin>
+```
+
+d) if using Java JPA upgrade Hibernate version to `5.x` (e.g. `5.2.6.Final`)
+
 
 **Play! 2.4.x to Play! 2.5.x migration**
 

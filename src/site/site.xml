@@ -57,6 +57,7 @@ under the License.
             <item name="Play 2.3.x" href="usage-play23.html"/>
             <item name="Play 2.4.x" href="usage-play24.html"/>
             <item name="Play 2.5.x" href="usage-play25.html"/>
+            <item name="Play 2.6.x" href="usage-play26.html"/>
         </menu>
 
         <menu name="IDE integration">
