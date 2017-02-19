@@ -118,7 +118,7 @@ under the License.
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
                         <sourcepath>${project.basedir}/src/main/java:${project.basedir}/../../play2-provider-api/src/main/java</sourcepath>
-                        <subpackages>com.google.code.play2.provider.play25</subpackages>
+                        <subpackages>com.google.code.play2.provider.play26</subpackages>
                     </configuration>
                 </plugin>
 
