@@ -1,0 +1,26 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Migration from previous plugin version
+
+Change plugin versions from
+
+```
+    <properties>
+        ...
+        <play2.plugin.version>1.0.0-beta5</play2.plugin.version>
+        <sbt-compiler.plugin.version>1.0.0-beta8</sbt-compiler.plugin.version>
+    </properties>
+```
+
+to
+
+```
+    <properties>
+        ...
+        <play2.plugin.version>1.0.0-beta6</play2.plugin.version>
+        <sbt-compiler.plugin.version>1.0.0-rc1</sbt-compiler.plugin.version>
+    </properties>
+```

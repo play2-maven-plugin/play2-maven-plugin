@@ -1,0 +1,48 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Migration from Play! Framework 2.1.x to 2.2.x
+
+Check original [Play! Framework migration documentation](https://www.playframework.com/documentation/2.2.x/Migration22) first.
+
+$h3 Maven-related changes
+
+a) change Play! version from
+
+```
+    <properties>
+        ...
+        <play2.version>${play21LatestVersion}</play2.version>
+    </properties>
+```
+
+to
+
+```
+    <properties>
+        ...
+        <play2.version>${play22LatestVersion}</play2.version>
+    </properties>
+```
+
+b) change `groupId` of all Play! dependencies from `play`
+
+```
+        <dependency>
+            <groupId>play</groupId>
+            <artifactId>play-xxxx_2.10</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```
+
+to `com.typesafe.play`
+
+```
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-xxxx_2.10</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```

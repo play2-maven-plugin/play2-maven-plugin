@@ -1,0 +1,70 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Migration from Play! Framework 2.5.x to 2.6.x
+
+Check original Play! Framework migration documentation first:
+
+- [General migration information](https://www.playframework.com/documentation/2.6.x/Migration26)
+- [Cache migration](https://www.playframework.com/documentation/2.6.x/CacheMigration26)
+- [JPA migration](https://www.playframework.com/documentation/2.6.x/JPAMigration26)
+- [Messages migration](https://www.playframework.com/documentation/2.6.x/MessagesMigration26)
+- [WS client migration](https://www.playframework.com/documentation/2.6.x/WSMigration26)
+
+$h3 Maven-related changes
+
+a) change Play! version from
+
+```
+    <properties>
+        ...
+        <play2.version>${play25LatestVersion}</play2.version>
+    </properties>
+```
+
+to
+
+```
+    <properties>
+        ...
+        <play2.version>${play26LatestVersion}</play2.version>
+    </properties>
+```
+
+b) add dependency
+
+```
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-guice_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```
+
+c) if using Java forms add dependency (previously it was part of Play! Java module)
+
+```
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-java-forms_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```
+and optionally configure additional template imports
+
+```
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${play2.plugin.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    ...
+                    <templateAdditionalImports>play.data._ play.core.j.PlayFormsMagicForJava._</templateAdditionalImports>
+                </configuration>
+            </plugin>
+```
+
+d) if using Java JPA upgrade Hibernate version to `5.x` (e.g. `5.2.6.Final`)
