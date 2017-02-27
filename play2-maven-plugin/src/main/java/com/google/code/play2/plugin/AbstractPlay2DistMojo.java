@@ -57,6 +57,14 @@ public abstract class AbstractPlay2DistMojo
     private File configFile;
 
     /**
+     * Additional JVM arguments passed to Play! server's JVM
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.serverJvmArgs", defaultValue = "" )
+    private String serverJvmArgs;
+
+    /**
      * Distribution additional project artifacts include filter.
      * 
      * Comma-separated list of the classifiers of project's additional artifacts
@@ -231,6 +239,15 @@ public abstract class AbstractPlay2DistMojo
                 writer.write( " -Dconfig.file=`dirname $0`/" );
                 writer.write( configFile.getName() );
             }
+            if ( serverJvmArgs != null )
+            {
+                String jvmArgs = serverJvmArgs.trim();
+                if ( jvmArgs.length() > 0 )
+                {
+                    writer.write( " " );
+                    writer.write( jvmArgs );
+                }
+            }
             writer.write( " " );
             writer.write( prodServerMainClassName );
             writer.write( " $scriptdir" );
@@ -260,6 +277,15 @@ public abstract class AbstractPlay2DistMojo
             {
                 writer.write( " -Dconfig.file=%scriptdir%/" );
                 writer.write( configFile.getName() );
+            }
+            if ( serverJvmArgs != null )
+            {
+                String jvmArgs = serverJvmArgs.trim();
+                if ( jvmArgs.length() > 0 )
+                {
+                    writer.write( " " );
+                    writer.write( jvmArgs );
+                }
             }
             writer.write( " " );
             writer.write( prodServerMainClassName );
