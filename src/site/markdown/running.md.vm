@@ -10,7 +10,7 @@
 
 $h2 Running in development mode
 
-To run project in development mode (`sbt run` equivalent) call
+To run project in development mode (`sbt run` equivalent), call
 
 ```
 mvn play2:run
@@ -18,12 +18,24 @@ mvn play2:run
 
 Application runs in current (Maven) JVM process, there is no forking possibility.
 
-Project does not require building before. First build will be executed on first request.
+Project does not require building before running. First build will be executed on first request.
 
-By default `process-classes` phase is executed to build the project. This can be customized
-in three ways:
+$h4 Debugging
 
-a) adding `runGoals` parameter to plugin configuration:
+To allow remote debugging, call
+
+```
+mvnDebug play2:run
+```
+
+and attach remote debugger from your IDE.
+
+$h4 Configuring build goals
+
+By default `process-classes` phase is executed to build the project.
+This can be customized, for example to run tests on every reload. It can be done in three ways:
+
+a) by adding `runGoals` parameter to plugin configuration:
 
 ```
     <build>
@@ -37,38 +49,72 @@ a) adding `runGoals` parameter to plugin configuration:
                 <extensions>true</extensions>
                 <configuration>
                     ...
-                    <runGoals>compile</runGoals>
+                    <runGoals>test</runGoals>
                 </configuration>
             </plugin>
         </plugins>
     </build>
-</project>
 ```
 
-b) adding `play2.runGoals` property to project properties:
+b) by adding `play2.runGoals` property to project properties:
 
 ```
     <properties>
         ...
-        <play2.runGoals>compile</play2.runGoals>
+        <play2.runGoals>test</play2.runGoals>
     </properties>
 ```
 
-c) adding `-Dplay2.runGoals` to Maven call:
+c) by adding `-Dplay2.runGoals` to Maven call:
 
 ```
-mvn play2:run -Dplay2.runGoals=compile
+mvn play2:run -Dplay2.runGoals=test
 ```
 
 $h3 Multi-module builds
 
-...
+In multi-module build the first `play2` module found will be run.
 
-$h3 Processing web assets
+If this is not expected behaviour, the module to run can be specified using `mainModule`
+plugin configuration parameter. Main module can be specified as:
 
-...
+- `artifactId` or `:artifactId` - find first module with given artifactId,
+- `groupId:artifactId` - find module with given groupId and artifactId.
 
-$h3 Other configuration options
+E.g. selecting module with `main-app` artifactId can be done in three ways:
 
-...
+a) by adding `mainModule` parameter to plugin configuration:
 
+```
+    <build>
+        ...
+        <plugins>
+            ....
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    ...
+                    <mainModule>main-app</mainModule>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+```
+
+b) by adding `play2.mainModule` property to project properties:
+
+```
+    <properties>
+        ...
+        <play2.mainModule>main-app</play2.mainModule>
+    </properties>
+```
+
+c) by adding `-Dplay2.mainModule` to Maven call:
+
+```
+mvn play2:run -Dplay2.mainModule=main-app
+```

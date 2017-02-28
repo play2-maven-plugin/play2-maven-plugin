@@ -76,7 +76,7 @@ under the License.
 
         <menu name="Other topics">
             <item name="Assets processing" href="assets.html"/>
-            <item name="Running in DEV mode" href="running.html"/>
+            <item name="Running in development mode" href="running.html"/>
             <item name="Multi-module builds" href="multi-module-builds.html"/>
             <item name="WAR packaging" href="war-packaging.html"/>
         </menu>
