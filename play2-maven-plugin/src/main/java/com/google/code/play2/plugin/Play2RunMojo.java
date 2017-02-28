@@ -112,18 +112,13 @@ public class Play2RunMojo
     private boolean runSkip;
 
     /**
-     * Directory containing web assets.
-     * <br>
-     * <br>
-     * Assets can be treated as resources (and added to <code>${project.build.outputDirectory}</code>) or not.
-     * <br>
-     * By default they are expected to be added to resources. This simplifies packaging.
+     * Directory containing all processed web assets.
      * <br>
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play2.assetsDirectory", defaultValue = "${project.build.outputDirectory}/public" ) //TODO  required or not?
-    private File assetsDirectory;
+    @Parameter( property = "play2.assetsOutputDirectory", defaultValue = "${project.build.outputDirectory}/public" ) //TODO  required or not?
+    private File assetsOutputDirectory;
 
     /**
      * Web asset URLs prefix.
@@ -229,7 +224,7 @@ public class Play2RunMojo
      * {@code artifactId} or {@code :artifactId} - find first module with given {@code artifactId}
      * </li>
      * <li>
-     * {@code groupId:artifactId} - find first module with given {@code groupId} and {@code artifactId}
+     * {@code groupId:artifactId} - find module with given {@code groupId} and {@code artifactId}
      * </li>
      * </ul>
      * If not specified, first reactor module with {@code play2} packaging will be selected.
@@ -502,7 +497,7 @@ public class Play2RunMojo
             configuration.setHttpsPort( resolvedHttpsPort );
             configuration.setHttpAddress( resolvedHttpAddress );
             configuration.setAssetsPrefix( assetsPrefix );
-            configuration.setAssetsDirectory( assetsDirectory );
+            configuration.setAssetsDirectory( assetsOutputDirectory );
             configuration.setDevSettings( devSettingsMap );
             configuration.setBuildLink( buildLink );
 
