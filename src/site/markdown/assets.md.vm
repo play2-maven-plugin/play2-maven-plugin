@@ -1,0 +1,196 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#if($project.version.endsWith("SNAPSHOT"))
+#set($testProjectsGitBranch = 'master')
+#else
+#set($testProjectsGitBranch = "test-projects-${project.version}")
+#end
+
+$h2 Processing web assets
+
+Web assets can be static (unmanaged in SBT terminology) or generated during the build (managed).
+Their location in distribution archive is by convention inside `public` directory although this
+path can be configured.
+
+Unmanaged assets are files (e.g. images, css and javascript files), by convention located inside
+`public` directory, which should be copied to distibution archive without any processing.
+
+Managed assets are created during the build process usually by transforming other files (e.g. less, coffeescript).
+Input files are located by convention inside `app/assets` directory.
+
+There is no one, proper way of processing web assets. Processing is not tightly coupled with building server side
+of Play! Framework application. They can even be processed by separate build system (e.g. Grunt).
+
+In fact in Play! Framework this changed over time.
+
+In versions 2.0.x to 2.2.x unmanaged assets were treated as resources and were just copied to build output directory.
+Managed assets were processed by `CoffeescriptCompiler`, `LessCompiler` and `JavascriptCompiler`
+and generated files were added to build output directory as well.
+
+In Play! Framework 2.3.x things changed. Web assets processing (both unmanaged and managed)
+was moved to external [SbtWeb](https://github.com/sbt/sbt-web) plugins family.
+
+
+I Maven build assets should be treated as resources. Below are described some build configurations.
+
+$h3 Static assets only
+
+The simplest case is a project with static assets only. Configuration is very simple.
+
+```
+    <build>
+        ...
+        <resources>
+            ...
+            <resource>
+                <directory>${basedir}/public</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+    </build>
+```
+
+$h3 Processing of CoffeeScript and Less files and using Google Closure Compiler.
+
+This plugin contains three simple assets-processing goals: 
+[coffee-compile](play2-maven-plugin/coffee-compile-mojo.html),
+[less-compile](play2-maven-plugin/less-compile-mojo.html)
+and [closure-compile](play2-maven-plugin/closure-compile-mojo.html).
+
+They implement subset of the features of similar tasks used for assets processing in Play! Framework SBT build
+before [SbtWeb](https://github.com/sbt/sbt-web) introduction (in version 2.3.x).
+Check original Play! Framework 2.2.x [managed assets documentation](https://www.playframework.com/documentation/2.2.x/Assets#Managed-assets)
+for details.
+
+Although these goals have limited functionality, they have some advantages:
+
+- performance (no need to launch external build system),
+- integration with error presentation system when running in development mode.
+
+Maven configuration is simple. Add static assets as resources (as in previous scenario) and dynamic assets processing goals:
+
+```
+    <build>
+        ...
+        <resources>
+            ...
+            <resource>
+                <directory>${basedir}/public</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    ...
+                    <execution>
+                        <id>default-play2-compile-assets</id>
+                        <goals>
+                            <goal>closure-compile</goal> <!-- only if precompiling js assets -->
+                            <goal>coffee-compile</goal> <!-- only if precompiling coffee assets -->
+                            <goal>less-compile</goal> <!-- only if precompiling less assets -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+```
+
+$h3 Using full power of SbtWeb build.
+
+Check original [SbtWeb](https://github.com/sbt/sbt-web) documentation to learn all its features.
+
+SBTWeb and its plugins **cannot** be used in Maven build. The workaround is to create auxiliary SBT build
+for web assets processing purpose only and call it from Maven build using [SBT Runner Maven Plugin](https://github.com/sbtrun-maven-plugin/sbtrun-maven-plugin).
+
+The simplest configuration is presented below. It may not be clear, why Play! Framework SBT plugin
+(`"com.typesafe.play" % "sbt-plugin"`) is not used. It's on purpose. SbtWeb plugin has many less
+dependencies and therefore forked SBT build initialization time is much shorter.
+
+Maven configuration is different. Resource directory must point to the place, where SBTWeb writes
+all (static and generated) web assets. It's `web/public/main` subdirectory of SBT build output
+directory. Complete configuration:
+
+```
+    <build>
+        ...
+        <resources>
+            ...
+            <resource>
+                <directory>${basedir}/target/sbt/web/public/main</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+        ...
+        <plugins>
+            ...
+            <plugin>
+                <groupId>com.google.code.sbtrun-maven-plugin</groupId>
+                <artifactId>sbtrun-maven-plugin</artifactId>
+                <version>${sbtrunPluginVersion}</version>
+                <executions>
+                    <execution>
+                        <id>compile-assets</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <args>web-assets:assets</args>
+                            <jvmArgs>-Dscala.version=${scala.version}</jvmArgs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            ...
+        </plugins>
+        ...
+    </build>
+```
+
+SBT build files:
+
+- `build.sbt`:
+
+```
+scalaVersion := Option(System.getProperty("scala.version")).getOrElse("${scala211LatestVersion}")
+
+lazy val main = (project in file("."))
+  .enablePlugins(SbtWeb)
+  .settings(
+    sourceDirectory in Assets := baseDirectory.value / "app/assets",
+    resourceDirectory in Assets := baseDirectory.value / "public",
+    target := baseDirectory.value / "target/sbt"
+  )
+```
+
+- `project/build.properties`:
+
+```
+sbt.version=${sbt013LatestVersion}
+```
+
+- `project/plugins.sbt`
+
+```
+addSbtPlugin("com.typesafe.sbt" % "sbt-web" % "1.4.0")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-js-engine" % "1.1.4")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-coffeescript" % "1.0.0")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-less" % "1.1.1")
+```
+
+

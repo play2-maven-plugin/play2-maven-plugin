@@ -257,6 +257,8 @@ under the License.
                             <buildHelperPluginVersion>1.9.1</buildHelperPluginVersion>
                             <warPluginVersion>2.6</warPluginVersion>
                             <sbtCompilerPluginVersion>${sbt-compiler.plugin.version}</sbtCompilerPluginVersion> <!-- Velocity does not allow dots in template names -->
+                            <sbtrunPluginVersion>1.0.0-beta4</sbtrunPluginVersion>
+                            <sbt013LatestVersion>0.13.13</sbt013LatestVersion>
                             <scala210LatestVersion>2.10.6</scala210LatestVersion>
                             <scala211LatestVersion>2.11.8</scala211LatestVersion>
                             <scala212LatestVersion>2.12.1</scala212LatestVersion>
