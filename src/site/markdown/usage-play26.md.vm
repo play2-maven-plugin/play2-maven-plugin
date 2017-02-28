@@ -292,7 +292,6 @@ Example with optional dependencies and configuration options:
                 <version>${project.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                <configuration>
                     <!-- if using controllers without dependency injection; default value is "injected" -->
                     <routesGenerator>static</routesGenerator>
                     <!-- only if using database evolutions -->
