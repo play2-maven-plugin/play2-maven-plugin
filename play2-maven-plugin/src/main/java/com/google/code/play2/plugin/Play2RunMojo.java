@@ -193,7 +193,7 @@ public class Play2RunMojo
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play2.httpsAddress", defaultValue = "" )
+    @Parameter( property = "play2.httpAddress", defaultValue = "" )
     private String httpAddress;
 
     /**
