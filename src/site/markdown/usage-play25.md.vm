@@ -118,7 +118,7 @@ Example with optional dependencies and configuration options:
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <anorm.version>3.0.0-M1</anorm.version>
+        <anorm.version>2.5.3</anorm.version>
         <play2.version>${play25LatestVersion}</play2.version>
         <play2-ebean.version>3.0.2</play2-ebean.version>
         <play2-enhancer.version>1.1.0</play2-enhancer.version>
