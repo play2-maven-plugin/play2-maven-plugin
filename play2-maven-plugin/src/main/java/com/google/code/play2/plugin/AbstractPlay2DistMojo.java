@@ -47,17 +47,29 @@ import com.google.code.play2.provider.api.Play2Runner;
 public abstract class AbstractPlay2DistMojo
     extends AbstractArchivingMojo
 {
-
     /**
-     * Custom config file.
+     * Extra settings used only in production mode (like {@code devSettings}
+     * for development mode).
+     * <br>
+     * <br>
+     * Space-separated list of key=value pairs, e.g.
+     * <br>
+     * {@code play.server.http.port=9001 play.server.https.port=9443}
+     * <br>
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "config.file" )
-    private File configFile;
+    @Parameter( property = "play2.prodSettings", defaultValue = "" )
+    private String prodSettings;
 
     /**
      * Additional JVM arguments passed to Play! server's JVM
+     * <br>
+     * <br>
+     * Space-separated list of arguments, e.g.
+     * <br>
+     * {@code -Xmx1024m -Dconfig.resource=application-prod.conf -Dlogger.file=./conf/logback-prod.xml}
+     * <br>
      * 
      * @since 1.0.0
      */
@@ -111,11 +123,6 @@ public abstract class AbstractPlay2DistMojo
         {
             throw new MojoExecutionException( String.format( "%s not present", projectArtifactFile.getAbsolutePath() ) );
             // TODO - add info about running "mvn package first"
-        }
-
-        if ( configFile != null && !configFile.isFile() )
-        {
-            throw new MojoExecutionException( String.format( "%s not present", configFile.getAbsolutePath() ) );
         }
 
         String packageName = project.getArtifactId() + "-" + project.getVersion();
@@ -210,11 +217,6 @@ public abstract class AbstractPlay2DistMojo
             zipArchiver.addFile( readmeFile, packageName + "/" + readmeFile.getName() );
         }
 
-        if ( configFile != null )
-        {
-            zipArchiver.addFile( configFile, packageName + "/" + configFile.getName() );
-        }
-
         checkArchiverForProblems( zipArchiver );
 
         return zipArchiver;
@@ -234,10 +236,18 @@ public abstract class AbstractPlay2DistMojo
             writer.write( "classpath=$scriptdir/lib/*" );
             writer.newLine();
             writer.write( "exec java $* -cp \"$classpath\"" );
-            if ( configFile != null )
+            if ( prodSettings != null )
             {
-                writer.write( " -Dconfig.file=`dirname $0`/" );
-                writer.write( configFile.getName() );
+                String trimmedProdSettings = prodSettings.trim();
+                if ( trimmedProdSettings.length() > 0 )
+                {
+                    String[] args = trimmedProdSettings.split( " " );
+                    for ( String arg : args )
+                    {
+                        writer.write( " -D" );
+                        writer.write( arg );
+                    }
+                }
             }
             if ( serverJvmArgs != null )
             {
@@ -273,10 +283,18 @@ public abstract class AbstractPlay2DistMojo
             writer.write( "set classpath=%scriptdir%/lib/*" );
             writer.newLine();
             writer.write( "java %* -cp \"%classpath%\"" );
-            if ( configFile != null )
+            if ( prodSettings != null )
             {
-                writer.write( " -Dconfig.file=%scriptdir%/" );
-                writer.write( configFile.getName() );
+                String trimmedProdSettings = prodSettings.trim();
+                if ( trimmedProdSettings.length() > 0 )
+                {
+                    String[] args = trimmedProdSettings.split( " " );
+                    for ( String arg : args )
+                    {
+                        writer.write( " -D" );
+                        writer.write( arg );
+                    }
+                }
             }
             if ( serverJvmArgs != null )
             {

@@ -36,30 +36,35 @@ public abstract class AbstractPlay2ServerMojo
     extends AbstractAntJavaBasedPlay2Mojo
 {
     /**
-     * Alternative server port.
+     * Extra settings used only in production mode (like {@code devSettings}
+     * for development mode).
+     * <br>
+     * <br>
+     * Space-separated list of key=value pairs, e.g.
+     * <br>
+     * {@code play.server.http.port=9001 play.server.https.port=9443}
+     * <br>
      * 
      * @since 1.0.0
      */
-    @Parameter( property = "play2.httpPort", defaultValue = "" )
-    protected String httpPort;
-
-    /**
-     * Alternative server port for secure connection (https protocol).
-     * 
-     * @since 1.0.0
-     */
-    @Parameter( property = "play2.httpsPort", defaultValue = "" )
-    private String httpsPort;
+    @Parameter( property = "play2.prodSettings", defaultValue = "" )
+    private String prodSettings;
 
     /**
      * Additional JVM arguments passed to Play! server's JVM
+     * <br>
+     * <br>
+     * Space-separated list of arguments, e.g.
+     * <br>
+     * {@code -Xmx1024m -Dconfig.resource=application-prod.conf -Dlogger.file=./conf/logback-prod.xml}
+     * <br>
      * 
      * @since 1.0.0
      */
     @Parameter( property = "play2.serverJvmArgs", defaultValue = "" )
     private String serverJvmArgs;
 
-    protected Java prepareAntJavaTask( String mainClassName, boolean fork )
+    protected Java prepareAntJavaTask( String mainClassName )
         throws MojoExecutionException
     {
         File baseDir = project.getBasedir();
@@ -72,68 +77,38 @@ public abstract class AbstractPlay2ServerMojo
         javaTask.setProject( antProject );
         javaTask.setClassname( mainClassName );
         javaTask.setClasspath( classPath );
-        javaTask.setFork( fork );
-        if ( fork )
-        {
-            javaTask.setDir( baseDir );
+        javaTask.setFork( true );
+        javaTask.setDir( baseDir );
 
-            if ( serverJvmArgs != null )
-            {
-                String jvmArgs = serverJvmArgs.trim();
-                if ( jvmArgs.length() > 0 )
-                {
-                    String[] args = jvmArgs.split( " " );
-                    for ( String arg : args )
-                    {
-                        javaTask.createJvmarg().setValue( arg );
-                        getLog().debug( "  Adding jvmarg '" + arg + "'" );
-                    }
-                }
-            }
-
-            if ( httpPort != null && httpPort.length() > 0 )
-            {
-                addSystemProperty( javaTask, "http.port", httpPort );
-            }
-            if ( httpsPort != null && httpsPort.length() > 0 )
-            {
-                addSystemProperty( javaTask, "https.port", httpsPort );
-            }
-        }
-        else
+        if ( prodSettings != null )
         {
-            // find and add all system properties in "serverJvmArgs"
-            if ( serverJvmArgs != null )
+            String trimmedProdSettings = prodSettings.trim();
+            if ( trimmedProdSettings.length() > 0 )
             {
-                String jvmArgs = serverJvmArgs.trim();
-                if ( jvmArgs.length() > 0 )
+                String[] args = trimmedProdSettings.split( " " );
+                for ( String arg : args )
                 {
-                    String[] args = jvmArgs.split( " " );
-                    for ( String arg : args )
-                    {
-                        if ( arg.startsWith( "-D" ) )
-                        {
-                            arg = arg.substring( 2 );
-                            int p = arg.indexOf( '=' );
-                            if ( p >= 0 )
-                            {
-                                String key = arg.substring( 0, p );
-                                String value = arg.substring( p + 1 );
-                                getLog().debug( "  Adding system property '" + arg + "'" );
-                                addSystemProperty( javaTask, key, value );
-                            }
-                            else
-                            {
-                                // TODO - throw an exception
-                            }
-                        }
-                    }
+                    javaTask.createJvmarg().setValue( "-D" + arg );
+                    getLog().debug( "  Adding jvmarg '-D" + arg + "'" );
                 }
             }
         }
-        // addSystemProperty( javaTask, "play.home", playHome.getAbsolutePath() );
-        // addSystemProperty( javaTask, "play.id", ( playId != null ? playId : "" ) );
-        // addSystemProperty( javaTask, "application.path", baseDir.getAbsolutePath() );
+
+        if ( serverJvmArgs != null )
+        {
+            String jvmArgs = serverJvmArgs.trim();
+            if ( jvmArgs.length() > 0 )
+            {
+                String[] args = jvmArgs.split( " " );
+                for ( String arg : args )
+                {
+                    javaTask.createJvmarg().setValue( arg );
+                    getLog().debug( "  Adding jvmarg '" + arg + "'" );
+                }
+            }
+        }
+
+        javaTask.createArg().setFile( baseDir );
 
         return javaTask;
     }

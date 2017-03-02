@@ -41,6 +41,7 @@ public class Play2StartMojo
 {
     /**
      * Allows the server startup to be skipped.
+     * <br>
      * 
      * @since 1.0.0
      */
@@ -48,8 +49,12 @@ public class Play2StartMojo
     private boolean startSkip;
 
     /**
-     * Spawns started JVM process. See <a href="http://ant.apache.org/manual/Tasks/java.html">Ant Java task
+     * Spawns started JVM process.
+     * <br>
+     * <br>
+     * See <a href="http://ant.apache.org/manual/Tasks/java.html">Ant Java task
      * documentation</a> for details.
+     * <br>
      * 
      * @since 1.0.0
      */
@@ -58,9 +63,10 @@ public class Play2StartMojo
 
     /**
      * Start server synchronously.
-     * 
-     * After starting server wait for "http://localhost:${httpPort}${startCheckUrl}" URL
-     * to be available.
+     * <br>
+     * <br>
+     * After starting server wait for {@code startCheckUrl} URL to be available.
+     * <br>
      * 
      * @since 1.0.0
      */
@@ -69,26 +75,38 @@ public class Play2StartMojo
 
     /**
      * Server start timeout in milliseconds.
-     * 
-     * Used only if startSynchro is true.
+     * <br>
+     * <br>
+     * Used only if {@code startSynchro} is true.
+     * <br>
      * 
      * @since 1.0.0
      */
     @Parameter( property = "play2.startTimeout", defaultValue = "0" )
-    int startTimeout;
+    private int startTimeout;
 
     /**
-     * URL to check periodically when server is starting.
+     * Relative or absolute URL to check periodically when server is starting.
+     * <br>
+     * <br>
      * Server is started when connection to this URL returns any content
      * (does not throw IOException).
-     * Has to starts with slash character (like URLs in "conf/routes" file).
-     * 
-     * Used only if startSynchro is true.
+     * <br>
+     * Relative URL is allowed only if absolute URL starts with
+     * {@code http://0.0.0.0:9000} (protocol, host and port have
+     * their default values).
+     * <br>
+     * If URL is relative, it has to start with a slash character
+     * (like URLs in {@code conf/routes} file).
+     * <br>
+     * <br>
+     * Used only if {@code startSynchro} is true.
+     * <br>
      * 
      * @since 1.0.0
      */
     @Parameter( property = "play2.startCheckUrl", defaultValue = "/" )
-    String startCheckUrl;
+    private String startCheckUrl;
 
     @Override
     protected void internalExecute()

@@ -39,11 +39,6 @@ import com.google.code.play2.provider.api.Play2Runner;
 public abstract class AbstractPlay2StartServerMojo
     extends AbstractPlay2ServerMojo
 {
-    /**
-     * Default HTTP port.
-     */
-    private static final int DEFAULT_HTTP_PORT = 9000;
-
     protected Java getStartServerTask( boolean spawn )
         throws MojoExecutionException
     {
@@ -59,7 +54,7 @@ public abstract class AbstractPlay2StartServerMojo
         Play2Provider play2Provider = getProvider();
         Play2Runner play2Runner = play2Provider.getRunner();
 
-        Java javaTask = prepareAntJavaTask( play2Runner.getServerMainClass(), true );
+        Java javaTask = prepareAntJavaTask( play2Runner.getServerMainClass() );
         if ( spawn )
         {
             javaTask.setSpawn( true );
@@ -88,19 +83,14 @@ public abstract class AbstractPlay2StartServerMojo
         return javaTask;
     }
 
-    protected String getRootUrl( String relativeUrl )
+    protected String getRootUrl( String url )
     {
-        int serverPort = DEFAULT_HTTP_PORT;
-        if ( httpPort != null && httpPort.length() > 0 )
+        String result = url; // maybe is already absolute
+        if ( !url.startsWith( "http:" ) && !url.startsWith( "https:" ) )
         {
-            serverPort = Integer.parseInt( httpPort );
+            result = String.format( "http://0.0.0.0:9000%s", url ); // was relative, make absolute one
         }
-        /*
-         * else { String serverPortStr = configParser.getProperty( "http.port" ); if ( serverPortStr != null ) {
-         * serverPort = Integer.parseInt( serverPortStr ); } }
-         */
-
-        return String.format( "http://localhost:%d%s", Integer.valueOf( serverPort ), relativeUrl );
+        return result;
     }
 
     // startTimeout in milliseconds
