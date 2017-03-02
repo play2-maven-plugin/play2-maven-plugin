@@ -45,7 +45,7 @@ import com.google.code.sbt.compiler.api.Analysis;
 import com.google.code.sbt.compiler.api.AnalysisProcessor;
 
 /**
- * Ebean enhance
+ * Enhence Ebean entity classes
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0

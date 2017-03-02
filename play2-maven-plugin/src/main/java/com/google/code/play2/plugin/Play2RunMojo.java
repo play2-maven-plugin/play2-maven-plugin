@@ -61,7 +61,7 @@ import com.google.code.play2.watcher.api.FileWatchService;
 import com.google.code.play2.watcher.api.FileWatchServices;
 
 /**
- * Run Play&#33; server ({@code sbt run} equivalent).
+ * Run Play&#33; server in development mode ({@code sbt run} equivalent).
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0

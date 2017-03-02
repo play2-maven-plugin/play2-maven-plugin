@@ -30,7 +30,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Java;
 
 /**
- * Start Play&#33; server ("play start" equivalent).
+ * Start Play&#33; server in production mode ({@code sbt start} equivalent).
  * 
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
