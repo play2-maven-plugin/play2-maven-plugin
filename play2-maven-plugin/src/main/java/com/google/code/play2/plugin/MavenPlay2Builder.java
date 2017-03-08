@@ -166,6 +166,12 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
     }
 
     @Override /* Play2Builder */
+    public void forceReload()
+    {
+        forceReloadNextTime = true;
+    }
+
+    @Override /* Play2Builder */
     public Object[] findSource( String className, Integer line )
     {
         Object[] result = null;
@@ -255,6 +261,7 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
 
         lifecycleExecutor.execute( newSession );
 
+        boolean shouldReload = forceReloadNextTime;
         forceReloadNextTime = result.hasExceptions();
 
         if ( !result.hasExceptions() && !additionalGoals.isEmpty() )
@@ -418,7 +425,6 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
         }
         this.currentSourceMaps = sourceMaps;
 
-        boolean reloadRequired = false;
         for ( MavenProject p: projectsToBuild )
         {
             long lastModifiedTime = 0L;
@@ -442,16 +448,16 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
                     }
                 }
             }
-            if ( !reloadRequired
+            if ( !shouldReload
                 && ( lastModifiedTime > currentClasspathTimestamps.get( p ).longValue() || !outputFilePaths.equals( currentClasspathFilePaths.get( p ) ) ) )
             {
-                reloadRequired = true;
+                shouldReload = true;
             }
             currentClasspathTimestamps.put( p, Long.valueOf( lastModifiedTime ) );
             currentClasspathFilePaths.put( p, outputFilePaths );
         }
 
-        return reloadRequired;
+        return shouldReload;
     }
 
     private Play2BuildException getPlayBuildException( Throwable playException )

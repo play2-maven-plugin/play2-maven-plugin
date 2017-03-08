@@ -108,7 +108,7 @@ public class Reloader implements SBTLink
     @Override /* BuildLink interface */
     public void forceReload()
     {
-        // NOT USED
+        buildLink.forceReload();
     }
 
     @Override /* BuildLink interface */

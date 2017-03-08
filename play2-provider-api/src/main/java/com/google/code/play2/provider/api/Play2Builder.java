@@ -24,6 +24,8 @@ public interface Play2Builder
 {
     boolean/*Play2BuildResult*/ build() throws Play2BuildFailure, Play2BuildError;
 
+    void forceReload();
+
     Object[] findSource( String className, Integer line );
 
 }

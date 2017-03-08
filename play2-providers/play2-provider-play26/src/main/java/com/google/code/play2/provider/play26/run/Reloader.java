@@ -110,11 +110,10 @@ public class Reloader implements BuildLink
     }
 
     @Override /* BuildLink interface */
-    // In SBT called by ApplicationEvolutions (play-jdbc-evolutions) L:362, 370
-    // for "/@evolutions/apply/..." and "/@evolutions/resolve/..." urls
+    // Called by EvolutionsWebCommands.<init> (play-jdbc-evolutions) L:367, 375
     public void forceReload()
     {
-        // not used
+        buildLink.forceReload();
     }
 
     @Override /* BuildLink interface */

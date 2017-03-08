@@ -109,7 +109,7 @@ public class Reloader implements BuildLink
     @Override /* BuildLink interface */
     public void forceReload()
     {
-        // NOT USED
+        buildLink.forceReload();
     }
 
     @Override /* BuildLink interface */
