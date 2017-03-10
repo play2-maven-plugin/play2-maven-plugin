@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -148,7 +147,7 @@ public abstract class AbstractPlay2DistMojo
         }
 
         // preparation
-        Set<?> projectArtifacts = project.getArtifacts();
+        Set<Artifact> projectArtifacts = project.getArtifacts();
 
         Set<Artifact> excludedArtifacts = new HashSet<Artifact>();
 
@@ -171,9 +170,8 @@ public abstract class AbstractPlay2DistMojo
         }
 
         Set<Artifact> filteredArtifacts = new HashSet<Artifact>(); // TODO-rename to filteredClassPathArtifacts
-        for ( Iterator<?> iter = projectArtifacts.iterator(); iter.hasNext(); )
+        for ( Artifact artifact: projectArtifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             if ( artifact.getArtifactHandler().isAddedToClasspath() && !excludedArtifacts.contains( artifact ) )
             {
                 // TODO-add checkPotentialReactorProblem( artifact );
@@ -189,9 +187,8 @@ public abstract class AbstractPlay2DistMojo
         }
 
         // lib
-        for ( Iterator<?> iter = filteredArtifacts.iterator(); iter.hasNext(); )
+        for ( Artifact artifact: filteredArtifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             File jarFile = artifact.getFile();
             StringBuilder dfnsb = new StringBuilder();
             dfnsb.append( artifact.getGroupId() ).append( '.' ).append( artifact.getArtifactId() ).append( '-' ).append( artifact.getVersion() );

@@ -18,7 +18,6 @@
 package com.google.code.play2.plugin;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -134,10 +133,9 @@ public abstract class AbstractPlay2ServerMojo
         getLog().debug( String.format( "CP: %s", classesDirectory.getAbsolutePath() ) );
         classPath.createPathElement().setLocation( classesDirectory );
 
-        Set<?> classPathArtifacts = project.getArtifacts();
-        for ( Iterator<?> iter = classPathArtifacts.iterator(); iter.hasNext(); )
+        Set<Artifact> classPathArtifacts = project.getArtifacts();
+        for ( Artifact artifact: classPathArtifacts )
         {
-            Artifact artifact = (Artifact) iter.next();
             getLog().debug( String.format( "CP: %s:%s:%s (%s)", artifact.getGroupId(), artifact.getArtifactId(),
                                            artifact.getType(), artifact.getScope() ) );
             classPath.createPathElement().setLocation( artifact.getFile() );
