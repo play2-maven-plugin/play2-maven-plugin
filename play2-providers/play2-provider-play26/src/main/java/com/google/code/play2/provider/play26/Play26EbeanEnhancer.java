@@ -23,9 +23,9 @@ import java.util.List;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
 
-import com.avaje.ebean.enhance.agent.InputStreamTransform;
-import com.avaje.ebean.enhance.agent.Transformer;
-import com.avaje.ebean.enhance.ant.StringReplace;
+import io.ebean.enhance.agent.InputStreamTransform;
+import io.ebean.enhance.agent.Transformer;
+import io.ebean.enhance.ant.StringReplace;
 
 public class Play26EbeanEnhancer
     implements Play2EbeanEnhancer
