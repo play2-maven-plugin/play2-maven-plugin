@@ -216,9 +216,9 @@ public class Play2RunMojo
      * <br>
      * <br>
      * Important in multi-module projects with more than one {@code play2} modules
-     * to choose which one should be run.
+     * to select which one should be run.
      * <br>
-     * There are three allowed formats:
+     * There are three supported formats:
      * <ul>
      * <li>
      * {@code artifactId} or {@code :artifactId} - find first module with given {@code artifactId}
@@ -531,24 +531,6 @@ public class Play2RunMojo
         {
             System.setProperties( origProperties );
         }
-    }
-
-    private boolean isMatchingProject( MavenProject p, String selector )
-    {
-        boolean result;
-        if ( !selector.contains( ":" ) ) // artifactId
-        {
-            result = selector.equals( p.getArtifactId() );
-        }
-        else if ( selector.startsWith( ":" ) ) // :artifactId
-        {
-            result = selector.equals( ":" + p.getArtifactId() );
-        }
-        else // groupId:artifactId
-        {
-            result = selector.equals( p.getGroupId() + ":" + p.getArtifactId() );
-        }
-        return result;
     }
 
     private File getTemplateCompilationOutputDirectory()

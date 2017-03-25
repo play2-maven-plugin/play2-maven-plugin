@@ -60,6 +60,12 @@ public class Play2DistExplodedMojo
             return;
         }
 
+        if ( !isMainModule() )
+        {
+            getLog().debug( "Not main module - skipping execution" );
+            return;
+        }
+
         try
         {
             ZipArchiver zipArchiver = prepareArchiver();

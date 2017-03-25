@@ -373,4 +373,22 @@ public abstract class AbstractPlay2Mojo
         return result.getArtifacts();
     }
 
+    protected boolean isMatchingProject( MavenProject p, String selector )
+    {
+        boolean result;
+        if ( !selector.contains( ":" ) ) // artifactId
+        {
+            result = selector.equals( p.getArtifactId() );
+        }
+        else if ( selector.startsWith( ":" ) ) // :artifactId
+        {
+            result = selector.equals( ":" + p.getArtifactId() );
+        }
+        else // groupId:artifactId
+        {
+            result = selector.equals( p.getGroupId() + ":" + p.getArtifactId() );
+        }
+        return result;
+    }
+
 }

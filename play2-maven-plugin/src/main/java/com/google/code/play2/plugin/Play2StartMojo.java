@@ -49,6 +49,30 @@ public class Play2StartMojo
     private boolean startSkip;
 
     /**
+     * Identifier of the module to start.
+     * <br>
+     * <br>
+     * Important in multi-module projects with more than one {@code play2} modules
+     * to choose which one should be started.
+     * <br>
+     * There are three supported formats:
+     * <ul>
+     * <li>
+     * {@code artifactId} or {@code :artifactId} - find first module with given {@code artifactId}
+     * </li>
+     * <li>
+     * {@code groupId:artifactId} - find module with given {@code groupId} and {@code artifactId}
+     * </li>
+     * </ul>
+     * If not specified, all reactor modules with {@code play2} packaging will be selected.
+     * <br>
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.mainModule", defaultValue = "" )
+    private String mainModule;
+
+    /**
      * Spawns started JVM process.
      * <br>
      * <br>
@@ -118,6 +142,12 @@ public class Play2StartMojo
             return;
         }
 
+        if ( !isMainModule() )
+        {
+            getLog().debug( "Not main module - skipping execution" );
+            return;
+        }
+
         File baseDir = project.getBasedir();
 
         // Make separate method for checking conf file (use in "run" and "start" mojos)
@@ -170,6 +200,11 @@ public class Play2StartMojo
         }
 
         getLog().info( "Play! server started" );
+    }
+
+    private boolean isMainModule()
+    {
+        return mainModule == null || "".equals( mainModule ) || isMatchingProject( project, mainModule );
     }
 
 }

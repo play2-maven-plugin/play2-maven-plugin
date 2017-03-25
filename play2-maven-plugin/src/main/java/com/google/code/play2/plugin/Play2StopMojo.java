@@ -44,6 +44,30 @@ public class Play2StopMojo
     @Parameter( property = "play2.stopSkip", defaultValue = "false" )
     private boolean stopSkip;
 
+    /**
+     * Identifier of the module to stop.
+     * <br>
+     * <br>
+     * Important in multi-module projects with more than one {@code play2} modules
+     * to choose which one should be stopped.
+     * <br>
+     * There are three supported formats:
+     * <ul>
+     * <li>
+     * {@code artifactId} or {@code :artifactId} - find first module with given {@code artifactId}
+     * </li>
+     * <li>
+     * {@code groupId:artifactId} - find module with given {@code groupId} and {@code artifactId}
+     * </li>
+     * </ul>
+     * If not specified, all reactor modules with {@code play2} packaging will be selected.
+     * <br>
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.mainModule", defaultValue = "" )
+    private String mainModule;
+
     @Override
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
@@ -51,6 +75,12 @@ public class Play2StopMojo
         if ( stopSkip )
         {
             getLog().info( "Skipping execution" );
+            return;
+        }
+
+        if ( !isMainModule() )
+        {
+            getLog().debug( "Not main module - skipping execution" );
             return;
         }
 
@@ -74,6 +104,11 @@ public class Play2StopMojo
         stopServer();
 
         getLog().info( "Play! server stopped" );
+    }
+
+    private boolean isMainModule()
+    {
+        return mainModule == null || "".equals( mainModule ) || isMatchingProject( project, mainModule );
     }
 
 }

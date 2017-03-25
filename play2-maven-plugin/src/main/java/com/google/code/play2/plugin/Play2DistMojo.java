@@ -100,6 +100,12 @@ public class Play2DistMojo
             return;
         }
 
+        if ( !isMainModule() )
+        {
+            getLog().debug( "Not main module - skipping execution" );
+            return;
+        }
+
         try
         {
             File destFile = new File( distOutputDirectory, getDestinationFileName() );
