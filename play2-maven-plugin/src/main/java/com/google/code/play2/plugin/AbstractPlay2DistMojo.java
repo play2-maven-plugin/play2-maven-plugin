@@ -227,7 +227,7 @@ public abstract class AbstractPlay2DistMojo
         }
 
         File linuxStartFile = createLinuxStartFile( buildDirectory, prodServerMainClassName );
-        zipArchiver.addFile( linuxStartFile, packageName + "/start" );
+        zipArchiver.addFile( linuxStartFile, packageName + "/start", 0755 /*permissions*/ );
 
         File windowsStartFile = createWindowsStartFile( buildDirectory, prodServerMainClassName );
         zipArchiver.addFile( windowsStartFile, packageName + "/start.bat" );
