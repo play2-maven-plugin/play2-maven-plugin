@@ -32,8 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.artifact.filter.PatternExcludesArtifactFilter;
 import org.apache.maven.shared.artifact.filter.PatternIncludesArtifactFilter;
 
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.archiver.Archiver;
 
 import com.google.code.play2.provider.api.Play2Provider;
 import com.google.code.play2.provider.api.Play2Runner;
@@ -128,16 +127,9 @@ public abstract class AbstractPlay2DistMojo
     @Parameter( property = "play2.distDependencyExcludes", defaultValue = "" )
     private String distDependencyExcludes;
 
-    protected ZipArchiver prepareArchiver()
-        throws IOException, MojoExecutionException, NoSuchArchiverException
+    protected void addArchiveContent( Archiver archiver, File linuxStartFile, File windowsStartFile )
+        throws MojoExecutionException
     {
-        Play2Provider play2Provider = getProvider();
-        Play2Runner play2Runner = play2Provider.getRunner();
-
-        String prodServerMainClassName = play2Runner.getServerMainClass();
-
-        ZipArchiver zipArchiver = getZipArchiver();
-
         File baseDir = project.getBasedir();
         File buildDirectory = new File( project.getBuild().getDirectory() );
 
@@ -151,7 +143,7 @@ public abstract class AbstractPlay2DistMojo
         String packageName = project.getArtifactId() + "-" + project.getVersion();
 
         String destinationFileName = packageName + "/lib/" + projectArtifactFile.getName();
-        zipArchiver.addFile( projectArtifactFile, destinationFileName );
+        archiver.addFile( projectArtifactFile, destinationFileName );
 
         if ( distClassifierIncludes != null && distClassifierIncludes.length() > 0 )
         {
@@ -166,7 +158,7 @@ public abstract class AbstractPlay2DistMojo
                     throw new MojoExecutionException( String.format( "%s not present", projectAttachedArtifactFile.getAbsolutePath() ) );
                 }
                 destinationFileName = packageName + "/lib/" + projectAttachedArtifactFile.getName();
-                zipArchiver.addFile( projectAttachedArtifactFile, destinationFileName );
+                archiver.addFile( projectAttachedArtifactFile, destinationFileName );
             }
         }
 
@@ -220,30 +212,31 @@ public abstract class AbstractPlay2DistMojo
             {
                 dfnsb.append( '-' ).append( artifact.getClassifier() );
             }
-            dfnsb.append( ".jar" ); // TODO-get the real extension?
-            String destFileName = dfnsb.toString();
-            // destinationFileName = ;
-            zipArchiver.addFile( jarFile, packageName + "/lib/" + destFileName/* jarFile.getName() */ );
+            dfnsb.append( '.' ).append( artifact.getType() );
+            destinationFileName = dfnsb.toString();
+            archiver.addFile( jarFile, packageName + "/lib/" + destinationFileName );
         }
 
-        File linuxStartFile = createLinuxStartFile( buildDirectory, prodServerMainClassName );
-        zipArchiver.addFile( linuxStartFile, packageName + "/start", 0755 /*permissions*/ );
+        if ( linuxStartFile != null && linuxStartFile.isFile() )
+        {
+            archiver.addFile( linuxStartFile, packageName + "/start", 0755 /*permissions*/ );
+        }
 
-        File windowsStartFile = createWindowsStartFile( buildDirectory, prodServerMainClassName );
-        zipArchiver.addFile( windowsStartFile, packageName + "/start.bat" );
+        if ( windowsStartFile != null && windowsStartFile.isFile() )
+        {
+            archiver.addFile( windowsStartFile, packageName + "/start.bat" );
+        }
 
         File readmeFile = new File( baseDir, "README" );
         if ( readmeFile.isFile() )
         {
-            zipArchiver.addFile( readmeFile, packageName + "/" + readmeFile.getName() );
+            archiver.addFile( readmeFile, packageName + "/" + readmeFile.getName() );
         }
 
-        checkArchiverForProblems( zipArchiver );
-
-        return zipArchiver;
+        checkArchiverForProblems( archiver );
     }
 
-    private File createLinuxStartFile( File buildDirectory, String prodServerMainClassName )
+    protected File createLinuxStartFile( File buildDirectory, String prodServerMainClassName )
         throws IOException
     {
         File result = new File( buildDirectory, "start" );
@@ -292,7 +285,7 @@ public abstract class AbstractPlay2DistMojo
         return result;
     }
 
-    private File createWindowsStartFile( File buildDirectory, String prodServerMainClassName )
+    protected File createWindowsStartFile( File buildDirectory, String prodServerMainClassName )
         throws IOException
     {
         File result = new File( buildDirectory, "start.bat" );
@@ -342,6 +335,14 @@ public abstract class AbstractPlay2DistMojo
     protected boolean isMainModule()
     {
         return mainModule == null || "".equals( mainModule ) || isMatchingProject( project, mainModule );
+    }
+
+    protected String getProdServerMainClassName() throws MojoExecutionException
+    {
+        Play2Provider play2Provider = getProvider();
+        Play2Runner play2Runner = play2Provider.getRunner();
+
+        return play2Runner.getServerMainClass();
     }
 
 }

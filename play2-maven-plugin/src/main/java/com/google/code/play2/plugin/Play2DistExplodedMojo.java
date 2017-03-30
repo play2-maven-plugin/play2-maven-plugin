@@ -27,9 +27,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
 
 /**
  * Create exploded Play&#33; framework and Play&#33; application (standalone distribution).
@@ -66,9 +66,17 @@ public class Play2DistExplodedMojo
             return;
         }
 
+        File buildDirectory = new File( project.getBuild().getDirectory() );
+
+        String prodServerMainClassName = getProdServerMainClassName();
+
+        File linuxStartFile = createLinuxStartFile( buildDirectory, prodServerMainClassName );
+        File windowsStartFile = createWindowsStartFile( buildDirectory, prodServerMainClassName );
+
         try
         {
-            ZipArchiver zipArchiver = prepareArchiver();
+            Archiver zipArchiver = getArchiver( "zip" );
+            addArchiveContent( zipArchiver, linuxStartFile, windowsStartFile );
 
             File distOutputDirectory = new File( project.getBuild().getDirectory(), "dist" );
             getLog().info( "Building dist directory: " + distOutputDirectory.getAbsolutePath() );

@@ -22,12 +22,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.maven.plugins.annotations.Component;
+
 import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.components.io.resources.PlexusIoResource;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.io.RawInputStreamFacade;
@@ -94,21 +94,21 @@ public abstract class AbstractArchivingMojo
                     default:
                         throw new RuntimeException( "Unknown archive entry type: " + entry.getType() ); // TODO-polish, what exception class?
                 }
-                // System.out.println(entry.getName());
             }
         }
     }
 
     /**
-     * Returns preconfigured ZIP archiver
+     * Returns preconfigured archiver
      * 
-     * @return ZIP archiver
-     * @throws NoSuchArchiverException should never be thrown
+     * @param archiverName archiver name
+     * @return archiver
+     * @throws NoSuchArchiverException for unsupported archiver name
      */
-    protected ZipArchiver getZipArchiver()
+    protected Archiver getArchiver( String archiverName )
         throws NoSuchArchiverException
     {
-        ZipArchiver result = (ZipArchiver) archiverManager.getArchiver( "zip" );
+        Archiver result = archiverManager.getArchiver( archiverName );
         result.setDuplicateBehavior( Archiver.DUPLICATES_FAIL ); // Just in case
         return result;
     }
