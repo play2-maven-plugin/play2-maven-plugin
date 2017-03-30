@@ -135,7 +135,7 @@ public class Play2DistMojo
      * @since 1.0.0
      */
     @Parameter( property = "play2.distTarLongFileMode", defaultValue = "warn" )
-    private String tarLongFileMode;
+    private String distTarLongFileMode;
 
     /**
      * Maven ProjectHelper.
@@ -277,7 +277,7 @@ public class Play2DistMojo
             tarArchiver.setCompression( TarArchiver.TarCompressionMethod.xz );
         }
 
-        tarArchiver.setLongfile( TarLongFileMode.valueOf( tarLongFileMode ) );
+        tarArchiver.setLongfile( TarLongFileMode.valueOf( distTarLongFileMode ) );
 
         return tarArchiver;
     }
