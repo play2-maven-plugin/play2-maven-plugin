@@ -124,12 +124,6 @@ public class Reloader implements BuildLink
     }
 
     @Override /* BuildLink interface */
-    public Object runTask( String task )
-    {
-        return null; // NOT USED
-    }
-
-    @Override /* BuildLink interface */
     // Called by DevServerStart.mainDev() (play-server) L:63
     public File projectPath()
     {
