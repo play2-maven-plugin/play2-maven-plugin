@@ -33,7 +33,7 @@ under the License.
     <description>Play! 2.x Provider for Play! 2.5.x</description>
 
     <properties>
-        <play2.version>2.5.13</play2.version>
+        <play2.version>2.5.14</play2.version>
         <twirl.version>1.1.1</twirl.version>
         <play2-enhancer.version>1.1.0</play2-enhancer.version>
     </properties>
