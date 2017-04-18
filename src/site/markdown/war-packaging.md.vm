@@ -8,7 +8,10 @@
 #set($testProjectsGitBranch = "test-projects-${project.version}")
 #end
 
-$h2 WAR packaging
+$h2 WAR distribution
+
+WAR distribution requires artifacts produced by [WAR Plugin for Play framework 2.x](https://github.com/play2war/play2-war-plugin) project.
+Unfortunately, the only supported Play! Framework versions are 2.2.x, 2.3.x and 2.4.x.
 
 Adding WAR packaging is actually very simple process, slightly different for servlet `2.5` and `3.0`/`3.1` compatible servers:
 

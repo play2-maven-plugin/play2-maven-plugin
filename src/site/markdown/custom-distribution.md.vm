@@ -1,0 +1,197 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#set($questionMark = '?')
+#if($project.version.endsWith("SNAPSHOT"))
+#set($testProjectsGitBranch = 'master')
+#else
+#set($testProjectsGitBranch = "test-projects-${project.version}")
+#end
+
+$h2 Custom distribution
+
+If [default distribution tasks](./default-distribution.html) are not sufficient, custom distribution archive can be created.
+using [Maven Assembly Plugin](http://maven.apache.org/plugins/maven-assembly-plugin/).
+
+Steps required to create custom distribution archive:
+
+a) create your Unix and/or Windows start and stop scripts in `/dist` directory:
+
+- Unix `start` script:
+
+```
+#!/usr/bin/env sh
+scriptdir=`dirname $0`
+classpath=$scriptdir/conf:$scriptdir/lib/*
+nohup java $* -cp "$classpath" play.core.server.ProdServerStart $scriptdir > $scriptdir/logs/system.out 2>&1 &
+```
+
+- Unix `stop` script:
+
+```
+kill $(cat RUNNING_PID)
+```
+
+- Windows `start.bat` script:
+
+```
+set scriptdir=%~dp0
+set classpath=%scriptdir%/conf;%scriptdir%/lib/*
+java %* -cp "%classpath%" play.core.server.ProdServerStart %scriptdir%
+```
+
+- Windows `stop.bat` script:
+
+```
+set /p pid=< RUNNING_PID
+taskkill /F /PID %pid%
+del RUNNING_PID
+```
+
+b) create assembly descriptor `assembly-dist.xml`:
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+
+    <id>dist</id>
+
+    <formats>
+        <format>tgz</format>
+        <format>zip</format>
+    </formats>
+
+    <includeSiteDirectory>false</includeSiteDirectory>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/dist</directory>
+            <outputDirectory></outputDirectory>
+            <fileMode>755</fileMode>
+            <lineEnding>unix</lineEnding>
+            <includes>
+                <include>start</include>
+                <include>stop</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${basedir}/dist</directory>
+            <outputDirectory></outputDirectory>
+            <lineEnding>windows</lineEnding>
+            <includes>
+                <include>start.bat</include>
+                <include>stop.bat</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>${basedir}/conf</directory>
+            <outputDirectory>conf</outputDirectory>
+            <fileMode>600</fileMode>
+            <lineEnding>unix</lineEnding>
+	        </fileSet>
+
+        <!-- empty 'logs' directory -->
+        <fileSet>
+            <directory>.</directory>
+            <outputDirectory>logs</outputDirectory>
+            <excludes>
+                <exclude>*/**</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
+
+    <files>
+        <file>
+            <source>${basedir}/LICENSE</source>
+        </file>
+
+        <file>
+            <source>${basedir}/README</source>
+        </file>
+
+        <file>
+            <source>\${project.build.directory}/\${project.build.finalName}-sans-externalized.jar</source>
+            <outputDirectory>lib</outputDirectory>
+            <destName>\${project.build.finalName}-sans-externalized.jar</destName>
+            <!-- or <destName>\${project.groupId}.\${project.build.finalName}-sans-externalized.jar</destName> -->
+        </file>
+    </files>
+
+    <dependencySets>
+        <dependencySet>
+            <scope>runtime</scope>
+            <outputDirectory>lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputFileNameMapping>${artifact.artifactId}-${artifact.version}$\{dashClassifier$questionMark\}.${artifact.extension}</outputFileNameMapping>
+            <!-- or <outputFileNameMapping>${artifact.groupId}.${artifact.artifactId}-${artifact.version}$\{dashClassifier$questionMark\}.${artifact.extension}</outputFileNameMapping> -->
+        </dependencySet>
+    </dependencySets>
+</assembly>
+```
+
+c) add configuration to `pom.xml` file, preferably in separate profile:
+
+```
+    <profiles>
+        <profile>
+            <id>dist</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sans-externalized-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>sans-externalized</classifier>
+                                    <excludes>
+                                        <exclude>application.conf</exclude>
+                                        <exclude>logback.xml</exclude>
+                                        <exclude>routes</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>${assemblyPluginVersion}</version>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly-dist.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+```
+
+d) generate distribution:
+
+```
+mvn package -Pdist
+```

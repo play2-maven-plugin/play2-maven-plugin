@@ -1,0 +1,46 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#set($questionMark = '?')
+#if($project.version.endsWith("SNAPSHOT"))
+#set($testProjectsGitBranch = 'master')
+#else
+#set($testProjectsGitBranch = "test-projects-${project.version}")
+#end
+
+$h2 Default distribution
+
+Check original Play! Framework documentation first:
+
+- [Deploying](https://www.playframework.com/documentation/latest/Deploying)
+
+Distribution archive can be prepared by calling one of the two goals:
+
+- [play2:dist](play2-maven-plugin/dist-mojo.html) goal creates distribution archive.
+
+- [play2:dist-exploded](play2-maven-plugin/dist-exploded-mojo.html) goal creates distribution
+archive structure in `target/dist` directory, e.g. for testing.
+
+Before calling any of distribution tasks, project must be packaged first (jar file must be created).
+
+Creating distribution archive:
+
+```
+mvn package play2:dist
+```
+
+Creating distribution archive structure in a directory:
+
+```
+mvn package play2:dist-exploded
+```
+
+$h4 Creating custom distribution archive.
+
+If above distribution goals are not sufficient, custom distribution archive can be created - 
+read [documentation](./custom-distribution.html).
+
+$h4 Creating WAR distribution.
+
+Read [documentation](./war-packaging.html).

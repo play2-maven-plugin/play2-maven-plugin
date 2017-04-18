@@ -74,11 +74,16 @@ under the License.
             <item name="IntelliJ IDEA" href="ide-integration-idea.html"/>
         </menu>
 
+        <menu name="Deploying">
+            <item name="Default distribution" href="default-distribution.html"/>
+            <item name="Custom distribution" href="custom-distribution.html"/>
+            <item name="WAR distribution" href="war-packaging.html"/>
+        </menu>
+
         <menu name="Other topics">
             <item name="Assets processing" href="assets.html"/>
             <item name="Running in development mode" href="running.html"/>
             <item name="Multi-module builds" href="multi-module-builds.html"/>
-            <item name="WAR packaging" href="war-packaging.html"/>
         </menu>
 
         <menu ref="parent" inherit="top"/>
