@@ -99,6 +99,14 @@ public abstract class AbstractPlay2DistMojo
     private String serverJvmArgs;
 
     /**
+     * Distribution top level directory.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.distTopLevelDirectory", defaultValue = "${project.build.finalName}" )
+    private String distTopLevelDirectory;
+
+    /**
      * Distribution additional project artifacts include filter.
      * 
      * Comma-separated list of the classifiers of project's additional artifacts
@@ -140,9 +148,14 @@ public abstract class AbstractPlay2DistMojo
             // TODO - add info about running "mvn package first"
         }
 
-        String packageName = project.getArtifactId() + "-" + project.getVersion();
+        String distPathPrefix = "";
+        if ( distTopLevelDirectory != null && !"".equals( distTopLevelDirectory ) )
+        {
+            distPathPrefix = distTopLevelDirectory + '/';
+        }
+        String distLibPath = distPathPrefix + "lib/";
 
-        String destinationFileName = packageName + "/lib/" + projectArtifactFile.getName();
+        String destinationFileName = distLibPath + projectArtifactFile.getName();
         archiver.addFile( projectArtifactFile, destinationFileName );
 
         if ( distClassifierIncludes != null && distClassifierIncludes.length() > 0 )
@@ -157,7 +170,7 @@ public abstract class AbstractPlay2DistMojo
                 {
                     throw new MojoExecutionException( String.format( "%s not present", projectAttachedArtifactFile.getAbsolutePath() ) );
                 }
-                destinationFileName = packageName + "/lib/" + projectAttachedArtifactFile.getName();
+                destinationFileName = distLibPath + projectAttachedArtifactFile.getName();
                 archiver.addFile( projectAttachedArtifactFile, destinationFileName );
             }
         }
@@ -214,23 +227,23 @@ public abstract class AbstractPlay2DistMojo
             }
             dfnsb.append( '.' ).append( artifact.getType() );
             destinationFileName = dfnsb.toString();
-            archiver.addFile( jarFile, packageName + "/lib/" + destinationFileName );
+            archiver.addFile( jarFile, distLibPath + destinationFileName );
         }
 
         if ( linuxStartFile != null && linuxStartFile.isFile() )
         {
-            archiver.addFile( linuxStartFile, packageName + "/start", 0755 /*permissions*/ );
+            archiver.addFile( linuxStartFile, distPathPrefix + "start", 0755 /*permissions*/ );
         }
 
         if ( windowsStartFile != null && windowsStartFile.isFile() )
         {
-            archiver.addFile( windowsStartFile, packageName + "/start.bat" );
+            archiver.addFile( windowsStartFile, distPathPrefix + "start.bat" );
         }
 
         File readmeFile = new File( baseDir, "README" );
         if ( readmeFile.isFile() )
         {
-            archiver.addFile( readmeFile, packageName + "/" + readmeFile.getName() );
+            archiver.addFile( readmeFile, distPathPrefix + readmeFile.getName() );
         }
 
         checkArchiverForProblems( archiver );
