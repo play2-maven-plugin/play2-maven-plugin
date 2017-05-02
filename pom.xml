@@ -254,6 +254,7 @@ under the License.
                     <version>3.6</version>
                     <configuration>
                         <attributes>
+                            <assemblyPluginVersion>3.0.0</assemblyPluginVersion>
                             <buildHelperPluginVersion>1.9.1</buildHelperPluginVersion>
                             <warPluginVersion>2.6</warPluginVersion>
                             <sbtCompilerPluginVersion>${sbt-compiler.plugin.version}</sbtCompilerPluginVersion> <!-- Velocity does not allow dots in template names -->
