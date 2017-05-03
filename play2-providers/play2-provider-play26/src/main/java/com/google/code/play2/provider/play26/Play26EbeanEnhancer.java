@@ -46,7 +46,7 @@ public class Play26EbeanEnhancer
     {
         URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        Transformer transformer = new Transformer( new URLClassLoader(cp, null), "debug=-1" );
+        Transformer transformer = new Transformer( new URLClassLoader( cp, null ), "debug=-1" );
         inputStreamTransform = new InputStreamTransform( transformer, classLoader );
     }
 
@@ -55,7 +55,7 @@ public class Play26EbeanEnhancer
         throws Exception
     {
         boolean processed = false;
-        
+
         String className = getClassName( classFile );
         byte[] result = inputStreamTransform.transform( className, classFile );
         if ( result != null )
