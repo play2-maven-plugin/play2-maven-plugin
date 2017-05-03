@@ -69,7 +69,7 @@ and optionally configure additional template imports
 
 d) if using Java JPA upgrade Hibernate version to `5.x` (e.g. `5.2.6.Final`)
 
-e) if using Ebean upgrade `play2-ebean` dependency version to `4.0.0-M2`
+e) if using Ebean upgrade `play2-ebean` dependency version to `4.0.0-M3`
 
 This will require some changes in model classes, e.g.:
 
