@@ -19,13 +19,14 @@ package com.google.code.play2.provider.play26;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
 
-import io.ebean.enhance.agent.InputStreamTransform;
-import io.ebean.enhance.agent.Transformer;
+import io.ebean.enhance.Transformer;
 import io.ebean.enhance.ant.StringReplace;
+import io.ebean.enhance.common.InputStreamTransform;
 
 public class Play26EbeanEnhancer
     implements Play2EbeanEnhancer
@@ -45,7 +46,7 @@ public class Play26EbeanEnhancer
     {
         URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        Transformer transformer = new Transformer( cp, "debug=-1" );
+        Transformer transformer = new Transformer( new URLClassLoader(cp, null), "debug=-1" );
         inputStreamTransform = new InputStreamTransform( transformer, classLoader );
     }
 
