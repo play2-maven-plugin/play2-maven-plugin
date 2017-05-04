@@ -19,6 +19,7 @@ package com.google.code.play2.provider.play25;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
@@ -44,7 +45,7 @@ public class Play25EbeanEnhancer
     public void setClassPathUrls( List<URL> classPathUrls )
     {
         URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+        ClassLoader classLoader = new URLClassLoader( cp, null );
         Transformer transformer = new Transformer( cp, "debug=-1" );
         inputStreamTransform = new InputStreamTransform( transformer, classLoader );
     }

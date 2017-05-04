@@ -45,8 +45,8 @@ public class Play26EbeanEnhancer
     public void setClassPathUrls( List<URL> classPathUrls )
     {
         URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-        Transformer transformer = new Transformer( new URLClassLoader( cp, null ), "debug=-1" );
+        ClassLoader classLoader = new URLClassLoader( cp, null );
+        Transformer transformer = new Transformer( classLoader, "debug=-1" );
         inputStreamTransform = new InputStreamTransform( transformer, classLoader );
     }
 
