@@ -18,7 +18,6 @@
 package com.google.code.play2.provider.play26.run;
 
 import java.io.IOException;
-import java.util.jar.JarFile;
 
 import com.google.code.play2.provider.api.Play2DevServer;
 
@@ -29,14 +28,11 @@ public class ReloaderPlayDevServer
 {
     private ServerWithStop server;
 
-    private JarFile docsJarFile; // optional
-
     private Reloader reloader;
 
-    public ReloaderPlayDevServer( ServerWithStop server, JarFile docsJarFile, Reloader reloader )
+    public ReloaderPlayDevServer( ServerWithStop server, Reloader reloader )
     {
         this.server = server;
-        this.docsJarFile = docsJarFile;
         this.reloader = reloader;
     }
 
@@ -45,10 +41,6 @@ public class ReloaderPlayDevServer
         throws IOException
     {
         server.stop();
-        if ( docsJarFile != null )
-        {
-            docsJarFile.close();
-        }
         reloader.close();
     }
 

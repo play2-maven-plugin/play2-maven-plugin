@@ -24,10 +24,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.JarFile;
 
 import play.core.Build;
-import play.core.BuildDocHandler;
 import play.core.BuildLink;
 import play.core.server.ServerWithStop;
 
@@ -64,8 +62,7 @@ public class Play26Runner
     @Override
     public String getPlayDocsModuleId( String scalaBinaryVersion, String playVersion )
     {
-        String docsArtifactName = playVersion.endsWith( "-SNAPSHOT" ) ? "play-docs" : "play-omnidoc";
-        return String.format( "com.typesafe.play:%s_%s:%s", docsArtifactName, scalaBinaryVersion, playVersion );
+        return null;
     }
 
     @Override
@@ -93,23 +90,6 @@ public class Play26Runner
 
         try
         {
-            ClassLoader docsLoader =
-                new URLClassLoader( Reloader.toUrls( configuration.getDocsClasspath() ), applicationLoader );
-            JarFile docsJarFile =
-                configuration.getDocsFile() != null ? new JarFile( configuration.getDocsFile() ) : null;
-            Class<?> docHandlerFactoryClass = docsLoader.loadClass( "play.docs.BuildDocHandlerFactory" );
-            BuildDocHandler buildDocHandler = null;
-            if ( docsJarFile != null )
-            {
-                Method factoryMethod = docHandlerFactoryClass.getMethod( "fromJar", JarFile.class, String.class );
-                buildDocHandler = (BuildDocHandler) factoryMethod.invoke( null, docsJarFile, "play/docs/content" );
-            }
-            else
-            {
-                Method factoryMethod = docHandlerFactoryClass.getMethod( "empty" );
-                buildDocHandler = (BuildDocHandler) factoryMethod.invoke( null );
-            }
-
             Class<?> mainClass = applicationLoader.loadClass( DEV_SERVER_MAIN_CLASS );
             String mainMethod = configuration.getHttpPort() != null ? "mainDevHttpMode" : "mainDevOnlyHttpsMode";
             int port =
@@ -117,11 +97,11 @@ public class Play26Runner
                                 : configuration.getHttpsPort().intValue();
             String httpAddress = configuration.getHttpAddress();
             Method mainDev =
-                mainClass.getMethod( mainMethod, BuildLink.class, BuildDocHandler.class, Integer.TYPE, String.class );
+                mainClass.getMethod( mainMethod, BuildLink.class, Integer.TYPE, String.class );
             ServerWithStop server =
-                (ServerWithStop) mainDev.invoke( null, reloader, buildDocHandler, port, httpAddress );
+                (ServerWithStop) mainDev.invoke( null, reloader, port, httpAddress );
 
-            return new ReloaderPlayDevServer( server, docsJarFile, reloader );
+            return new ReloaderPlayDevServer( server, reloader );
         }
         catch ( Throwable t )
         {
