@@ -33,7 +33,7 @@ to
     </properties>
 ```
 
-b) add dependency
+b) add dependency (unless compile-time or other dependency injection framework used)
 
 ```
         <dependency>
@@ -43,7 +43,30 @@ b) add dependency
         </dependency>
 ```
 
-c) if using Java forms add dependency (previously it was part of Play! Java module)
+c) optionally change HTTP server from `play-netty-server`
+
+```
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-netty-server_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```
+
+to `play-akka-http-server`
+
+```
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-akka-http-server_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+```
+
+Previously only `play-netty-server` was available. Now `play-akka-http-server` is available
+and is used by default in SBT.
+
+d) if using Java forms, add dependency (previously it was part of Play! Java module)
 
 ```
         <dependency>
@@ -67,9 +90,9 @@ and optionally configure additional template imports
             </plugin>
 ```
 
-d) if using Java JPA upgrade Hibernate version to `5.x` (e.g. `5.2.6.Final`)
+e) if using Java JPA, upgrade Hibernate version to `5.x` (e.g. `5.2.6.Final`)
 
-e) if using Ebean upgrade `play2-ebean` dependency version to `4.0.0-M3`
+f) if using Ebean, upgrade `play2-ebean` dependency version to `4.0.0-M3`
 
 This will require some changes in model classes, e.g.:
 

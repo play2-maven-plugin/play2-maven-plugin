@@ -63,9 +63,12 @@ Simplest project file:
             <scope>runtime</scope>
         </dependency>
 
+        <!-- default HTTP server -->
+        <!-- see https://www.playframework.com/documentation/2.6.x/AkkaHttpServer -->
+        <!--     https://www.playframework.com/documentation/2.6.x/NettyServer -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>play-netty-server_2.12</artifactId>
+            <artifactId>play-akka-http-server_2.12</artifactId>
             <version>${play2.version}</version>
             <scope>runtime</scope>
         </dependency>
@@ -233,9 +236,12 @@ Example with optional dependencies and configuration options:
             <scope>runtime</scope>
         </dependency>
 
+        <!-- default HTTP server -->
+        <!-- see https://www.playframework.com/documentation/2.6.x/AkkaHttpServer -->
+        <!--     https://www.playframework.com/documentation/2.6.x/NettyServer -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>play-netty-server_2.12</artifactId>
+            <artifactId>play-akka-http-server_2.12</artifactId>
             <version>${play2.version}</version>
             <scope>runtime</scope>
         </dependency>
