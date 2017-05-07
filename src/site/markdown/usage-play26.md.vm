@@ -156,6 +156,13 @@ Example with optional dependencies and configuration options:
             <version>${play2.version}</version>
         </dependency>
 
+        <!-- only if using default filters -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>filters-helpers_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
         <!-- only if using Anorm -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
