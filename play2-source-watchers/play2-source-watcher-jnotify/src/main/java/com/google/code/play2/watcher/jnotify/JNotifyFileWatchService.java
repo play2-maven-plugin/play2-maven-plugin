@@ -115,14 +115,12 @@ public class JNotifyFileWatchService
         }
 
         String libraryResourceName = System.mapLibraryName( libraryName );
-        libraryResourceName = libraryResourceName.replace(".dylib", ".jnilib"); // fix for JDK-7134701 bug
+        libraryResourceName = libraryResourceName.replace( ".dylib", ".jnilib" ); // fix for JDK-7134701 bug
         File outputFile = new File( nativeLibsDirectory, libraryResourceName );
         if ( !outputFile.exists() )
         {
             try
             {
-                debug( String.format( "JNotify watch service initialization (libraryOS = \"%s\", libraryResourceName = \"%s\", nativeLibsDirectory = \"%s\")",
-                                      libraryOS, libraryResourceName, nativeLibsDirectory.getAbsolutePath() ) );
                 copyResourceToFile( "META-INF/native/" + libraryOS, libraryResourceName, nativeLibsDirectory );
             }
             catch ( IOException e )
@@ -202,14 +200,6 @@ public class JNotifyFileWatchService
         finally
         {
             is.close();
-        }
-    }
-
-    private void debug( String message, Object... args )
-    {
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( String.format( message, args ) );
         }
     }
 
