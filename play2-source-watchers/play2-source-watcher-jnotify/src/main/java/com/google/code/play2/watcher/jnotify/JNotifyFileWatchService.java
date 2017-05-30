@@ -174,17 +174,25 @@ public class JNotifyFileWatchService
         }
     }
 
-    private void copyResourceToFile( String resourcePath, String libraryName, File outputDirectory ) throws IOException
+    private void copyResourceToFile( String resourcePath, String libraryName, File outputDirectory )
+        throws IOException, FileWatchException
     {
         InputStream is = this.getClass().getClassLoader().getResourceAsStream( resourcePath + "/" + libraryName );
+        if ( is == null ) // should never happen
+        {
+            throw new FileWatchException( "JNotifyFileWatcherService initialization failed, native library resource \""
+                + resourcePath + "/" + libraryName + "\" not found" );
+        }
+
         try
         {
+            byte[] buffer = new byte[8192];
+            int len = is.read( buffer );
+
             File outputFile = new File( outputDirectory, libraryName );
             OutputStream os = new FileOutputStream( outputFile );
             try
             {
-                byte[] buffer = new byte[8192];
-                int len = is.read( buffer );
                 while ( len != -1 )
                 {
                     os.write( buffer, 0, len );
