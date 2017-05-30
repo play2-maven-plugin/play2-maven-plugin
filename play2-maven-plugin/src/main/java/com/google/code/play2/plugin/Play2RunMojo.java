@@ -480,6 +480,7 @@ public class Play2RunMojo
             catch ( Exception e )
             {
                 getLog().warn( "File watch service initialization failed. Running without hot-reload functionality.", e );
+                playWatchService = null;
             }
 
             Play2Builder buildLink =
