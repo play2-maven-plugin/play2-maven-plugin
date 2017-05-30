@@ -121,6 +121,8 @@ public class JNotifyFileWatchService
         {
             try
             {
+                debug( String.format( "JNotify watch service initialization (libraryOS = \"%s\", libraryResourceName = \"%s\", nativeLibsDirectory = \"%s\")",
+                                      libraryOS, libraryResourceName, nativeLibsDirectory.getAbsolutePath() ) );
                 copyResourceToFile( "META-INF/native/" + libraryOS, libraryResourceName, nativeLibsDirectory );
             }
             catch ( IOException e )
@@ -200,6 +202,14 @@ public class JNotifyFileWatchService
         finally
         {
             is.close();
+        }
+    }
+
+    private void debug( String message, Object... args )
+    {
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( String.format( message, args ) );
         }
     }
 
