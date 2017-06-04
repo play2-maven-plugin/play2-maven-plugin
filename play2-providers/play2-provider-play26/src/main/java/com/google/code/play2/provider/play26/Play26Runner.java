@@ -27,7 +27,7 @@ import java.util.List;
 
 import play.core.Build;
 import play.core.BuildLink;
-import play.core.server.ServerWithStop;
+import play.core.server.ReloadableServer;
 
 import com.google.code.play2.provider.api.Play2DevServer;
 import com.google.code.play2.provider.api.Play2Runner;
@@ -98,8 +98,8 @@ public class Play26Runner
             String httpAddress = configuration.getHttpAddress();
             Method mainDev =
                 mainClass.getMethod( mainMethod, BuildLink.class, Integer.TYPE, String.class );
-            ServerWithStop server =
-                (ServerWithStop) mainDev.invoke( null, reloader, port, httpAddress );
+            ReloadableServer server =
+                (ReloadableServer) mainDev.invoke( null, reloader, port, httpAddress );
 
             return new ReloaderPlayDevServer( server, reloader );
         }

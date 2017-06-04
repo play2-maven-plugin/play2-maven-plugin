@@ -21,16 +21,16 @@ import java.io.IOException;
 
 import com.google.code.play2.provider.api.Play2DevServer;
 
-import play.core.server.ServerWithStop;
+import play.core.server.ReloadableServer;
 
 public class ReloaderPlayDevServer
     implements Play2DevServer
 {
-    private ServerWithStop server;
+    private ReloadableServer server;
 
     private Reloader reloader;
 
-    public ReloaderPlayDevServer( ServerWithStop server, Reloader reloader )
+    public ReloaderPlayDevServer( ReloadableServer server, Reloader reloader )
     {
         this.server = server;
         this.reloader = reloader;
