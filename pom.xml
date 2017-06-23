@@ -28,7 +28,7 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.google.code.play2-maven-plugin</groupId>
     <artifactId>play2</artifactId>
-    <version>1.0.0-beta10-SNAPSHOT</version>
+    <version>1.0.0-rc1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Play! 2.x</name>
