@@ -280,7 +280,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>org.scalatestplus.play</groupId>
             <artifactId>scalatestplus-play_2.12</artifactId>
-            <version>3.0.0</version>
+            <version>3.1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
