@@ -55,7 +55,7 @@ public class Play2Providers
         }
         if ( result == null )
         {
-            result = "play25"; // 'play26' is not stable yet
+            result = "play26";
         }
         return result;
     }
