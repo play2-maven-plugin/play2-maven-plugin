@@ -19,8 +19,11 @@ package com.google.code.play2.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,10 +34,12 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigParseOptions;
 import com.typesafe.config.ConfigValue;
 import com.typesafe.config.ConfigValueType;
 
@@ -59,6 +64,12 @@ public class Play2EbeanEnhanceMojo
      */
     @Parameter( property = "project.compileClasspathElements", readonly = true, required = true )
     private List<String> classpathElements;
+
+    /**
+     * The "conf" directory.
+     */
+    @Parameter( property = "play2.confDirectory", readonly = true, defaultValue = "${project.basedir}/conf" )
+    private File confDirectory;
 
     @Override
     protected void internalExecute()
@@ -171,11 +182,22 @@ public class Play2EbeanEnhanceMojo
         String configResource = System.getProperty( "config.resource" );
         if ( configResource != null )
         {
-            return ConfigFactory.parseResources( configResource );
+            ConfigParseOptions options = ConfigParseOptions.defaults();
+            options = options.setClassLoader(getProjectClassloader());
+            return ConfigFactory.parseResources( configResource, options );
         }
-        String configFileName = System.getProperty( "config.file", "conf/application.conf" );
-        File applicationConfFile = new File( project.getBasedir(), configFileName );
-        return ConfigFactory.parseFileAnySyntax( applicationConfFile );
+        String configFileName = System.getProperty( "config.file" );
+        if ( configFileName != null )
+        {
+            File applicationConfFile = new File( project.getBasedir(), configFileName );
+            return ConfigFactory.parseFileAnySyntax( applicationConfFile );
+        }
+        File applicationConfFile = new File( confDirectory, "application.conf" );
+        if ( applicationConfFile.exists() )
+        {
+            return ConfigFactory.parseFileAnySyntax( applicationConfFile );
+        }
+        return ConfigFactory.load();
     }
 
     private String getEBeanModelsToEnhance( Config config )
@@ -305,6 +327,27 @@ public class Play2EbeanEnhanceMojo
             result = dir.substring( 0, dir.length() - 1 );
         }
         return result;
+    }
+    
+    private ClassLoader getProjectClassloader()
+    {
+        try {
+            Set<URL> urls = new HashSet<URL>();
+            List<String> elements = project.getCompileClasspathElements();
+            elements.addAll(project.getRuntimeClasspathElements());
+            for (String element : elements) {
+                urls.add(new File(element).toURI().toURL());
+            }
+
+            return URLClassLoader.newInstance(
+                    urls.toArray(new URL[0]),
+                    Thread.currentThread().getContextClassLoader());
+            
+        } catch (DependencyResolutionRequiredException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
