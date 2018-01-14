@@ -450,7 +450,14 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
         newSession.setParallel( session.isParallel() );
         newSession.setProjectDependencyGraph( session.getProjectDependencyGraph() );
 
-        lifecycleExecutor.execute( newSession );
+        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            lifecycleExecutor.execute( newSession );
+        }
+        finally {
+            // don't let Maven (BuilderCommon.attachToThread method) to permanently change thread's class loader
+            Thread.currentThread().setContextClassLoader( currentClassLoader );
+        }
 
         return result;
     }
