@@ -246,41 +246,16 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
             projectsToBuild = calculateProjectsToBuild( changedFilePaths );
         }
 
-        MavenExecutionRequest request = DefaultMavenExecutionRequest.copy( session.getRequest() );
-        request.setStartTime( new Date() );
-        request.setExecutionListener( new ExecutionEventLogger() );
-        request.setGoals( goals );
-
-        MavenExecutionResult result = new DefaultMavenExecutionResult();
-
-        MavenSession newSession = new MavenSession( container, session.getRepositorySession(), request, result );
-        newSession.setProjects( projectsToBuild );
-        newSession.setCurrentProject( session.getCurrentProject() );
-        newSession.setParallel( session.isParallel() );
-        newSession.setProjectDependencyGraph( session.getProjectDependencyGraph() );
-
-        lifecycleExecutor.execute( newSession );
+        MavenExecutionResult result = executeBuild( projectsToBuild, goals );
 
         boolean shouldReload = forceReloadNextTime;
         forceReloadNextTime = result.hasExceptions();
 
         if ( !result.hasExceptions() && !additionalGoals.isEmpty() )
         {
-            request = DefaultMavenExecutionRequest.copy( session.getRequest() );
-            request.setStartTime( new Date() );
-            request.setExecutionListener( new ExecutionEventLogger() );
-            request.setGoals( additionalGoals );
-
-            result = new DefaultMavenExecutionResult();
-
-            newSession = new MavenSession( container, session.getRepositorySession(), request, result );
             List<MavenProject> onlyMe = Arrays.asList( new MavenProject[] { session.getCurrentProject() } );
-            newSession.setProjects( onlyMe );   
-            newSession.setCurrentProject( session.getCurrentProject() );
-            newSession.setParallel( session.isParallel() );
-            newSession.setProjectDependencyGraph( session.getProjectDependencyGraph() );
 
-            lifecycleExecutor.execute( newSession );
+            result = executeBuild( onlyMe, additionalGoals );
 
             forceReloadNextTime = result.hasExceptions();
         }
@@ -458,6 +433,26 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
         }
 
         return shouldReload;
+    }
+
+    private MavenExecutionResult executeBuild( List<MavenProject> projectsToBuild, List<String> goalsToExecute )
+    {
+        MavenExecutionRequest request = DefaultMavenExecutionRequest.copy( session.getRequest() );
+        request.setStartTime( new Date() );
+        request.setExecutionListener( new ExecutionEventLogger() );
+        request.setGoals( goalsToExecute );
+
+        MavenExecutionResult result = new DefaultMavenExecutionResult();
+
+        MavenSession newSession = new MavenSession( container, session.getRepositorySession(), request, result );
+        newSession.setProjects( projectsToBuild );
+        newSession.setCurrentProject( session.getCurrentProject() );
+        newSession.setParallel( session.isParallel() );
+        newSession.setProjectDependencyGraph( session.getProjectDependencyGraph() );
+
+        lifecycleExecutor.execute( newSession );
+
+        return result;
     }
 
     private Play2BuildException getPlayBuildException( Throwable playException )
