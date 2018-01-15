@@ -90,9 +90,9 @@ and optionally configure additional template imports
             </plugin>
 ```
 
-e) if using Java JPA, upgrade Hibernate version to `5.x` (e.g. `5.2.10.Final`)
+e) if using Java JPA, upgrade Hibernate version to `5.x` (e.g. `5.2.11.Final`)
 
-f) if using Ebean, upgrade `play-ebean` dependency version to `4.0.6`
+f) if using Ebean, upgrade `play-ebean` dependency version to `4.1.0`
 
 This will require some changes in model classes, e.g.:
 

@@ -130,7 +130,7 @@ Example with optional dependencies and configuration options:
 
         <anorm.version>2.5.3</anorm.version>
         <play2.version>${play26LatestVersion}</play2.version>
-        <play2-ebean.version>4.0.6</play2-ebean.version>
+        <play2-ebean.version>4.1.0</play2-ebean.version>
         <play2-enhancer.version>1.2.2</play2-enhancer.version>
         <scala.version>${scala212LatestVersion}</scala.version>
     </properties>
@@ -217,7 +217,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.2.10.Final</version>
+            <version>5.2.11.Final</version>
             <exclusions>
                 <!-- required to avoid version downgrade from '1.4.01' to '1.0.b2' -->
                 <exclusion>
