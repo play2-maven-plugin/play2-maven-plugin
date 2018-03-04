@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -58,9 +59,9 @@ public class Play2RoutesCompileMojo
     /**
      * The "conf" directory.
      * 
-     * @since 1.0.0
+     * @deprecated
      */
-    @Parameter( property = "play2.confDirectory", readonly = true, defaultValue = "${project.basedir}/conf" )
+    @Parameter( property = "play2.confDirectory", readonly = true )
     private File confDirectory;
 
     /**
@@ -88,6 +89,12 @@ public class Play2RoutesCompileMojo
     protected void internalExecute()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        if ( confDirectory != null )
+        {
+            getLog().warn( "\"confDirectory\" plugin configuration parameter is deprecated. "
+                + "Plugin looks for routes files in all resource directories." );
+        }
+
         if ( !"java".equals( mainLang ) && !"scala".equals( mainLang ) )
         {
             throw new MojoExecutionException(
@@ -95,25 +102,38 @@ public class Play2RoutesCompileMojo
                                                              mainLang ) );
         }
 
-        if ( !confDirectory.isDirectory() )
+        int routeFilesCount = 0;
+        for ( Resource resource: project.getBuild().getResources() )
         {
-            getLog().info( "No routers to compile" );
-            return;
+            if ( !"public".equals( resource.getTargetPath() ) ) // exclude web assets
+            {
+                File directory = new File( resource.getDirectory() );
+                if ( directory.isDirectory() )
+                {
+                    DirectoryScanner scanner = new DirectoryScanner();
+                    scanner.setBasedir( directory );
+                    scanner.setIncludes( ROUTES_INCLUDES );
+                    scanner.addDefaultExcludes();
+                    scanner.scan();
+                    String[] files = scanner.getIncludedFiles();
+                    if ( files.length > 0 )
+                    {
+                        routeFilesCount += files.length;
+                        compileRoutes( directory, files );
+                    }
+                }
+            }
         }
 
-        DirectoryScanner scanner = new DirectoryScanner();
-        scanner.setBasedir( confDirectory );
-        scanner.setIncludes( ROUTES_INCLUDES );
-        scanner.addDefaultExcludes();
-        scanner.scan();
-        String[] files = scanner.getIncludedFiles();
-
-        if ( files.length == 0 )
+        if ( routeFilesCount == 0 )
         {
             getLog().info( "No routers to compile" );
-            return;
         }
+    }
 
+    private void compileRoutes( File resourceDirectory, String[] files )
+            throws MojoExecutionException, MojoFailureException
+    {
         Play2Provider play2Provider = getProvider();
         Play2RoutesCompiler compiler = play2Provider.getRoutesCompiler();
 
@@ -180,7 +200,7 @@ public class Play2RoutesCompileMojo
 
         for ( String fileName : files )
         {
-            File routesFile = new File( confDirectory, fileName );
+            File routesFile = new File( resourceDirectory, fileName );
             String generatedFileName = getGeneratedFileName( fileName, defaultNamespace, mainRoutesFileName );
             File generatedFile = new File( generatedDirectory, generatedFileName );
             boolean modified = true;
