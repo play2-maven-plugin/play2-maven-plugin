@@ -47,6 +47,14 @@ public class Play2EbeanEnhanceMojo
     extends AbstractPlay2EnhanceMojo
 {
     /**
+     * ...
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.ebeanModels" )
+    private String ebeanModels;
+
+    /**
      * Project classpath.
      */
     @Parameter( property = "project.compileClasspathElements", readonly = true, required = true )
@@ -87,7 +95,11 @@ public class Play2EbeanEnhanceMojo
         Play2EbeanEnhancer enhancer = play2Provider.getEbeanEnhancer();
         enhancer.setOutputDirectory( outputDirectory );
         enhancer.setClassPathUrls( classPathUrls );
-        String models = enhancer.getModelsToEnhance();
+        String models = this.ebeanModels;
+        if ( models == null || "".equals( models ) )
+        {
+            models = enhancer.getModelsToEnhance();
+        }
 
         List<File> modelClassesToEnhance = collectClassFilesToEnhance( lastEnhanced, outputDirectory, models );
         if ( !modelClassesToEnhance.isEmpty() )
