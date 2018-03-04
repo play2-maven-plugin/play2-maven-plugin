@@ -75,6 +75,12 @@ under the License.
         </dependency>
 
         <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>routes-compiler_2.10</artifactId>
             <version>${play2.version}</version>
