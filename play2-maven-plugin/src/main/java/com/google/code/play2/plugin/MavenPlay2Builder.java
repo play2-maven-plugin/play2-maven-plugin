@@ -40,6 +40,7 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.PluginExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 
@@ -241,7 +242,8 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
         // - currentSourceMaps.isEmpty() => first build, build all modules
         // - projects.size() == 1 => one-module project, just build it
         // - else => not the first build in multimodule-project, calculate modules subset to build
-        if ( afterFirstSuccessfulBuild/*!currentSourceMaps.isEmpty()*//*currentSourceMap != null*/ && projects.size() > 1 )
+        if ( afterFirstSuccessfulBuild /* !currentSourceMaps.isEmpty() *//* currentSourceMap != null */
+            && !forceReloadNextTime && projects.size() > 1 )
         {
             projectsToBuild = calculateProjectsToBuild( changedFilePaths );
         }
@@ -266,51 +268,58 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
             {
                 changedFiles.putAll( prevChangedFiles ); // restore previously changed paths, required for next rebuild
             }
-            Throwable firstException = result.getExceptions().get( 0 );
-            if ( firstException.getCause() instanceof MojoFailureException )
+            Throwable firstException = result.getExceptions().get( 0 ); // LifecycleExecutionException
+            Throwable t = firstException.getCause();
+            if ( t instanceof MojoFailureException )
             {
-                MojoFailureException mfe = (MojoFailureException) firstException.getCause();
-                Throwable mfeCause = mfe.getCause();
-                if ( mfeCause != null )
+                Throwable cause = t.getCause();
+                if ( cause != null )
                 {
-                  try
-                  {
-                    Play2BuildException pbe = null;
-                    String causeName = mfeCause.getClass().getName();
-                    
-                    // sbt-compiler exception
-                    if ( CompilerException.class.getName().equals( causeName ) )
+                    try
                     {
-                        pbe = getSBTCompilerBuildException( mfeCause );
-                    }
-                    else if ( AssetCompilationException.class.getName().equals( causeName )
-                        || RoutesCompilationException.class.getName().equals( causeName )
-                        || TemplateCompilationException.class.getName().equals( causeName ) )
-                    {
-                        pbe = getPlayBuildException( mfeCause );
-                    }
+                        Play2BuildException pbe = null;
+                        String causeName = cause.getClass().getName();
 
-                    if ( pbe != null )
-                    {
-                        throw new Play2BuildFailure( pbe, sourceEncoding );
+                        // sbt-compiler exception
+                        if ( CompilerException.class.getName().equals( causeName ) )
+                        {
+                            pbe = getSBTCompilerBuildException( cause );
+                        }
+                        else if ( AssetCompilationException.class.getName().equals( causeName )
+                            || RoutesCompilationException.class.getName().equals( causeName )
+                            || TemplateCompilationException.class.getName().equals( causeName ) )
+                        {
+                            pbe = getPlayBuildException( cause );
+                        }
+
+                        if ( pbe != null )
+                        {
+                            throw new Play2BuildFailure( pbe, sourceEncoding );
+                        }
+                        throw new Play2BuildError( t.getClass().getSimpleName() + ": " + t.getMessage(), t );
                     }
-                    throw new Play2BuildError( "Build failed without reporting any problem!"/*?, ce*/ );
-                  }
-                  catch ( Play2BuildFailure e )
-                  {
-                      throw e;
-                  }
-                  catch ( Play2BuildError e )
-                  {
-                      throw e;
-                  }
-                  catch ( Exception e )
-                  {
-                      throw new Play2BuildError( ".... , check Maven console" );
-                  }
+                    catch ( Play2BuildFailure e )
+                    {
+                        throw e;
+                    }
+                    catch ( Play2BuildError e )
+                    {
+                        throw e;
+                    }
+                    catch ( Exception e )
+                    {
+                        throw new Play2BuildError( ".... , check Maven console" );
+                    }
                 }
+                throw new Play2BuildError( t.getClass().getSimpleName() + ": " + t.getMessage(), t );
             }
-            throw new Play2BuildError( "The compilation task failed, check Maven console"/*?, firstException*/ );
+
+            if ( t instanceof PluginExecutionException )
+            {
+                Throwable cause = t.getCause();
+                throw new Play2BuildError( cause.getClass().getSimpleName() + ": " + cause.getMessage(), cause );
+            }
+            throw new Play2BuildError( t.getClass().getSimpleName() + ": " + t.getMessage(), t );
         }
 
         // no exceptions
@@ -444,19 +453,21 @@ public class MavenPlay2Builder implements Play2Builder, FileWatchCallback
 
         MavenExecutionResult result = new DefaultMavenExecutionResult();
 
-        MavenSession newSession = new MavenSession( container, session.getRepositorySession(), request, result );
+        final MavenSession newSession = new MavenSession( container, session.getRepositorySession(), request, result );
         newSession.setProjects( projectsToBuild );
         newSession.setCurrentProject( session.getCurrentProject() );
         newSession.setParallel( session.isParallel() );
         newSession.setProjectDependencyGraph( session.getProjectDependencyGraph() );
 
-        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
-        try {
-            lifecycleExecutor.execute( newSession );
+        Thread mavenBuildThread = new Thread( new MavenPlay2BuilderRunnable( lifecycleExecutor, newSession ) );
+        mavenBuildThread.start();
+        try
+        {
+            mavenBuildThread.join();
         }
-        finally {
-            // don't let Maven (BuilderCommon.attachToThread method) to permanently change thread's class loader
-            Thread.currentThread().setContextClassLoader( currentClassLoader );
+        catch ( InterruptedException e )
+        {
+            throw new RuntimeException ( e );
         }
 
         return result;
