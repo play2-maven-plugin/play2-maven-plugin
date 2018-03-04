@@ -63,6 +63,16 @@ public class Play2TemplateCompileMojo
     @Parameter( property = "play2.templateAdditionalImports" )
     private String templateAdditionalImports;
 
+    /**
+     * Source directory for templates.
+     * 
+     * If not specified, all Maven build source directories are used.
+     * 
+     * @since 1.0.0
+     */
+    @Parameter( property = "play2.templateSourceDirectory" )
+    private File templateSourceDirectory;
+
     private static final String[] SCALA_TEMPLATES_INCLUDES = new String[] { "**/*.scala.*" };
 
     @Override
@@ -109,15 +119,13 @@ public class Play2TemplateCompileMojo
         int compiledFiles = 0;
         TemplateCompilationException firstException = null;
 
-        List<String> compileSourceRoots = project.getCompileSourceRoots();
-        for ( String sourceRoot : compileSourceRoots )
+        List<File> templateSourceDirectories = getTemplateSourceDirectories();
+        for ( File templateSourceDirectory: templateSourceDirectories )
         {
-            File sourceRootDirectory = new File( sourceRoot );
-            if ( sourceRootDirectory.isDirectory()
-                && !sourceRootDirectory.getAbsolutePath().startsWith( targetDirectory.getAbsolutePath() ) )
+            if ( templateSourceDirectory.isDirectory() )
             {
                 DirectoryScanner scanner = new DirectoryScanner();
-                scanner.setBasedir( sourceRootDirectory );
+                scanner.setBasedir( templateSourceDirectory );
                 scanner.setIncludes( SCALA_TEMPLATES_INCLUDES );
                 scanner.addDefaultExcludes();
                 scanner.scan();
@@ -125,11 +133,11 @@ public class Play2TemplateCompileMojo
 
                 if ( files.length > 0 )
                 {
-                    compiler.setSourceDirectory( sourceRootDirectory );
+                    compiler.setSourceDirectory( templateSourceDirectory );
 
                     for ( String fileName : files )
                     {
-                        File templateFile = new File( sourceRootDirectory, fileName );
+                        File templateFile = new File( templateSourceDirectory, fileName );
                         try
                         {
                             File generatedFile = compiler.compile( templateFile );
@@ -175,6 +183,26 @@ public class Play2TemplateCompileMojo
         {
             getLog().info( "No templates to compile" );
         }
+    }
+
+    private List<File> getTemplateSourceDirectories()
+    {
+        if ( templateSourceDirectory != null )
+        {
+            return Collections.singletonList( templateSourceDirectory );
+        }
+        List<String> compileSourceRoots = project.getCompileSourceRoots();
+        File targetDirectory = new File( project.getBuild().getDirectory() );
+        List<File> templateSourceDirectories = new ArrayList<File>();
+        for ( String sourceRoot : compileSourceRoots )
+        {
+            File sourceRootDirectory = new File( sourceRoot );
+            if ( !sourceRootDirectory.getAbsolutePath().startsWith( targetDirectory.getAbsolutePath() ) )
+            {
+                templateSourceDirectories.add( sourceRootDirectory );
+            }
+        }
+        return templateSourceDirectories;
     }
 
 }
