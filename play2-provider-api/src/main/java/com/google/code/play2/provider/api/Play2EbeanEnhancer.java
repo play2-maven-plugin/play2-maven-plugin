@@ -27,6 +27,8 @@ public interface Play2EbeanEnhancer
 
     void setClassPathUrls( List<URL> classPathUrls ); /* change the name? */
 
+    String getModelsToEnhance();
+
     boolean enhanceModel( File classFile )
         throws Exception;
 

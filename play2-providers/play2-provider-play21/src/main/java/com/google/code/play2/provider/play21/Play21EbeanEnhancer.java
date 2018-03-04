@@ -20,10 +20,17 @@ package com.google.code.play2.provider.play21;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.avaje.ebean.enhance.agent.InputStreamTransform;
 import com.avaje.ebean.enhance.agent.Transformer;
 import com.avaje.ebean.enhance.ant.StringReplace;
+
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigFactory;
+import com.typesafe.config.ConfigValue;
 
 import com.google.code.play2.provider.api.Play2EbeanEnhancer;
 
@@ -46,7 +53,35 @@ public class Play21EbeanEnhancer
         URL[] cp = classPathUrls.toArray( new URL[classPathUrls.size()] );
         ClassLoader classLoader = ClassLoader.getSystemClassLoader();
         Transformer transformer = new Transformer( cp, "debug=-1" );
-        inputStreamTransform = new InputStreamTransform( transformer, classLoader );
+        this.inputStreamTransform = new InputStreamTransform( transformer, classLoader );
+    }
+
+    @Override
+    public String getModelsToEnhance()
+    {
+        Config config = getConfig();
+        try
+        {
+            StringBuilder collector = new StringBuilder();
+
+            Set<Map.Entry<String, ConfigValue>> entries = config.getConfig( "ebean" ).entrySet();
+            for ( Map.Entry<String, ConfigValue> entry : entries )
+            {
+                ConfigValue configValue = entry.getValue();
+                collector.append( ',' ).append( configValue.unwrapped().toString() );
+            }
+            return collector.length() != 0 ? collector.substring( 1 ) : null;
+        }
+        catch ( ConfigException.Missing e )
+        {
+            return "models.*";
+        }
+    }
+
+    private Config getConfig()
+    {
+        // in 'process-classes' phase resources are already copied to the output directory
+        return ConfigFactory.parseFileAnySyntax( new File( outputDirectory, "application.conf" ) );
     }
 
     @Override
@@ -54,7 +89,7 @@ public class Play21EbeanEnhancer
         throws Exception
     {
         boolean processed = false;
-        
+
         String className = getClassName( classFile );
         byte[] result = inputStreamTransform.transform( className, classFile );
         if ( result != null )
