@@ -17,23 +17,22 @@
 
 package com.google.code.play2.plugin;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-
-import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.dir.DirectoryArchiver;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Create exploded Play&#33; framework and Play&#33; application (standalone distribution).
- * 
+ *
  * @author <a href="mailto:gslowikowski@gmail.com">Grzegorz Slowikowski</a>
  * @since 1.0.0
  */
@@ -44,7 +43,7 @@ public class Play2DistExplodedMojo
 
     /**
      * Skip dist exploded generation.
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter( property = "play2.distExplodedSkip", defaultValue = "false" )
@@ -75,13 +74,12 @@ public class Play2DistExplodedMojo
 
         try
         {
-            Archiver zipArchiver = getArchiver( "zip" );
-            addArchiveContent( zipArchiver, linuxStartFile, windowsStartFile );
-
+            DirectoryArchiver archiver = (DirectoryArchiver) getArchiver( "dir" );
             File distOutputDirectory = new File( project.getBuild().getDirectory(), "dist" );
             getLog().info( "Building dist directory: " + distOutputDirectory.getAbsolutePath() );
-            expandArchive( zipArchiver, distOutputDirectory );
-
+            archiver.setDestFile(distOutputDirectory);
+            addArchiveContent( archiver, linuxStartFile, windowsStartFile );
+            archiver.execute();
             getLog().info( String.format( "%nYour application is ready in %s%n%n",
                                           distOutputDirectory.getCanonicalPath() ) );
         }
