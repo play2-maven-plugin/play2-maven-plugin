@@ -17,20 +17,12 @@
 
 package com.google.code.play2.plugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.maven.plugins.annotations.Component;
 
-import org.codehaus.plexus.archiver.ArchiveEntry;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ResourceIterator;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.components.io.resources.PlexusIoResource;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.io.RawInputStreamFacade;
 
 /**
  * Base class for Play&#33; packaging mojos.
@@ -46,57 +38,6 @@ public abstract class AbstractArchivingMojo
      */
     @Component
     private ArchiverManager archiverManager;
-
-    /**
-     * Copies archiver content to a directory instead of creating archive file.
-     * 
-     * @param archiver archiver to extract from
-     * @param destDirectory destination directory
-     * @throws IOException I/O exception
-     */
-    protected void expandArchive( Archiver archiver, File destDirectory )
-        throws IOException
-    {
-        for ( ResourceIterator iter = archiver.getResources(); iter.hasNext(); )
-        {
-            ArchiveEntry entry = iter.next();
-            String name = entry.getName();
-            name = name.replace( File.separatorChar, '/' );
-            File destFile = new File( destDirectory, name );
-
-            PlexusIoResource resource = entry.getResource();
-            boolean skip = false;
-            if ( destFile.exists() )
-            {
-                long resLastModified = resource.getLastModified();
-                if ( resLastModified != PlexusIoResource.UNKNOWN_MODIFICATION_DATE )
-                {
-                    long destFileLastModified = destFile.lastModified(); // TODO-use this
-                    if ( resLastModified <= destFileLastModified )
-                    {
-                        skip = true;
-                    }
-                }
-            }
-
-            if ( !skip )
-            {
-                switch ( entry.getType() )
-                {
-                    case ArchiveEntry.DIRECTORY:
-                        destFile.mkdirs(); // TODO-change to PlexusUtils, check result
-                        break;
-                    case ArchiveEntry.FILE:
-                        InputStream contents = resource.getContents();
-                        RawInputStreamFacade facade = new RawInputStreamFacade( contents );
-                        FileUtils.copyStreamToFile( facade, destFile );
-                        break;
-                    default:
-                        throw new RuntimeException( "Unknown archive entry type: " + entry.getType() ); // TODO-polish, what exception class?
-                }
-            }
-        }
-    }
 
     /**
      * Returns preconfigured archiver

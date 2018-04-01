@@ -17,18 +17,19 @@
 
 package com.google.code.play2.plugin;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.dir.DirectoryArchiver;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
-import java.io.File;
-import java.io.IOException;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 /**
  * Create exploded Play&#33; framework and Play&#33; application (standalone distribution).
@@ -74,12 +75,15 @@ public class Play2DistExplodedMojo
 
         try
         {
-            DirectoryArchiver archiver = (DirectoryArchiver) getArchiver( "dir" );
             File distOutputDirectory = new File( project.getBuild().getDirectory(), "dist" );
             getLog().info( "Building dist directory: " + distOutputDirectory.getAbsolutePath() );
-            archiver.setDestFile(distOutputDirectory);
+
+            Archiver archiver = getArchiver( "dir" );
             addArchiveContent( archiver, linuxStartFile, windowsStartFile );
-            archiver.execute();
+            archiver.setDestFile( distOutputDirectory );
+
+            archiver.createArchive();
+
             getLog().info( String.format( "%nYour application is ready in %s%n%n",
                                           distOutputDirectory.getCanonicalPath() ) );
         }
