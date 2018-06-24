@@ -1,0 +1,46 @@
+#banner {
+    background-color: #006bbb;
+    border-radius: 6px 6px 0px 0px;
+    color: white;
+}
+
+#bannerLeft {
+    margin-left: 14px;
+    margin-top: 30px;
+}
+
+#bannerRight > img {
+    border-radius: 6px 6px 0px 0px;
+}
+
+.breadcrumb {
+    background-color: #002f51;
+    border-radius: 0px 0px 4px 4px;
+}
+
+.breadcrumb > li {
+    color: #ffffff;
+    text-shadow: none;
+}
+
+.builtBy {
+    display: none;
+}
+
+pre.prettyprint {
+    border: 1px solid #e3e3e3;
+}
+
+tt {
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    color: #d14;
+}
+
+.tag {
+    color: #63a35c;
+}
+
+code, pre {
+    font-family: Monaco,Menlo,"Courier New",monospace;
+}

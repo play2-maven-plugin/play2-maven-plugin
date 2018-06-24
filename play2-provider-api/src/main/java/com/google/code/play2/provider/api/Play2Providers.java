@@ -28,7 +28,11 @@ public class Play2Providers
         String result = null;
         if ( playVersion != null && !playVersion.isEmpty() )
         {
-            if ( playVersion.startsWith( "2.6." ) || playVersion.startsWith( "2.6-" ) )
+            if ( playVersion.startsWith( "2.7." ) || playVersion.startsWith( "2.7-" ) )
+            {
+                result = "play27";
+            }
+            else if ( playVersion.startsWith( "2.6." ) || playVersion.startsWith( "2.6-" ) )
             {
                 result = "play26";
             }
