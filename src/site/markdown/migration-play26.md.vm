@@ -50,6 +50,7 @@ c) optionally change HTTP server from `play-netty-server`
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-netty-server_2.12</artifactId>
             <version>${play2.version}</version>
+            <scope>runtime</scope>
         </dependency>
 ```
 
@@ -60,6 +61,7 @@ to `play-akka-http-server`
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-akka-http-server_2.12</artifactId>
             <version>${play2.version}</version>
+            <scope>runtime</scope>
         </dependency>
 ```
 
