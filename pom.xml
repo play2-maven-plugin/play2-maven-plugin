@@ -262,7 +262,7 @@ under the License.
                             <sbt013LatestVersion>0.13.15</sbt013LatestVersion>
                             <scala210LatestVersion>2.10.7</scala210LatestVersion>
                             <scala211LatestVersion>2.11.12</scala211LatestVersion>
-                            <scala212LatestVersion>2.12.4</scala212LatestVersion>
+                            <scala212LatestVersion>2.12.6</scala212LatestVersion>
                             <play21LatestVersion>2.1.5</play21LatestVersion>
                             <play22LatestVersion>2.2.6</play22LatestVersion>
                             <play23LatestVersion>2.3.10</play23LatestVersion>
