@@ -166,13 +166,13 @@ public class Play2TemplateCompileMojo
             }
         }
 
+        if ( firstException != null )
+        {
+            throw new MojoFailureException( "Template compilation failed", firstException );
+        }
+
         if ( processedFiles > 0 )
         {
-            if ( firstException != null )
-            {
-                throw new MojoFailureException( "Template compilation failed", firstException );
-            }
-
             getLog().info( String.format( "%d template%s processed, %d compiled", Integer.valueOf( processedFiles ),
                                           processedFiles > 1 ? "s" : "", Integer.valueOf( compiledFiles ) ) );
 

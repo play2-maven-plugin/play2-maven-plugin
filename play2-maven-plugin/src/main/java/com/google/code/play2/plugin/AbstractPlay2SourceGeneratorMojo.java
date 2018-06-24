@@ -77,17 +77,20 @@ public abstract class AbstractPlay2SourceGeneratorMojo
             getLog().error( String.format( "%s:%d: %s", source.getAbsolutePath(), Integer.valueOf( e.line() ),
                                            e.getMessage() ) );
             String lineContent = readFileNthLine( source, e.line() - 1, "unknown" );
-            getLog().error( lineContent );
-            if ( e.position() > 0 )
+            if ( lineContent != null )
             {
-                int pointerSpaceLength = Math.min( e.position() - 1, lineContent.length() );
-                char[] pointerLine = new char[ pointerSpaceLength + 1 ];
-                for ( int i = 0; i < pointerSpaceLength; i++ )
+                getLog().error( lineContent );
+                if ( e.position() > 0 )
                 {
-                    pointerLine[ i ] = lineContent.charAt( i ) == '\t' ? '\t' : ' ';
+                    int pointerSpaceLength = Math.min( e.position() - 1, lineContent.length() );
+                    char[] pointerLine = new char[ pointerSpaceLength + 1 ];
+                    for ( int i = 0; i < pointerSpaceLength; i++ )
+                    {
+                        pointerLine[ i ] = lineContent.charAt( i ) == '\t' ? '\t' : ' ';
+                    }
+                    pointerLine[ pointerSpaceLength ] = '^';
+                    getLog().error( String.valueOf( pointerLine ) );
                 }
-                pointerLine[ pointerSpaceLength ] = '^';
-                getLog().error( String.valueOf( pointerLine ) );
             }
         }
         else
