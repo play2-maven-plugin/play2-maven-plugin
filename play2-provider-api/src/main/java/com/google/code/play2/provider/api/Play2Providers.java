@@ -32,7 +32,7 @@ public class Play2Providers
             {
                 result = "play26";
             }
-            if ( playVersion.startsWith( "2.5." ) || playVersion.startsWith( "2.5-" ) )
+            else if ( playVersion.startsWith( "2.5." ) || playVersion.startsWith( "2.5-" ) )
             {
                 result = "play25";
             }
