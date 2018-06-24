@@ -39,7 +39,7 @@ under the License.
     <properties>
         <ant.version>1.9.4</ant.version>
         <maven.version>3.1.0</maven.version>
-        <maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
+        <maven-plugin-plugin.version>3.5.2</maven-plugin-plugin.version>
         <plexus-archiver.version>3.4</plexus-archiver.version>
     </properties>
 
