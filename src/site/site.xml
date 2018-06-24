@@ -52,6 +52,7 @@ under the License.
 
         <menu name="Usage">
             <item name="General instructions" href="usage.html"/>
+            <item name="Play 2.7.x" href="usage-play27.html"/>
             <item name="Play 2.6.x" href="usage-play26.html"/>
             <item name="Play 2.5.x" href="usage-play25.html"/>
             <item name="Play 2.4.x" href="usage-play24.html"/>
@@ -62,6 +63,7 @@ under the License.
 
         <menu name="Migration">
             <item name="From previous plugin version" href="migration-plugin.html"/>
+            <item name="From Play 2.6.x to 2.7.x" href="migration-play27.html"/>
             <item name="From Play 2.5.x to 2.6.x" href="migration-play26.html"/>
             <item name="From Play 2.4.x to 2.5.x" href="migration-play25.html"/>
             <item name="From Play 2.3.x to 2.4.x" href="migration-play24.html"/>
