@@ -17,6 +17,8 @@
 
 package com.google.code.play2.provider.play26.run;
 
+import java.net.URLClassLoader;
+
 import play.runsupport.classloader.ApplicationClassLoaderProvider;
 
 public class ReloaderApplicationClassLoaderProvider
@@ -30,7 +32,7 @@ public class ReloaderApplicationClassLoaderProvider
     }
 
     @Override
-    public ClassLoader get()
+    public URLClassLoader get()
     {
         return reloader != null ? reloader.getClassLoader() : null;
     }

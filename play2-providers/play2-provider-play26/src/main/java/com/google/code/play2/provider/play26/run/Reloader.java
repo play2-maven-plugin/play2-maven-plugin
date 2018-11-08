@@ -20,6 +20,7 @@ package com.google.code.play2.provider.play26.run;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class Reloader implements BuildLink
 
     private Map<String, String> devSettings;
 
-    private volatile ClassLoader currentApplicationClassLoader = null;
+    private volatile URLClassLoader currentApplicationClassLoader = null;
 
     private int classLoaderVersion = 0;
 
@@ -135,7 +136,7 @@ public class Reloader implements BuildLink
         currentApplicationClassLoader = null;
     }
 
-    ClassLoader getClassLoader()
+    URLClassLoader getClassLoader()
     {
         return currentApplicationClassLoader;
     }
