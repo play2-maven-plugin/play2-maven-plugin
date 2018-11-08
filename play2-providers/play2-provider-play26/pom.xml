@@ -73,7 +73,7 @@ under the License.
 
         <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>sbt-routes-compiler_2.10</artifactId>
+            <artifactId>sbt-routes-compiler_2.12</artifactId>
             <version>${play2.version}</version>
             <exclusions>
                 <exclusion>
@@ -91,7 +91,7 @@ under the License.
 
         <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>twirl-compiler_2.10</artifactId>
+            <artifactId>twirl-compiler_2.12</artifactId>
             <version>${twirl.version}</version>
         </dependency>
 

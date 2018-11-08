@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import scala.Option;
-import scala.collection.JavaConversions;
+import scala.collection.JavaConverters;
 import scala.collection.Seq;
 import scala.io.Codec;
 
@@ -93,7 +93,7 @@ public class Play26TemplateCompiler
 
     private List<String> getDefaultImports( List<String> playImports )
     {
-        List<String> twirlDefaultImports = JavaConversions.asJavaList( TwirlCompiler.DefaultImports() );
+        List<String> twirlDefaultImports = JavaConverters.seqAsJavaList( TwirlCompiler.DefaultImports() );
         List<String> defaultImports = new ArrayList<String>( twirlDefaultImports.size() + playImports.size() );
         defaultImports.addAll( twirlDefaultImports );
         defaultImports.addAll( playImports );
@@ -120,7 +120,7 @@ public class Play26TemplateCompiler
             String formatterType = formatterTypes[index];
             Seq<String> additionalImportsSeq = getAdditionalImports( ext );
             Seq<String> constructorAnnotationsSeq =
-                JavaConversions.asScalaBuffer( Arrays.asList( constructorAnnotations ) ).toSeq();
+                JavaConverters.asScalaBuffer( Arrays.asList( constructorAnnotations ) ).toSeq();
             try
             {
                 Option<File> resultOption =
@@ -158,7 +158,7 @@ public class Play26TemplateCompiler
         {
             formattedAdditionalImports.add( additionalImport.replace( "%format%", format ) );
         }
-        return JavaConversions.asScalaBuffer( formattedAdditionalImports ).toSeq();
+        return JavaConverters.asScalaBuffer( formattedAdditionalImports ).toSeq();
     }
 
 }
