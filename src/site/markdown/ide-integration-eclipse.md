@@ -34,6 +34,12 @@ Necessary `pom.xml` code snipped with `eclipse` profile is presented below:
         <profile>
             <id>eclipse</id>
 
+            <activation>
+                <property>
+                    <name>m2e.version</name> <!-- for automatic profile activation -->
+                </property>
+            </activation>
+
             <build>
                 <directory>${project.basedir}/target-eclipse</directory>
 
