@@ -28,7 +28,7 @@ under the License.
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.google.code.play2-maven-plugin</groupId>
     <artifactId>play2</artifactId>
-    <version>1.0.0-rc4-SNAPSHOT</version>
+    <version>1.0.0-rc4</version>
     <packaging>pom</packaging>
 
     <name>Play! 2.x</name>
@@ -40,7 +40,7 @@ under the License.
         <connection>scm:git:git://github.com/play2-maven-plugin/play2-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:play2-maven-plugin/play2-maven-plugin.git</developerConnection>
         <url>https://github.com/play2-maven-plugin/play2-maven-plugin/tree/${project.scm.tag}</url>
-        <tag>HEAD</tag>
+        <tag>play2-1.0.0-rc4</tag>
     </scm>
 
     <ciManagement>
