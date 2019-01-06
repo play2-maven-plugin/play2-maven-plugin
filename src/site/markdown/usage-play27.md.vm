@@ -126,7 +126,7 @@ Example with optional dependencies and configuration options:
 
         <anorm.version>2.6.2</anorm.version>
         <play2.version>${play27LatestVersion}</play2.version>
-        <play2-ebean.version>5.0.0-RC1</play2-ebean.version>
+        <play2-ebean.version>5.0.0-RC2</play2-ebean.version>
         <play2-enhancer.version>1.2.2</play2-enhancer.version>
         <scala.version>${scala212LatestVersion}</scala.version>
     </properties>
@@ -209,15 +209,8 @@ Example with optional dependencies and configuration options:
         <!-- only if using JPA -->
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.3.5.Final</version>
-            <exclusions>
-                <!-- required to avoid version downgrade from '1.4.01' to '1.0.b2' -->
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.4.0.Final</version>
         </dependency>
 
         <!-- default SLF4J logging implementation, can be replaced by other -->
@@ -239,7 +232,7 @@ Example with optional dependencies and configuration options:
             <scope>runtime</scope>
         </dependency>
 
-        <!-- only if enhancement is required -->
+        <!-- only if enhancement is required (Ebean or JPA) -->
         <dependency>
             <groupId>com.typesafe.play</groupId>
             <artifactId>play-enhancer</artifactId>
@@ -266,7 +259,7 @@ Example with optional dependencies and configuration options:
         <dependency>
             <groupId>org.scalatestplus.play</groupId>
             <artifactId>scalatestplus-play_2.12</artifactId>
-            <version>4.0.0-RC1</version>
+            <version>4.0.0-RC2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -310,7 +303,7 @@ Example with optional dependencies and configuration options:
                     <execution>
                         <id>default-play2-enhance</id>
                         <goals>
-                            <goal>enhance</goal>
+                            <goal>enhance</goal> <!-- only if using JPA or Ebean -->
                             <goal>ebean-enhance</goal> <!-- only if using Ebean -->
                         </goals>
                     </execution>
