@@ -33,8 +33,8 @@ under the License.
     <description>Play! 2.x Provider for Play! 2.7.x</description>
 
     <properties>
-        <play2.version>2.7.0-RC3</play2.version>
-        <twirl.version>1.4.0-RC1</twirl.version>
+        <play2.version>2.7.0-RC8</play2.version>
+        <twirl.version>1.4.0-RC4</twirl.version>
         <play2-enhancer.version>1.2.2</play2-enhancer.version>
     </properties>
 
@@ -62,7 +62,7 @@ under the License.
         <dependency>
             <groupId>io.ebean</groupId>
             <artifactId>ebean-agent</artifactId>
-            <version>11.11.1</version> <!-- version used by play-ebean 5.0.0-RC1 -->
+            <version>11.26.1</version> <!-- version used by play-ebean 5.0.0-RC2 -->
         </dependency>
 
         <dependency>
