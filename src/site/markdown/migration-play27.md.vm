@@ -25,4 +25,4 @@ to
     </properties>
 ```
 
-b) if using Ebean, upgrade `play-ebean` dependency version to `5.0.0-RC2`
+b) if using Ebean, upgrade `play-ebean` dependency version to `5.0.0-RC3`
