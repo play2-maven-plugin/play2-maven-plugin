@@ -59,7 +59,7 @@ public class Play2Providers
         }
         if ( result == null )
         {
-            result = "play26";
+            result = "play27";
         }
         return result;
     }

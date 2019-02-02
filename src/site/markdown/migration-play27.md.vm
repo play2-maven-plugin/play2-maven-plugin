@@ -25,4 +25,6 @@ to
     </properties>
 ```
 
-b) if using Ebean, upgrade `play-ebean` dependency version to `5.0.0-RC3`
+b) if using [Ebean](https://github.com/playframework/play-ebean), upgrade `play-ebean` dependency version to `5.0.1`
+
+c) if using [Slick](https://github.com/playframework/play-slick/), upgrade `play-slick` dependency version to `4.0.0`
