@@ -260,6 +260,17 @@ public class Play2RunMojo
     @Parameter( property = "play2.fileWatchService", defaultValue = "" )
     private String fileWatchService;
 
+    
+    /**
+     * Should non play modules to be reloaded in dev mode. 
+     * 
+     * Default is to reload play, jar all modules.
+     * 
+     * @since 1.0.0.rc6
+     */
+    @Parameter( property = "play2.reloadNonPlayModules", defaultValue = "true" )
+    private boolean reloadNonPlayModules;
+
     /**
      * The component used to execute the second Maven execution.
      */
@@ -338,19 +349,38 @@ public class Play2RunMojo
             assetsPrefix = assetsPrefix + "/";
         }
 
+        
         getLog().debug( "Required reactor modules:" );
         List<MavenProject> upstreamProjects = session.getProjectDependencyGraph().getUpstreamProjects( project, true );
         List<MavenProject> allRequiredReactorModules = new ArrayList<MavenProject>( 1 + upstreamProjects.size() );
+        List<File> outputDirectories = new ArrayList<File>( 1 + upstreamProjects.size() );
+        
+        Set<Artifact> projectArtifacts = project.getArtifacts();
+        List<File> dependencyClasspath = new ArrayList<File>( projectArtifacts.size()  + upstreamProjects.size());
+
         for ( MavenProject p: upstreamProjects )
         {
-            allRequiredReactorModules.add( p );
-            getLog().debug( "- " + p.getGroupId() + ":" + p.getArtifactId() );
+        	allRequiredReactorModules.add( p );
+        	getLog().debug( "- " + p.getGroupId() + ":" + p.getArtifactId() + ":" + p.getArtifact().getType());
+        	
+          	if ("play2".equals(p.getArtifact().getType())) {
+        		outputDirectories.add( new File( p.getBuild().getOutputDirectory()));
+        	}
+          	else {
+          		
+          		if (reloadNonPlayModules) {
+          			outputDirectories.add( new File( p.getBuild().getOutputDirectory()));
+          		}
+          		else {
+          			dependencyClasspath.add(new File(p.getBuild().getOutputDirectory()));
+          		}
+          	}
+          	
         }
         allRequiredReactorModules.add( project );
+        outputDirectories.add( new File( project.getBuild().getOutputDirectory()));
 
         String scalaVersion = null;
-        Set<Artifact> projectArtifacts = project.getArtifacts();
-        List<File> dependencyClasspath = new ArrayList<File>( projectArtifacts.size() );
         for ( Artifact a: projectArtifacts )
         {
             if ( !isReactorProject( upstreamProjects, a ) )
@@ -374,12 +404,7 @@ public class Play2RunMojo
             }
         }
 
-        List<File> outputDirectories = new ArrayList<File>( allRequiredReactorModules.size() );
-        for ( MavenProject p: allRequiredReactorModules )
-        {
-            outputDirectories.add( new File( p.getBuild().getOutputDirectory() ) );
-        }
-
+        
         File templateCompilationOutputDirectory = getTemplateCompilationOutputDirectory();
         
         AnalysisProcessor sbtAnalysisProcessor = getSbtAnalysisProcessor();
