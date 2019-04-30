@@ -135,13 +135,16 @@ public abstract class AbstractPlay2DistMojo
     @Parameter( property = "play2.distDependencyExcludes", defaultValue = "" )
     private String distDependencyExcludes;
 
+    @Parameter( defaultValue = "${project.build.finalName}", readonly = true )
+    private String artifactBuildFinalName;
+
     protected void addArchiveContent( Archiver archiver, File linuxStartFile, File windowsStartFile )
         throws MojoExecutionException
     {
         File baseDir = project.getBasedir();
         File buildDirectory = new File( project.getBuild().getDirectory() );
 
-        File projectArtifactFile = new File( buildDirectory, project.getBuild().getFinalName() + ".jar" ); // project.getArtifact().getFile();
+        File projectArtifactFile = new File( buildDirectory, artifactBuildFinalName + ".jar" );
         if ( !projectArtifactFile.isFile() )
         {
             throw new MojoExecutionException( String.format( "%s not present", projectArtifactFile.getAbsolutePath() ) );
@@ -164,7 +167,7 @@ public abstract class AbstractPlay2DistMojo
             for ( String classifier: incl )
             {
                 String projectAttachedArtifactFileName =
-                    String.format( "%s-%s.jar", project.getBuild().getFinalName(), classifier.trim() );
+                    String.format( "%s-%s.jar", artifactBuildFinalName, classifier.trim() );
                 File projectAttachedArtifactFile = new File( buildDirectory, projectAttachedArtifactFileName );
                 if ( !projectAttachedArtifactFile.isFile() )
                 {
