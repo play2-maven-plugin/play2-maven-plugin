@@ -10,4 +10,4 @@ install:
 
 script: mvn verify --update-snapshots --settings .travis.settings.xml -e
 
-jdk: oraclejdk8
+jdk: openjdk8
