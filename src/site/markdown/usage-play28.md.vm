@@ -1,0 +1,323 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+#if($project.version.endsWith("SNAPSHOT"))
+#set($testProjectsGitBranch = 'master')
+#else
+#set($testProjectsGitBranch = "test-projects-${project.version}")
+#end
+
+$h2 Usage - Play! Framework 2.8.x
+
+Simplest project file:
+
+```
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test</groupId>
+    <artifactId>test</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>play2</packaging>
+
+    <name>Play! Framework 2.8.x Maven Test Project</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <play2.version>${play28LatestVersion}</play2.version>
+        <scala.version>${scala212LatestVersion}</scala.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- default DI framework -->
+        <!-- see https://www.playframework.com/documentation/2.6.x/Migration26#Guice-DI-support-moved-to-separate-module for more info -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-guice_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- default SLF4J logging implementation, can be replaced by other -->
+        <!-- see https://www.playframework.com/documentation/2.6.x/SettingsLogger for more info -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-logback_2.12</artifactId>
+            <version>${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- default HTTP server -->
+        <!-- see https://www.playframework.com/documentation/2.6.x/AkkaHttpServer -->
+        <!--     https://www.playframework.com/documentation/2.6.x/NettyServer -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-akka-http-server_2.12</artifactId>
+            <version>${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>\${project.basedir}/app</sourceDirectory>
+        <testSourceDirectory>\${project.basedir}/test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>\${project.basedir}/conf</directory>
+            </resource>
+            <resource>
+                <directory>\${project.basedir}/public</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
+                <artifactId>sbt-compiler-maven-plugin</artifactId>
+                <version>${sbtCompilerPluginVersion}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+Example with optional dependencies and configuration options:
+
+```
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>test</groupId>
+    <artifactId>test</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>play2</packaging>
+
+    <name>Play! Framework 2.8.x Maven Test Project</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <anorm.version>2.6.5</anorm.version>
+        <play2.version>${play28LatestVersion}</play2.version>
+        <play2-ebean.version>5.0.2</play2-ebean.version>
+        <play2-enhancer.version>1.2.2</play2-enhancer.version>
+        <scala.version>${scala212LatestVersion}</scala.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-guice_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- only if using default filters -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>filters-helpers_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- only if using Anorm -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>anorm_2.12</artifactId>
+            <version>${anorm.version}</version>
+        </dependency>
+
+        <!-- only if using JDBC -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-jdbc_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- only if using JDBC evolutions -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-jdbc-evolutions_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- only if using Java -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-java_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- only if using Java forms -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-java-forms_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- only if using Ebean -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-ebean_2.12</artifactId>
+            <version>${play2-ebean.version}</version>
+        </dependency>
+
+        <!-- only if using JPA -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-java-jpa_2.12</artifactId>
+            <version>${play2.version}</version>
+        </dependency>
+
+        <!-- only if using JPA -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.4.10.Final</version>
+        </dependency>
+
+        <!-- default SLF4J logging implementation, can be replaced by other -->
+        <!-- see https://www.playframework.com/documentation/2.6.x/SettingsLogger for more info -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-logback_2.12</artifactId>
+            <version>${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- default HTTP server -->
+        <!-- see https://www.playframework.com/documentation/2.6.x/AkkaHttpServer -->
+        <!--     https://www.playframework.com/documentation/2.6.x/NettyServer -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-akka-http-server_2.12</artifactId>
+            <version>${play2.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- only if enhancement is required (Ebean or JPA) -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-enhancer</artifactId>
+            <version>${play2-enhancer.version}</version>
+        </dependency>
+
+        <!-- only if there are JUnit tests in the project -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-test_2.12</artifactId>
+            <version>${play2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- only if there are Specs2 tests in the project -->
+        <dependency>
+            <groupId>com.typesafe.play</groupId>
+            <artifactId>play-specs2_2.12</artifactId>
+            <version>${play2.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- only if there are ScalaTest tests in the project -->
+        <dependency>
+            <groupId>org.scalatestplus.play</groupId>
+            <artifactId>scalatestplus-play_2.12</artifactId>
+            <version>5.0.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <sourceDirectory>\${project.basedir}/app</sourceDirectory>
+        <testSourceDirectory>\${project.basedir}/test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>\${project.basedir}/conf</directory>
+            </resource>
+            <resource>
+                <directory>\${project.basedir}/public</directory>
+                <targetPath>public</targetPath>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>com.google.code.play2-maven-plugin</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- only if using database evolutions -->
+                    <serverJvmArgs>-Dplay.evolutions.db.default.autoApply=true</serverJvmArgs>
+                    <!-- only if using 'play-java-forms' module -->
+                    <templateAdditionalImports>play.data._ play.core.j.PlayFormsMagicForJava._</templateAdditionalImports>
+                </configuration>
+                <executions>
+                    <!-- only if there are assets in the project -->
+                    <execution>
+                        <id>default-play2-compile-assets</id>
+                        <goals>
+                            <goal>closure-compile</goal> <!-- only if precompiling js assets -->
+                            <goal>coffee-compile</goal> <!-- only if precompiling coffee assets -->
+                            <goal>less-compile</goal> <!-- only if precompiling less assets -->
+                        </goals>
+                    </execution>
+                    <!-- only if enhancement is required -->
+                    <execution>
+                        <id>default-play2-enhance</id>
+                        <goals>
+                            <goal>enhance</goal> <!-- only if using JPA or Ebean -->
+                            <goal>ebean-enhance</goal> <!-- only if using Ebean -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.google.code.sbt-compiler-maven-plugin</groupId>
+                <artifactId>sbt-compiler-maven-plugin</artifactId>
+                <version>${sbtCompilerPluginVersion}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+For more example projects go to [Play! 2.8.x test projects](https://github.com/play2-maven-plugin/play2-maven-test-projects/tree/$testProjectsGitBranch/play28/).

@@ -1,0 +1,9 @@
+This product includes software developed at
+Lightbend Inc. <https://www.lightbend.com>,
+which is licensed under the Apache 2 license.
+
+Details:
+- src/main/java/play/runsupport/classloader/ApplicationClassLoaderProvider.java
+- src/main/java/play/runsupport/classloader/DelegatingClassLoader.java
+both copied from
+https://github.com/playframework/playframework/tree/2.8.0/dev-mode/run-support/src/main/java/play/runsupport/classloader

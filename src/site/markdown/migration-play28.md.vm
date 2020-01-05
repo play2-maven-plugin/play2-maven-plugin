@@ -1,0 +1,32 @@
+#set($h1 = '#')
+#set($h2 = '##')
+#set($h3 = '###')
+#set($h4 = '####')
+
+$h2 Migration from Play! Framework 2.7.x to 2.8.x
+
+$h3 Maven-related changes
+
+a) change Play! version from
+
+```
+    <properties>
+        ...
+        <play2.version>${play27LatestVersion}</play2.version>
+    </properties>
+```
+
+to
+
+```
+    <properties>
+        ...
+        <play2.version>${play28LatestVersion}</play2.version>
+    </properties>
+```
+
+b) if using [Anorm](https://github.com/playframework/anorm/), upgrade `anorm` dependency version to `2.6.5`
+
+c) if using [Ebean](https://github.com/playframework/play-ebean/), upgrade `play-ebean` dependency version to `5.0.2`
+
+d) if using [Slick](https://github.com/playframework/play-slick/), upgrade `play-slick` dependency version to `5.0.0`
