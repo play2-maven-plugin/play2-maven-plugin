@@ -6,4 +6,4 @@ Details:
 - src/main/java/play/runsupport/classloader/ApplicationClassLoaderProvider.java
 - src/main/java/play/runsupport/classloader/DelegatingClassLoader.java
 both copied from
-https://github.com/playframework/playframework/tree/2.6.0-M1/framework/src/run-support/src/main/java/play/runsupport/classloader
+https://github.com/playframework/playframework/tree/2.7.4/dev-mode/run-support/src/main/java/play/runsupport/classloader
