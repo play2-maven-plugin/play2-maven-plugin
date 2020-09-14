@@ -37,7 +37,7 @@ under the License.
     </prerequisites>
 
     <properties>
-        <ant.version>1.9.4</ant.version>
+        <ant.version>1.9.15</ant.version>
         <maven.version>3.1.0</maven.version>
         <maven-plugin-plugin.version>3.5.2</maven-plugin-plugin.version>
         <plexus-archiver.version>3.6.0</plexus-archiver.version>
