@@ -67,7 +67,7 @@ under the License.
 
         <dependency>
             <groupId>com.typesafe.play</groupId>
-            <artifactId>build-link</artifactId>
+            <artifactId>play-build-link</artifactId>
             <version>${play2.version}</version>
         </dependency>
 
